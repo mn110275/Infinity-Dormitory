@@ -1,0 +1,276 @@
+/* admin-dashboard.css - styling riêng cho admin dashboard */
+:root {
+    --sidebar-w: 320px;
+    --viewer-w: 380px;
+    --gap: 18px;
+    --bg: #f7f8fb;
+    --muted: #6b7280;
+    --accent: #2563eb;
+}
+
+* {
+    box-sizing: border-box
+}
+
+body,
+html {
+    height: 100%;
+    margin: 0;
+    font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+.admin-container {
+    display: flex;
+    min-height: calc(100vh - 56px);
+    /* header cao ~56px */
+    gap: var(--gap);
+    background: var(--bg);
+    padding: 16px;
+}
+
+/* Sidebar (trái) */
+.sidebar {
+    width: var(--sidebar-w);
+    background: white;
+    border-radius: 10px;
+    padding: 14px;
+    box-shadow: 0 6px 18px rgba(22, 24, 40, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 18px
+}
+
+.sidebar-header small {
+    color: var(--muted)
+}
+
+.sidebar-list {
+    flex: 1;
+    overflow: auto;
+    padding-top: 6px
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .15s, transform .08s;
+    color: #111827;
+}
+
+.sidebar-item:hover {
+    background: #f2f6ff
+}
+
+.sidebar-item.active {
+    background: #eef4ff;
+    border-left: 3px solid var(--accent);
+    padding-left: 7px
+}
+
+.sidebar-item .item-title {
+    font-weight: 600
+}
+
+.sidebar-item .item-desc {
+    font-size: 12px;
+    color: var(--muted)
+}
+
+/* Footer controls inside sidebar */
+.sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+}
+
+.btn {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: white;
+    color: black;
+    cursor: pointer
+}
+
+.btn.danger {
+    background: #fff1f0;
+    border-color: #d30000
+}
+
+.btn.ghost {
+    background: transparent;
+    border: 1px dashed rgba(0, 0, 0, 0.06)
+}
+
+/* Content area (giữa) */
+.content-area {
+    flex: 1;
+    min-width: 360px;
+    position: relative;
+    overflow: auto;
+}
+
+.content-inner {
+    background: white;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(22, 24, 40, 0.04);
+    min-height: 300px;
+}
+
+/* Tables */
+.table {
+    width: 100%;
+    border-collapse: collapse
+}
+
+.table th,
+.table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.room-badge {
+    display: inline-block;
+    padding: 6px 8px;
+    background: #eef2ff;
+    border-radius: 6px;
+    font-weight: 600
+}
+
+/* Matrix */
+.matrix-table {
+    overflow: auto
+}
+
+.matrix-table table {
+    min-width: 700px;
+    border-collapse: collapse
+}
+
+.matrix-table thead th {
+    background: #fafafb;
+    position: sticky;
+    top: 0
+}
+
+.matrix-table th,
+.matrix-table td {
+    padding: 8px;
+    border: 1px solid #eee;
+    text-align: center
+}
+
+.qty-cell {
+    display: inline-block;
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    min-width: 28px;
+}
+
+/* Viewer (gạt sang) */
+.viewer {
+    width: var(--viewer-w);
+    position: fixed;
+    right: 16px;
+    top: 76px;
+    /* header offset */
+    bottom: 16px;
+    transform: translateX(calc(var(--viewer-w) + 40px));
+    transition: transform .28s cubic-bezier(.22, .98, .37, 1);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(10, 12, 25, 0.12);
+    z-index: 60;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+}
+
+.viewer.open {
+    transform: translateX(0);
+}
+
+.viewer-close {
+    position: absolute;
+    right: 8px;
+    top: 6px;
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    cursor: pointer
+}
+
+.viewer-body {
+    padding-top: 28px
+}
+
+/* main image and thumbs */
+.viewer-main {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #fafafa;
+    overflow: hidden
+}
+
+.viewer-main img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain
+}
+
+.viewer-thumbs {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    overflow: auto;
+    padding-bottom: 6px
+}
+
+.viewer-thumbs img {
+    width: 72px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid #eee
+}
+
+.viewer-links {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 13px
+}
+
+/* Responsive small screens */
+@media (max-width:900px) {
+    :root {
+        --sidebar-w: 260px;
+        --viewer-w: 320px
+    }
+
+    .container.admin-container {
+        padding: 8px
+    }
+
+    .viewer {
+        right: 8px;
+        left: auto
+    }
+}

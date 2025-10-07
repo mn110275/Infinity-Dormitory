@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đăng ký KTX - HUST</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <a href="../index.html">Trang chủ</a>
+    <a href="register.html" class="active">Đăng ký KTX</a>
+    <a href="student-login.html">Đăng nhập Sinh viên</a>
+    <a href="admin-login.html">Đăng nhập Quản lý</a>
+  </header>
+
+  <main class="container">
+    <h1>Đăng ký ở KTX - HUST</h1>
+
+    <form id="registerForm" class="form">
+      <label for="name">Họ và tên</label>
+      <input type="text" id="name" required />
+
+      <label for="mssv">Mã số sinh viên</label>
+      <input type="text" id="mssv" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required />
+
+      <label for="phone">Số điện thoại</label>
+      <input type="tel" id="phone" />
+
+      <button type="submit" class="btn">Gửi đăng ký</button>
+    </form>
+
+    <p id="message" class="message"></p>
+
+    <h2>Danh sách sinh viên đã đăng ký</h2>
+    <div id="studentList"></div>
+  </main>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

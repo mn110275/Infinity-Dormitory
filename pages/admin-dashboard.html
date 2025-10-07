@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard Quản lý</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <!-- CSS riêng cho admin dashboard -->
+  <link rel="stylesheet" href="../assets/css/admin-dashboard.css" />
+</head>
+<body>
+  <header class="nav">
+    <a href="../index.html">Trang chủ</a>
+    <a href="admin-dashboard.html" class="active">Quản lý</a>
+  </header>
+
+  <main class="admin-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h3>Quản lý KTX</h3>
+        <small id="sidebar-sub">Admin</small>
+      </div>
+
+      <nav id="sidebarList" class="sidebar-list">
+        <!-- Các mục sidebar sẽ được render bằng JS -->
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="exportBtn" class="btn">Xuất log (JSON)</button>
+        <button id="clearBtn" class="btn danger">Xóa toàn bộ</button>
+        <button id="logoutAdmin" class="btn ghost">Đăng xuất</button>
+      </div>
+    </aside>
+
+    <section id="adminContent" class="content-area">
+      <div id="contentInner" class="content-inner">
+        <!-- Nội dung động (bảng, ma trận,...) sẽ render vào đây -->
+      </div>
+    </section>
+
+    <!-- Viewer phải (gạt sang) -->
+    <aside id="viewer" class="viewer" aria-hidden="true">
+      <button id="viewerClose" class="viewer-close" title="Đóng">✕</button>
+      <div class="viewer-body">
+        <h3 id="viewerTitle">Phòng - Vật dụng</h3>
+        <div id="viewerMain" class="viewer-main">
+          <img id="viewerMainImg" src="" alt="Ảnh vật dụng" />
+        </div>
+        <div id="viewerThumbs" class="viewer-thumbs">
+          <!-- thumbnails sẽ được render ở đây -->
+        </div>
+        <div id="viewerLinks" class="viewer-links">
+          <!-- ví dụ: link, mô tả ngắn -->
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- <script src="../assets/js/main.js"></script> -->
+  <script src="../assets/js/admin-dashboard.js"></script>
+</body>
+</html>

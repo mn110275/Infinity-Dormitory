@@ -1,0 +1,129 @@
+:root {
+  --primary: #0066cc;
+  --dark: #004c99;
+  --danger: #cc3300;
+  --bg: #f7f9fc;
+}
+
+* {
+  box-sizing: border-box
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: #111;
+}
+
+.nav {
+  background: white;
+  padding: 12px 20px;
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid #e6e9ef;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #333;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.nav a.active {
+  background: var(--primary);
+  color: white;
+}
+
+.container {
+  max-width: 80%;
+  margin: 30px auto;
+  padding: 0 16px;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.form {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 12px;
+  background: var(--primary);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer
+}
+
+.btn:hover {
+  background: var(--dark)
+}
+
+.message {
+  margin-top: 12px;
+  color: green;
+  font-weight: 700
+}
+
+.cards {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap
+}
+
+.card {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 220px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05)
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  background: white
+}
+
+table th,
+table td {
+  padding: 8px;
+  border: 1px solid #eee;
+  text-align: left
+}
+
+.danger {
+  background: var(--danger)
+}
+
+.note {
+  color: #666;
+  font-size: 0.95rem;
+  margin-top: 8px
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đăng nhập Sinh viên</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <a href="../index.html">Trang chủ</a>
+    <a href="register.html">Đăng ký</a>
+    <a href="student-login.html" class="active">Đăng nhập Sinh viên</a>
+    <a href="admin-login.html">Đăng nhập Quản lý</a>
+  </header>
+
+  <main class="container">
+    <h1>Đăng nhập KTX - Sinh viên</h1>
+    <form id="studentLoginForm" class="form">
+      <label for="login_mssv">Mã số sinh viên</label>
+      <input type="text" id="login_mssv" required />
+
+      <label for="login_email">Email</label>
+      <input type="email" id="login_email" required />
+
+      <button type="submit" class="btn">Đăng nhập</button>
+    </form>
+    <p id="loginMsg" class="message"></p>
+  </main>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

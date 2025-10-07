@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đăng nhập Quản lý</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <a href="index.html">Trang chủ</a>
+    <a href="register.html">Đăng ký</a>
+    <a href="student-login.html">Đăng nhập Sinh viên</a>
+    <a href="admin-login.html" class="active">Đăng nhập Quản lý</a>
+  </header>
+
+  <main class="container">
+    <h1>Đăng nhập Quản lý KTX</h1>
+    <form id="adminLoginForm" class="form">
+      <label for="username">Tên đăng nhập</label>
+      <input type="text" id="username" required />
+
+      <label for="password">Mật khẩu</label>
+      <input type="password" id="password" required />
+
+      <button type="submit" class="btn">Đăng nhập</button>
+    </form>
+    <p id="adminLoginMsg" class="message"></p>
+    <p class="note">Tài khoản mẫu: <strong>admin</strong> / <strong>admin123</strong></p>
+  </main>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
