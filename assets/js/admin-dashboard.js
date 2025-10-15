@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ktxData.rooms.forEach(room => {
       const tr = document.createElement('tr');
       const tdRoom = document.createElement('td');
-      tdRoom.innerHTML = `<span class="room-badge">Phòng ${room.number}</span>`;
+      tdRoom.innerHTML = `<span class="room-badge">${room.number}</span>`;
       const tdList = document.createElement('td');
       if (room.students && room.students.length) {
         const ul = document.createElement('ul');
