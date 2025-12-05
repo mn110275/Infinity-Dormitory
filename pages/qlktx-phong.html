@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giao diện QL KTX</title>
+    <style>
+      /* CODE CSS SẼ ĐƯỢC CHÈN VÀO ĐÂY */
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      table {
+        border-collapse: collapse;
+        width: auto;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+
+      /* CSS để ẩn/hiện các giao diện phụ */
+      .hidden {
+        display: none;
+      }
+
+      /* Liên kết trong bảng chính */
+      .link-cell a {
+        color: blue;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
+      /* Định kiểu cho bảng chi tiết để dễ phân biệt */
+      #cơ-sở-vật-chất th,
+      #sinh-viên th {
+        background-color: #e0f7fa;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="qlktx-dashboard.html">← Quay lại Menu Chính</a>
+       
+    <hr />
+    <h2>Danh sách Phòng</h2>
+    <table id="phòng">
+      <thead>
+        <tr>
+          <th>Tên Phòng</th>
+          <th>Cơ sở vật chất</th>
+          <th>Sinh viên</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>P100</td>
+          <td class="link-cell">
+            <a href="#" onclick="showTable('cơ-sở-vật-chất')">CSVC100</a>
+          </td>
+          <td class="link-cell">
+            <a href="#" onclick="showTable('sinh-viên')">SV100</a>
+          </td>
+        </tr>
+        <tr>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr />
+
+    <div id="cơ-sở-vật-chất" class="hidden">
+      <h2>Chi tiết Cơ sở vật chất (P100)</h2>
+      <a href="#" onclick="hideTable('cơ-sở-vật-chất')"
+        >← Quay lại danh sách phòng</a
+      >
+      <table>
+        <thead>
+          <tr>
+            <th>Cơ sở vật chất</th>
+            <th>Số lượng ban đầu</th>
+            <th>Số lượng cần sửa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Quạt</td>
+            <td>2</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Điều hòa</td>
+            <td>1</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+      <a href="#" onclick="showTable('sinh-viên')">→ Xem Chi tiết Sinh viên</a>
+    </div>
+    <div id="sinh-viên" class="hidden">
+      <h2>Chi tiết Sinh viên (P100)</h2>
+      <a href="#" onclick="hideTable('sinh-viên')"
+        >← Quay lại danh sách phòng</a
+      >
+      <table>
+        <thead>
+          <tr>
+            <th>MSSV</th>
+            <th>Họ tên</th>
+            <th>Giới tính</th>
+            <th>Ngày sinh</th>
+            <th>Liên hệ người thân</th>
+            <th>Email</th>
+            <th>Số Phòng</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+      <a href="#" onclick="showTable('cơ-sở-vật-chất')"
+        >← Xem Chi tiết Cơ sở vật chất</a
+      >
+    </div>
+
+    <script>
+      // Hàm hiển thị bảng chi tiết
+      function showTable(tableId) {
+        // Ẩn tất cả các bảng chi tiết trước
+        document.getElementById("cơ-sở-vật-chất").classList.add("hidden");
+        document.getElementById("sinh-viên").classList.add("hidden");
+
+        // Hiển thị bảng được chọn
+        document.getElementById(tableId).classList.remove("hidden");
+
+        // Tùy chọn: Ẩn bảng chính khi xem chi tiết
+        document.getElementById("phòng").classList.add("hidden");
+        document.querySelector("h2").classList.add("hidden"); // Ẩn tiêu đề bảng chính
+      }
+
+      // Hàm ẩn bảng chi tiết và quay lại bảng chính
+      function hideTable(tableId) {
+        document.getElementById(tableId).classList.add("hidden");
+
+        // Hiển thị lại bảng chính
+        document.getElementById("phòng").classList.remove("hidden");
+        document.querySelector("h2").classList.remove("hidden"); // Hiện lại tiêu đề bảng chính
+      }
+    </script>
+  </body>
+</html>
