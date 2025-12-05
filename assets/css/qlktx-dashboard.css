@@ -1,0 +1,179 @@
+/*body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 50px;
+  margin: 0;
+  background-color: #f4f4f4;
+}
+
+.container {
+  width: 300px;
+  background-color: white;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+Phần tiêu đề "QL KTX Admin" 
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.header p {
+  font-size: 1em;
+  margin: 5px 0 0;
+}
+
+Menu chính - Thay đổi để mỗi mục là một button riêng biệt 
+.menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 100px; Khoảng cách lớn giữa menu và nút Đăng xuất 
+}
+
+ Định kiểu cho mỗi mục (li) thành một button riêng 
+.menu li {
+  margin-bottom: 10px;  Khoảng cách giữa các button 
+}
+
+.menu a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: black;
+  text-align: left;
+  background-color: white;
+  /* KHUNG CHO MỖI BUTTON 
+  border: 1px solid black;
+}
+
+Nút Đăng xuất 
+.logout {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.logout a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: black;
+  text-align: left;
+  /* KHUNG CHO NÚT ĐĂNG XUẤT 
+  border: 1px solid black;
+  background-color: white;
+}
+*/
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+
+  /* Đảm bảo khối .container được đẩy sát về phía bên trái */
+  justify-content: flex-start;
+
+  /* Loại bỏ hoàn toàn khoảng đệm và lề trái của body */
+  padding-left: 0;
+  margin-left: 0;
+
+  /* Giữ padding-top để khối không dính lên mép trên */
+  padding-top: 50px;
+
+  margin: 0;
+  background-color: #f8f9fa;
+}
+
+.container {
+  width: 300px;
+  background-color: #ffffff;
+  padding: 30px;
+  box-sizing: border-box;
+  border-radius: 12px; /* Thêm bo góc */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ */
+}
+
+/* Tiêu đề */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #007bff;
+}
+
+.header h1 {
+  font-size: 1.8em;
+  margin: 0;
+  color: #343a40;
+}
+
+.header p {
+  font-size: 1em;
+  margin: 5px 0 0;
+  color: #6c757d;
+}
+
+/* Menu chính */
+.menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 40px;
+}
+
+.menu li {
+  margin-bottom: 12px;
+}
+
+.menu a {
+  display: block;
+  padding: 12px 15px;
+  text-decoration: none;
+  color: #343a40;
+  text-align: left;
+  background-color: #f8f9fa; /* Nền nhạt */
+  border: 1px solid #ced4da; /* Viền nhẹ */
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+/* Hiệu ứng HOVER cho các nút menu */
+.menu a:hover {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Nút Đăng xuất */
+.logout {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 60px;
+}
+
+.logout a {
+  display: block;
+  padding: 12px 15px;
+  text-decoration: none;
+  color: #dc3545; /* Màu đỏ */
+  text-align: center;
+  border: 1px solid #dc3545;
+  background-color: white;
+  border-radius: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Hiệu ứng HOVER cho nút Đăng xuất */
+.logout a:hover {
+  background-color: #dc3545;
+  color: white;
+}
