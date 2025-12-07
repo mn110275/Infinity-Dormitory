@@ -1,3 +1,14 @@
+<?php
+session_start();
+require '../database_connection.php'; // dùng chung database
+
+// Kiểm tra phân quyền admin
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
+    header("Location: manager_login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -8,9 +19,9 @@
 </head>
 <body>
   <header class="nav">
-    <a href="admin-home.html">Trang chủ</a>
-    <a href="admin-dashboard.html" class="active">Quản lý</a>
-    <!-- Cần thêm mục Đăng xuất -->
+    <a href="manager_home.php" class="active"> Trang chủ</a>
+    <a href="manager_dashboard.php">Quản lý</a>
+    <a href="../logout.php" style="margin-left:auto">Đăng xuất</a>
   </header>
 
   <main class="container">

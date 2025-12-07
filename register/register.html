@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>InfiDorm - Đăng ký vào KTX</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+  <header class="nav">
+    <a href="../index.php">Trang chủ</a>
+    <a href="register.html" class="active">Đăng ký ở KTX</a>
+    <a href="../student/student_login.php">Đăng nhập Sinh viên</a>
+    <a href="../manager/manager_login.php">Đăng nhập Quản lý</a>
+  </header>
+
+  <main class="container">
+    <h1>Đăng ký ở KTX</h1>
+
+    <form id="registerForm" class="form">
+      <label for="name">Họ và tên</label>
+      <input type="text" id="name" required />
+
+      <label for="mssv">Mã số sinh viên</label>
+      <input type="text" id="mssv" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required />
+
+      <label for="phone">Số điện thoại</label>
+      <input type="tel" id="phone" />
+
+      <button type="submit" class="btn">Gửi đăng ký</button>
+    </form>
+
+    <p id="message" class="message"></p>
+
+    <!-- Muốn hiển thị danh sách svien đăng ký lên màn hình thì đây -->
+    <!--
+    <h2>Danh sách sinh viên đã đăng ký</h2>
+    <div id="studentList"></div>
+    -->
+  </main>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const mssv = document.getElementById('mssv').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('mssv', mssv);
+      formData.append('email', email);
+      formData.append('phone', phone);
+
+      const res = await fetch('register_process.php', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      const messageEl = document.getElementById('message');
+      messageEl.textContent = data.message;
+      if (data.success) {
+        messageEl.style.color = 'green';
+        document.getElementById('registerForm').reset();
+        // loadStudentList(); // reload danh sách sinh viên
+      } else {
+        messageEl.style.color = 'red';
+      }
+    });
+
+    // Load danh sách đăng ký để hiện cho quản lý (hoặc hiển thị ngay ở form demo)
+    async function loadStudentList() {
+      const res = await fetch('list_register.php'); // PHP trả danh sách JSON
+      const data = await res.json();
+      const div = document.getElementById('studentList');
+      if (!data.length) {
+        div.innerHTML = '<p>Chưa có sinh viên đăng ký nào</p>';
+        return;
+      }
+      let html = '<table><thead><tr><th>Họ và tên</th><th>MSSV</th><th>Email</th><th>SĐT</th><th>Trạng thái</th></tr></thead><tbody>';
+      data.forEach(d => {
+        html += `<tr>
+      <td>${d.HO_TEN_NDK}</td>
+      <td>${d.MSSV_NDK}</td>
+      <td>${d.EMAIL_NDK}</td>
+      <td>${d.SDT_NDK}</td>
+      <td>${d.STATUS_DON}</td>
+    </tr>`;
+      });
+      html += '</tbody></table>';
+      div.innerHTML = html;
+    }
+
+    // Gọi lần đầu
+    loadStudentList();
+  </script>
+</body>
+
+</html>
