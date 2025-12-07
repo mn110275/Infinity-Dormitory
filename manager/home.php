@@ -4,7 +4,7 @@ require '../database_connection.php'; // dùng chung database
 
 // Kiểm tra phân quyền admin
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
-    header("Location: manager_login.php");
+    header("Location: login.php");
     exit;
 }
 ?>
@@ -19,8 +19,9 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
 </head>
 <body>
   <header class="nav">
-    <a href="manager_home.php" class="active"> Trang chủ</a>
-    <a href="manager_dashboard.php">Quản lý</a>
+    <a href="home.php" class="active"> Trang chủ</a>
+    <a href="dashboard.php">Quản lý</a>
+    <a href="../change_password.php style="margin-left:auto">Đổi mật khẩu</a>
     <a href="../logout.php" style="margin-left:auto">Đăng xuất</a>
   </header>
 
@@ -33,7 +34,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
       <div class="card">
         <h3>Đăng ký ở KTX</h3>
         <p>Đăng ký khi bạn mới muốn ở KTX.</p>
-        <a class="btn" href="register.html">Đến trang đăng ký</a>
+        <a class="btn" href="../register/register.html">Đến trang đăng ký</a>
       </div>
 
     </section>

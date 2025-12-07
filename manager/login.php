@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['role'] = 'manager';
         $_SESSION['user_id'] = $user['ID_USER'];
         $_SESSION['name'] = $user['HO_TEN_QL'];
-        header("Location: manager_dashboard.php");
+        header("Location: dashboard.php");
         exit;
     } else {
         $error = "Sai email hoặc mật khẩu quản lý!";
@@ -40,13 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <header class="nav">
     <a href="../index.php">Trang chủ</a>
     <a href="../register/register.html">Đăng ký KTX</a>
-    <a href="../student/student_login.php">Đăng nhập Sinh viên</a>
-    <a href="manager_login.php" class="active">Đăng nhập Quản lý</a>
+    <a href="../student/login.php">Đăng nhập Sinh viên</a>
+    <a href="login.php" class="active">Đăng nhập Quản lý</a>
   </header>
 
   <main class="container">
     <h1>Đăng nhập Quản lý KTX</h1>
-    <form action="manager_login.php" method="POST" class="form">
+    <form action="login.php" method="POST" class="form">
       <label for="email">Email đăng nhập</label>
       <input type="email" id="email" name="email" required value="<?php if(isset($email)) echo htmlspecialchars($email); ?>">
 

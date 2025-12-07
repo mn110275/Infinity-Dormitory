@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $_SESSION['email'] = $user['EMAIL'];
       $_SESSION['name'] = $user['HO_TEN_SV'];
 
-      header("Location: student_home.php");
+      header("Location: home.php");
       exit;
     } else {
         $error = "Sai email hoặc mật khẩu sinh viên!";
@@ -45,14 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <header class="nav">
     <a href="../index.php">Trang chủ</a>
     <a href="../register/register.html">Đăng ký KTX</a>
-    <a href="student_login.php" class="active">Đăng nhập Sinh viên</a>
-    <a href="../manager/manager_login.php">Đăng nhập Quản lý</a>
+    <a href="login.php" class="active">Đăng nhập Sinh viên</a>
+    <a href="../manager/login.php">Đăng nhập Quản lý</a>
   </header>
 
   <main class="container">
     <h1>Đăng nhập Sinh viên KTX</h1>
 
-    <form action="student_login.php" method="POST" class="form">
+    <form action="login.php" method="POST" class="form">
       <label for="email">Email đăng nhập</label>
       <input type="email" id="email" name="email" required value="<?php if(isset($email)) echo htmlspecialchars($email); ?>">
 

@@ -3,7 +3,7 @@ session_start();
 
 // Kiểm tra phân quyền hiện tại
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
-    header("Location: student_login.php");
+    header("Location: student_login.php?error=unauthorized");
     exit;
 }
 
@@ -23,12 +23,13 @@ $student_name = $_SESSION['name'];
   <!-- Header là cái thanh ở đầu ấy, có chữ trang chủ các thứ -->
   <header class="nav">
     <div style="display:flex; gap:12px;">
-      <a href="student_home.php">Trang chủ</a>
-      <a href="#">Quản lý dịch vụ</a>
+      <a href="home.php" class="active">Trang chủ</a>
+      <a href="dashboard.html">Quản lý thông tin</a>
     </div>
     <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
       <a href="../logout.php">Đăng xuất</a>
-      <a href="student_profile.php">Chào mừng <?php echo htmlspecialchars($student_name); ?>!</a>
+      <a href="../change_password.php">Đổi mật khẩu</a>
+      <a href="profile.php">Chào mừng <?php echo htmlspecialchars($student_name); ?>!</a>
     </div>
   </header>
 
