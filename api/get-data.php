@@ -7,26 +7,21 @@ header('Access-Control-Allow-Origin: *');
 require_once '../database_connection.php';
 
 try {
-    // Kiểm tra kết nối
     if (!$conn) {
         throw new Exception('Không có kết nối database');
     }
-    
-    // Set charset UTF-8
+
     mysqli_set_charset($conn, "utf8mb4");
     
-    // Lấy danh sách phòng với sinh viên
+    // Lấy danh sách phòng
     $roomQuery = "SELECT 
                     p.ID_ROOM,
                     p.ROOM_NAME,
                     p.CAPACITY,
                     p.OCCUPIED_SLOT,
-                    t.TEN_TOA,
-                    GROUP_CONCAT(DISTINCT s.HO_TEN_SV ORDER BY s.HO_TEN_SV SEPARATOR '|') as students
+                    t.TEN_TOA
                   FROM PHONG p
                   LEFT JOIN TOA t ON p.ID_TOA = t.ID_TOA
-                  LEFT JOIN SINHVIEN s ON p.ID_ROOM = s.ID_ROOM
-                  GROUP BY p.ID_ROOM, p.ROOM_NAME, p.CAPACITY, p.OCCUPIED_SLOT, t.TEN_TOA
                   ORDER BY t.TEN_TOA, p.ROOM_NAME";
     
     $roomResult = mysqli_query($conn, $roomQuery);
@@ -37,7 +32,54 @@ try {
     
     $rooms = [];
     while ($row = mysqli_fetch_assoc($roomResult)) {
-        $rooms[] = $row;
+        $rooms[$row['ID_ROOM']] = [
+            'id' => (int)$row['ID_ROOM'],
+            'number' => $row['ROOM_NAME'],
+            'building' => $row['TEN_TOA'] ?: 'N/A',
+            'capacity' => (int)($row['CAPACITY'] ?: 0),
+            'occupied' => (int)($row['OCCUPIED_SLOT'] ?: 0),
+            'students' => [],
+            'students_detail' => [],
+            'items' => [],
+            'images' => []
+        ];
+    }
+    
+    // Lấy chi tiết sinh viên theo phòng
+    $studentQuery = "SELECT 
+                        s.ID_ROOM,
+                        s.MSSV,
+                        s.HO_TEN_SV,
+                        s.CONTACT_SV,
+                        s.ADDRESS_SV,
+                        s.SEMESTER_DK,
+                        s.IMAGE_SV
+                     FROM SINHVIEN s
+                     ORDER BY s.ID_ROOM, s.HO_TEN_SV";
+    
+    $studentResult = mysqli_query($conn, $studentQuery);
+    
+    if (!$studentResult) {
+        throw new Exception('Lỗi query sinh viên: ' . mysqli_error($conn));
+    }
+    
+    while ($student = mysqli_fetch_assoc($studentResult)) {
+        $roomId = (int)$student['ID_ROOM'];
+        
+        if (isset($rooms[$roomId])) {
+            // Thêm tên vào mảng students (để tương thích code cũ)
+            $rooms[$roomId]['students'][] = $student['HO_TEN_SV'];
+            
+            // Thêm chi tiết đầy đủ
+            $rooms[$roomId]['students_detail'][] = [
+                'MSSV' => $student['MSSV'] ?: '',
+                'HO_TEN_SV' => $student['HO_TEN_SV'] ?: '',
+                'CONTACT_SV' => $student['CONTACT_SV'] ?: '',
+                'ADDRESS_SV' => $student['ADDRESS_SV'] ?: '',
+                'SEMESTER_DK' => $student['SEMESTER_DK'] ?: '',
+                'IMAGE_SV' => $student['IMAGE_SV'] ?: ''
+            ];
+        }
     }
     
     // Lấy thiết bị/cơ sở vật chất
@@ -69,64 +111,38 @@ try {
         throw new Exception('Lỗi query thiết bị: ' . mysqli_error($conn));
     }
     
-    $equipment = [];
-    while ($row = mysqli_fetch_assoc($equipResult)) {
-        $equipment[] = $row;
-    }
-    
-    // Tổ chức dữ liệu
-    $roomsData = [];
-    foreach ($rooms as $room) {
-        $roomsData[] = [
-            'id' => (int)$room['ID_ROOM'],
-            'number' => $room['ROOM_NAME'],
-            'building' => $room['TEN_TOA'] ?: 'N/A',
-            'capacity' => (int)($room['CAPACITY'] ?: 0),
-            'occupied' => (int)($room['OCCUPIED_SLOT'] ?: 0),
-            'students' => $room['students'] ? explode('|', $room['students']) : [],
-            'items' => [],
-            'images' => []
-        ];
-    }
-    
     // Thêm thiết bị vào phòng
-    foreach ($equipment as $eq) {
+    while ($eq = mysqli_fetch_assoc($equipResult)) {
         $roomId = (int)$eq['ID_ROOM'];
         
-        // Tìm index của phòng
-        $roomIndex = -1;
-        foreach ($roomsData as $idx => $room) {
-            if ($room['id'] === $roomId) {
-                $roomIndex = $idx;
-                break;
-            }
-        }
-        
-        if ($roomIndex !== -1) {
+        if (isset($rooms[$roomId])) {
             $itemName = $eq['LOAI_CSVC'];
             
             // Cộng dồn số lượng
-            if (isset($roomsData[$roomIndex]['items'][$itemName])) {
-                $roomsData[$roomIndex]['items'][$itemName] += (int)$eq['quantity'];
+            if (isset($rooms[$roomId]['items'][$itemName])) {
+                $rooms[$roomId]['items'][$itemName] += (int)$eq['quantity'];
             } else {
-                $roomsData[$roomIndex]['items'][$itemName] = (int)$eq['quantity'];
+                $rooms[$roomId]['items'][$itemName] = (int)$eq['quantity'];
             }
             
             // Thêm ảnh nếu có
             if (!empty($eq['images'])) {
                 $imgs = array_filter(explode('|', $eq['images']));
                 if (count($imgs) > 0) {
-                    if (!isset($roomsData[$roomIndex]['images'][$itemName])) {
-                        $roomsData[$roomIndex]['images'][$itemName] = [];
+                    if (!isset($rooms[$roomId]['images'][$itemName])) {
+                        $rooms[$roomId]['images'][$itemName] = [];
                     }
-                    $roomsData[$roomIndex]['images'][$itemName] = array_merge(
-                        $roomsData[$roomIndex]['images'][$itemName], 
+                    $rooms[$roomId]['images'][$itemName] = array_merge(
+                        $rooms[$roomId]['images'][$itemName], 
                         $imgs
                     );
                 }
             }
         }
     }
+    
+    // Chuyển associative array thành indexed array
+    $roomsData = array_values($rooms);
     
     // Trả về JSON
     echo json_encode([
