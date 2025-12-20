@@ -21,7 +21,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
   <header class="nav">
     <a href="home.php" class="active"> Trang chủ</a>
     <a href="dashboard.php">Quản lý</a>
-    <a href="../change_password.php style="margin-left:auto">Đổi mật khẩu</a>
+    <a href="../change_password.php">Đổi mật khẩu</a>
     <a href="../logout.php" style="margin-left:auto">Đăng xuất</a>
   </header>
 

@@ -10,12 +10,12 @@ try {
     if ($conn) {
         mysqli_set_charset($conn, "utf8mb4");
         
-        $studentQuery = "SELECT s.MSSV, s.HO_TEN_SV, s.CONTACT_SV, s.ADDRESS_SV, 
-                         s.SEMESTER_DK, s.IMAGE_SV, p.ROOM_NAME, t.TEN_TOA
-                         FROM SINHVIEN s
-                         INNER JOIN PHONG p ON s.ID_ROOM = p.ID_ROOM
-                         LEFT JOIN TOA t ON p.ID_TOA = t.ID_TOA
-                         ORDER BY t.TEN_TOA, p.ROOM_NAME, s.HO_TEN_SV";
+        $studentQuery = "SELECT s.STD_ID, s.STD_NAME, s.STD_PHONE, s.STD_ADR, 
+                         s.STARTDATE, s.STD_IMG, r.ROOM_ID, b.BLOCK_ID
+                         FROM STUDENT s
+                         INNER JOIN ROOM r ON r.ROOM_ID = s.ROOM_ID
+                         LEFT JOIN BLOCK b ON r.BLOCK_ID = b.BLOCK_ID
+                         ORDER BY r.ROOM_ID, s.STD_NAME";
         
         $result = mysqli_query($conn, $studentQuery);
         if ($result) {
@@ -33,34 +33,33 @@ $rooms = [];
 $items = [];
 try {
     if ($conn) {
-        $roomQuery = "SELECT p.ID_ROOM, p.ROOM_NAME, t.TEN_TOA 
-                      FROM PHONG p 
-                      LEFT JOIN TOA t ON p.ID_TOA = t.ID_TOA 
-                      ORDER BY t.TEN_TOA, p.ROOM_NAME";
+        $roomQuery = "SELECT r.ROOM_ID, b.BLOCK_ID 
+                      FROM ROOM r 
+                      LEFT JOIN BLOCK b ON b.BLOCK_ID = r.BLOCK_ID 
+                      ORDER BY b.BLOCK_ID, r.ROOM_ID";
         $roomResult = mysqli_query($conn, $roomQuery);
         
         if ($roomResult) {
             while ($row = mysqli_fetch_assoc($roomResult)) {
-                $rooms[$row['ID_ROOM']] = [
-                    'id' => $row['ID_ROOM'],
-                    'number' => $row['ROOM_NAME'],
-                    'building' => $row['TEN_TOA'] ?: 'N/A',
+                $rooms[$row['ROOM_ID']] = [
+                    'id' => $row['ROOM_ID'],
+                    'block' => $row['BLOCK_ID'] ?: 'N/A',
                     'items' => [],
                     'images' => []
                 ];
             }
         }
         
-        $equipQuery = "SELECT c.ID_ROOM, c.LOAI_CSVC, COUNT(*) as quantity,
-                       GROUP_CONCAT(DISTINCT c.IMAGE_CSVC SEPARATOR '|') as images
-                       FROM COSOVATCHAT c
-                       GROUP BY c.ID_ROOM, c.LOAI_CSVC";
+        $equipQuery = "SELECT c.ROOM_ID, c.FCLT_TYPE, COUNT(*) as quantity,
+                       GROUP_CONCAT(DISTINCT c.FCLT_IMG SEPARATOR '|') as images
+                       FROM FACILITY c
+                       GROUP BY c.ROOM_ID, c.FCLT_TYPE";
         $equipResult = mysqli_query($conn, $equipQuery);
         
         if ($equipResult) {
             while ($eq = mysqli_fetch_assoc($equipResult)) {
-                $roomId = $eq['ID_ROOM'];
-                $itemName = $eq['LOAI_CSVC'];
+                $roomId = $eq['ROOM_ID'];
+                $itemName = $eq['FCLT_TYPE'];
                 
                 if (isset($rooms[$roomId])) {
                     $rooms[$roomId]['items'][$itemName] = (int)$eq['quantity'];
@@ -101,6 +100,8 @@ if (isset($conn)) mysqli_close($conn);
   <header class="nav">
     <a href="home.php">Trang chủ</a>
     <a href="dashboard.php" class="active">Quản lý</a>
+    <a href="../change_password.php">Đổi mật khẩu</a>
+    <a href="../logout.php" style="margin-left:auto">Đăng xuất</a>
   </header>
 
   <main class="admin-container">
@@ -193,12 +194,11 @@ if (isset($conn)) mysqli_close($conn);
                 <tbody>
                   <?php foreach ($students as $s): ?>
                   <tr>
-                    <td><span class="room-badge"><?= htmlspecialchars($s['ROOM_NAME']) ?></span></td>
-                    <td><?= htmlspecialchars($s['HO_TEN_SV']) ?></td>
-                    <td><?= htmlspecialchars($s['MSSV']) ?></td>
-                    <td><?= htmlspecialchars($s['CONTACT_SV']) ?></td>
-                    <td><?= htmlspecialchars($s['ADDRESS_SV']) ?></td>
-                    <td><?= htmlspecialchars($s['SEMESTER_DK']) ?></td>
+                    <td><span class="room-badge"><?= htmlspecialchars($s['ROOM_ID']) ?></span></td>
+                    <td><?= htmlspecialchars($s['STD_NAME']) ?></td>
+                    <td><?= htmlspecialchars($s['STD_ID']) ?></td>
+                    <td><?= htmlspecialchars($s['STD_PHONE']) ?></td>
+                    <td><?= htmlspecialchars($s['STD_ADR']) ?></td>
                   </tr>
                   <?php endforeach; ?>
                 </tbody>
@@ -222,8 +222,8 @@ if (isset($conn)) mysqli_close($conn);
                     <th>Vật dụng \ Phòng</th>
                     <?php foreach ($rooms as $room): ?>
                       <th>
-                        <div><?= htmlspecialchars($room['number']) ?></div>
-                        <small><?= htmlspecialchars($room['building']) ?></small>
+                        <div><?= htmlspecialchars($room['id']) ?></div>
+                        <small><?= htmlspecialchars($room['block']) ?></small>
                       </th>
                     <?php endforeach; ?>
                   </tr>

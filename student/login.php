@@ -9,9 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     $sql = "
-        SELECT * FROM SINHVIEN sv
-        JOIN NGUOIDUNG nd ON sv.ID_USER = nd.ID_USER
-        WHERE nd.EMAIL = '$email' AND nd.PASSWORD_ND = '$password'
+        SELECT * FROM STUDENT s
+        JOIN USERS u ON s.USER_ID = u.USER_ID
+        WHERE u.EMAIL = '$email' AND u.PASS = '$password'
     ";
 
     $result = mysqli_query($conn, $sql);
@@ -20,9 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $user = mysqli_fetch_assoc($result);
 
       $_SESSION['role'] = 'student';
-      $_SESSION['user_id'] = $user['ID_USER'];
+      $_SESSION['user_id'] = $user['USER_ID'];
       $_SESSION['email'] = $user['EMAIL'];
-      $_SESSION['name'] = $user['HO_TEN_SV'];
+      $_SESSION['name'] = $user['STD_NAME'];
 
       header("Location: home.php");
       exit;
