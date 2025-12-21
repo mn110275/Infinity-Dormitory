@@ -2,77 +2,124 @@
 // manager/dashboard.php
 session_start();
 
+// Check authentication
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
+    header('Location: login.php');
+    exit;
+}
+
+if (!isset($_SESSION['block'])) {
+    die('Lỗi: Không xác định được tòa quản lý. Vui lòng đăng nhập lại.');
+}
+
 require_once '../database_connection.php';
 
-// Lấy dữ liệu sinh viên
+// Lấy dữ liệu sinh viên (chỉ tòa của manager)
 $students = [];
+$managerBlock = $_SESSION['block']; // Lấy tòa từ session
+
 try {
-    if ($conn) {
+    if ($conn && $managerBlock) {
         mysqli_set_charset($conn, "utf8mb4");
         
-        $studentQuery = "SELECT s.STD_ID, s.STD_NAME, s.STD_PHONE, s.STD_ADR, 
-                         s.STARTDATE, s.STD_IMG, r.ROOM_ID, b.BLOCK_ID
+        $studentQuery = "SELECT s.STD_ID, s.STD_NAME, s.STD_GD, s.STD_PHONE, 
+                         s.STD_ADR, s.STARTDATE, s.STD_IMG, r.ROOM_ID, r.BLOCK_ID
                          FROM STUDENT s
                          INNER JOIN ROOM r ON r.ROOM_ID = s.ROOM_ID
-                         LEFT JOIN BLOCK b ON r.BLOCK_ID = b.BLOCK_ID
+                         WHERE r.BLOCK_ID = ?
                          ORDER BY r.ROOM_ID, s.STD_NAME";
         
-        $result = mysqli_query($conn, $studentQuery);
+        $stmt = mysqli_prepare($conn, $studentQuery);
+        mysqli_stmt_bind_param($stmt, "s", $managerBlock);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        
         if ($result) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $students[] = $row;
             }
         }
+    } elseif (!$managerBlock) {
+        $studentError = "Không xác định được tòa quản lý. Vui lòng đăng nhập lại.";
     }
 } catch (Exception $e) {
     $studentError = $e->getMessage();
 }
 
-// Lấy dữ liệu inventory
+// Lấy dữ liệu inventory (chỉ tòa của manager)
 $rooms = [];
 $items = [];
 try {
-    if ($conn) {
-        $roomQuery = "SELECT r.ROOM_ID, b.BLOCK_ID 
-                      FROM ROOM r 
-                      LEFT JOIN BLOCK b ON b.BLOCK_ID = r.BLOCK_ID 
-                      ORDER BY b.BLOCK_ID, r.ROOM_ID";
-        $roomResult = mysqli_query($conn, $roomQuery);
+    if ($conn && $managerBlock) {
+        $roomQuery = "SELECT r.ROOM_ID, r.BLOCK_ID
+                      FROM ROOM r
+                      WHERE r.BLOCK_ID = ?
+                      ORDER BY r.ROOM_ID";
+        
+        $stmt = mysqli_prepare($conn, $roomQuery);
+        mysqli_stmt_bind_param($stmt, "s", $managerBlock);
+        mysqli_stmt_execute($stmt);
+        $roomResult = mysqli_stmt_get_result($stmt);
         
         if ($roomResult) {
             while ($row = mysqli_fetch_assoc($roomResult)) {
                 $rooms[$row['ROOM_ID']] = [
                     'id' => $row['ROOM_ID'],
-                    'block' => $row['BLOCK_ID'] ?: 'N/A',
+                    'number' => $row['ROOM_ID'],
+                    'building' => $row['BLOCK_ID'],
                     'items' => [],
                     'images' => []
                 ];
             }
         }
         
-        $equipQuery = "SELECT c.ROOM_ID, c.FCLT_TYPE, COUNT(*) as quantity,
-                       GROUP_CONCAT(DISTINCT c.FCLT_IMG SEPARATOR '|') as images
-                       FROM FACILITY c
-                       GROUP BY c.ROOM_ID, c.FCLT_TYPE";
-        $equipResult = mysqli_query($conn, $equipQuery);
-        
-        if ($equipResult) {
-            while ($eq = mysqli_fetch_assoc($equipResult)) {
-                $roomId = $eq['ROOM_ID'];
-                $itemName = $eq['FCLT_TYPE'];
-                
-                if (isset($rooms[$roomId])) {
-                    $rooms[$roomId]['items'][$itemName] = (int)$eq['quantity'];
+        // Lấy thiết bị (FACILITY) - chỉ phòng của tòa này
+        if (!empty($rooms)) {
+            $roomIds = array_keys($rooms);
+            $placeholders = str_repeat('?,', count($roomIds) - 1) . '?';
+            
+            $equipQuery = "SELECT f.ROOM_ID, f.FCLT_TYPE, f.FCLT_STATUS,
+                           COUNT(*) as quantity,
+                           GROUP_CONCAT(DISTINCT f.FCLT_IMG SEPARATOR '|') as images
+                           FROM FACILITY f
+                           WHERE f.ROOM_ID IN ($placeholders)
+                           GROUP BY f.ROOM_ID, f.FCLT_TYPE, f.FCLT_STATUS";
+            
+            $stmt = mysqli_prepare($conn, $equipQuery);
+            $types = str_repeat('s', count($roomIds));
+            mysqli_stmt_bind_param($stmt, $types, ...$roomIds);
+            mysqli_stmt_execute($stmt);
+            $equipResult = mysqli_stmt_get_result($stmt);
+            
+            if ($equipResult) {
+                while ($eq = mysqli_fetch_assoc($equipResult)) {
+                    $roomId = $eq['ROOM_ID'];
+                    $itemName = $eq['FCLT_TYPE'];
                     
-                    if (!empty($eq['images'])) {
-                        $imgs = array_filter(explode('|', $eq['images']));
-                        if (count($imgs) > 0) {
-                            $rooms[$roomId]['images'][$itemName] = $imgs;
+                    if (isset($rooms[$roomId])) {
+                        // Tổng hợp số lượng theo loại (bất kể status)
+                        if (!isset($rooms[$roomId]['items'][$itemName])) {
+                            $rooms[$roomId]['items'][$itemName] = 0;
                         }
-                    }
-                    
-                    if (!in_array($itemName, $items)) {
-                        $items[] = $itemName;
+                        $rooms[$roomId]['items'][$itemName] += (int)$eq['quantity'];
+                        
+                        // Lưu ảnh
+                        if (!empty($eq['images'])) {
+                            $imgs = array_filter(explode('|', $eq['images']));
+                            if (count($imgs) > 0) {
+                                if (!isset($rooms[$roomId]['images'][$itemName])) {
+                                    $rooms[$roomId]['images'][$itemName] = [];
+                                }
+                                $rooms[$roomId]['images'][$itemName] = array_merge(
+                                    $rooms[$roomId]['images'][$itemName],
+                                    $imgs
+                                );
+                            }
+                        }
+                        
+                        if (!in_array($itemName, $items)) {
+                            $items[] = $itemName;
+                        }
                     }
                 }
             }
@@ -100,8 +147,9 @@ if (isset($conn)) mysqli_close($conn);
   <header class="nav">
     <a href="home.php">Trang chủ</a>
     <a href="dashboard.php" class="active">Quản lý</a>
-    <a href="../change_password.php">Đổi mật khẩu</a>
-    <a href="../logout.php" style="margin-left:auto">Đăng xuất</a>
+    <span style="margin-left: auto; color: #64748b;">
+      <?= htmlspecialchars($_SESSION['name'] ?? 'Admin') ?> - Tòa <?= htmlspecialchars($_SESSION['block'] ?? 'N/A') ?>
+    </span>
   </header>
 
   <main class="admin-container">
@@ -199,6 +247,7 @@ if (isset($conn)) mysqli_close($conn);
                     <td><?= htmlspecialchars($s['STD_ID']) ?></td>
                     <td><?= htmlspecialchars($s['STD_PHONE']) ?></td>
                     <td><?= htmlspecialchars($s['STD_ADR']) ?></td>
+                    <td><?= htmlspecialchars($s['STARTDATE']) ?></td>
                   </tr>
                   <?php endforeach; ?>
                 </tbody>
@@ -222,8 +271,8 @@ if (isset($conn)) mysqli_close($conn);
                     <th>Vật dụng \ Phòng</th>
                     <?php foreach ($rooms as $room): ?>
                       <th>
-                        <div><?= htmlspecialchars($room['id']) ?></div>
-                        <small><?= htmlspecialchars($room['block']) ?></small>
+                        <div><?= htmlspecialchars($room['number']) ?></div>
+                        <small><?= htmlspecialchars($room['building']) ?></small>
                       </th>
                     <?php endforeach; ?>
                   </tr>

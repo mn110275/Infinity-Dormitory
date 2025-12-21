@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_id'] = $user['USER_ID'];
         $_SESSION['email'] = $user['EMAIL'];
         $_SESSION['name'] = $user['MNG_NAME'];
+        $_SESSION['block'] = $user['MNG_BLOCK'];
         header("Location: dashboard.php");
         exit;
     } else {
@@ -62,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p class="message"><?php echo $error; ?></p>
     <?php endif; ?>
 
-    <p class="note">Tài khoản mẫu: <strong>adm@example.com</strong> / <strong>123</strong></p>
+    <p class="note">Tài khoản mẫu: <strong>manager@infidorm.com</strong> / <strong>123456</strong></p>
   </main>
 </body>
 </html>
