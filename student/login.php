@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (mysqli_num_rows($result) == 1) {
       $user = mysqli_fetch_assoc($result);
 
-      $_SESSION['role'] = 'student';
+      $_SESSION['role'] = $user['ROLE'];
       $_SESSION['user_id'] = $user['ID_USER'];
       $_SESSION['email'] = $user['EMAIL'];
       $_SESSION['name'] = $user['HO_TEN_SV'];

@@ -5,25 +5,30 @@ require '../database_connection.php';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+    
     $sql = "
-        SELECT * FROM NGUOIDUNG nd
-        JOIN QUANLY ql ON nd.ID_USER = ql.ID_USER
-        WHERE nd.EMAIL = '$email' AND nd.PASSWORD_ND = '$password'
+        SELECT ID_USER, NAME, ROLE
+        FROM NGUOIDUNG
+        WHERE EMAIL = ? AND PASSWORD_ND = ? AND ROLE = 'admin'
+        LIMIT 1
     ";
-    $result = mysqli_query($conn, $sql);
 
-    if (mysqli_num_rows($result) == 1) {
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, 'ss', $email, $password);
+    mysqli_stmt_execute($stmt);
+    
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result && mysqli_num_rows($result) === 1) {
         $user = mysqli_fetch_assoc($result);
         $_SESSION['role'] = $user['ROLE'];
         $_SESSION['user_id'] = $user['ID_USER'];
-        $_SESSION['name'] = $user['HO_TEN_QL'];
         header("Location: dashboard.php");
         exit;
     } else {
-        $error = "Sai email hoặc mật khẩu quản lý!";
+        $error = "Sai email hoặc mật khẩu admin!";
     }
 }
 ?>
@@ -33,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Đăng nhập Quản lý</title>
+  <title>Đăng nhập Admin</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
 </head>
 <body>
@@ -41,11 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="../index.php">Trang chủ</a>
     <a href="../register/register.html">Đăng ký KTX</a>
     <a href="../student/login.php">Đăng nhập Sinh viên</a>
-    <a href="login.php" class="active">Đăng nhập Quản lý</a>
+    <a href="../student/login.php">Đăng nhập Quản lý</a>
+    <a href="login.php" class="active">Đăng nhập Admin</a>
   </header>
 
   <main class="container">
-    <h1>Đăng nhập Quản lý KTX</h1>
+    <h1>Đăng nhập Admin InfiDorm</h1>
     <form action="login.php" method="POST" class="form">
       <label for="email">Email đăng nhập</label>
       <input type="email" id="email" name="email" required value="<?php if(isset($email)) echo htmlspecialchars($email); ?>">
