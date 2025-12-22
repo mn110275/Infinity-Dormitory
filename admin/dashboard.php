@@ -22,8 +22,8 @@ if (!in_array($tab, $allowedTabs)) {
   <link rel="stylesheet" href="../assets/css/style.css" />
   <link rel="stylesheet" href="../assets/css/manager_dashboard.css" />
   <link rel="stylesheet" href="../assets/css/dashboard-style.css" />
-  <link rel="stylesheet" href="admin.css" />
-  <link rel="stylesheet" href="modal.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="css/modal.css" />
 </head>
 
 <body>

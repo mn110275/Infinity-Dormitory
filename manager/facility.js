@@ -1,6 +1,6 @@
-// manager/inventory.js
+// manager/facility.js
 
-const Inventory = {
+const Facility = {
   viewer: null,
   data: null,
 
@@ -97,7 +97,7 @@ const Inventory = {
 
 // Sidebar switching
 document.addEventListener('DOMContentLoaded', () => {
-  Inventory.init();
+  Facility.init();
 
   // Sidebar click
   document.querySelectorAll('.sidebar-item').forEach(item => {
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Switch view
       document.getElementById('studentView').style.display = view === 'students' ? 'block' : 'none';
-      document.getElementById('inventoryView').style.display = view === 'inventory' ? 'block' : 'none';
+      document.getElementById('facilityView').style.display = view === 'facility' ? 'block' : 'none';
     });
   });
 
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ky: cells[5]?.textContent.trim()
         };
       }),
-      inventory: window.INVENTORY_DATA
+      facility: window.INVENTORY_DATA
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });

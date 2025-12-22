@@ -10,15 +10,22 @@ try {
 
         $sql = "
             SELECT 
-                ID_DON,
-                HO_TEN_NDK,
-                MSSV_NDK,
-                SDT_NDK,
-                EMAIL_NDK,
-                STATUS_DON,
-                THOI_DIEM_TAO
-            FROM DONDANGKY
-            ORDER BY THOI_DIEM_TAO DESC
+                REG_ID,
+                REG_NAME,
+                REG_STD_ID,
+                REG_PHONE,
+                REG_EMAIL,
+                REG_STATUS,
+                CREATED_AT
+            FROM REGIFORM
+            ORDER BY 
+              CASE REG_STATUS
+                  WHEN 'Chưa xử lý' THEN 1
+                  WHEN 'Đã chấp nhận' THEN 2
+                  WHEN 'Đã từ chối' THEN 3
+                  ELSE 4
+              END,
+              CREATED_AT DESC
         ";
 
         $result = mysqli_query($conn, $sql);
@@ -106,41 +113,41 @@ try {
     <tbody>
       <?php foreach ($applications as $a): ?>
       <tr class="
-        <?= $a['STATUS_DON'] === 'Đã từ chối' ? 'row-rejected' : '' ?>
-        <?= $a['STATUS_DON'] === 'Đã chấp nhận' ? 'row-approved' : '' ?>
+        <?= $a['REG_STATUS'] === 'Đã từ chối' ? 'row-rejected' : '' ?>
+        <?= $a['REG_STATUS'] === 'Đã chấp nhận' ? 'row-approved' : '' ?>
       ">
-        <td><?= $a['ID_DON'] ?></td>
-        <td><?= htmlspecialchars($a['HO_TEN_NDK']) ?></td>
-        <td><?= htmlspecialchars($a['MSSV_NDK']) ?></td>
-        <td><?= htmlspecialchars($a['SDT_NDK']) ?></td>
-        <td><?= htmlspecialchars($a['EMAIL_NDK']) ?></td>
+        <td><?= $a['REG_ID'] ?></td>
+        <td><?= htmlspecialchars($a['REG_NAME']) ?></td>
+        <td><?= htmlspecialchars($a['REG_STD_ID']) ?></td>
+        <td><?= htmlspecialchars($a['REG_PHONE']) ?></td>
+        <td><?= htmlspecialchars($a['REG_EMAIL']) ?></td>
         <td>
-          <span class="status-badge status-<?= strtolower(str_replace(' ', '-', $a['STATUS_DON'])) ?>">
-            <?= $a['STATUS_DON'] ?>
+          <span class="status-badge status-<?= strtolower(str_replace(' ', '-', $a['REG_STATUS'])) ?>">
+            <?= $a['REG_STATUS'] ?>
           </span>
         </td>
-        <td><?= date('d/m/Y H:i', strtotime($a['THOI_DIEM_TAO'])) ?></td>
+        <td><?= date('d/m/Y H:i', strtotime($a['CREATED_AT'])) ?></td>
         
         <td class="action-cell">
-          <?php if ($a['STATUS_DON'] === 'Chưa xử lý'): ?>
+          <?php if ($a['REG_STATUS'] === 'Chưa xử lý'): ?>
             <button 
               class="btn btn-success btn-accept"
-              data-id="<?= $a['ID_DON'] ?>">
+              data-id="<?= $a['REG_ID'] ?>">
               Chấp nhận
             </button>
             <button
               class="btn btn-danger btn-reject"
-              data-id="<?= $a['ID_DON'] ?>">
+              data-id="<?= $a['REG_ID'] ?>">
               Từ chối
             </button>
 
-          <?php elseif ($a['STATUS_DON'] === 'Đã từ chối'): ?>
+          <?php elseif ($a['REG_ID'] === 'Đã từ chối'): ?>
             <button class="btn btn-warning btn-undo"
-                    data-id="<?= $a['ID_DON'] ?>">
+                    data-id="<?= $a['REG_ID'] ?>">
               Hoàn tác
             </button>
 
-          <?php elseif ($a['STATUS_DON'] === 'Đã chấp nhận'): ?>
+          <?php elseif ($a['REG_STATUS'] === 'Đã chấp nhận'): ?>
             <span class="status-text accepted">Đã chấp nhận</span>
 
           <?php endif; ?>
@@ -164,7 +171,7 @@ try {
 // Lấy danh sách phòng có sẵn để hiển thị dropdown phòng trong popup
 $rooms = [];
 if ($conn) {
-    $roomResult = mysqli_query($conn, "SELECT ID_ROOM, ROOM_NAME, GIOI_TINH, CAPACITY, OCCUPIED_SLOT FROM PHONG");
+    $roomResult = mysqli_query($conn, "SELECT ROOM_ID, GENDER, CAPACITY, OCCUPIED FROM ROOM");
     if ($roomResult) {
         while ($row = mysqli_fetch_assoc($roomResult)) {
             $rooms[] = $row;
@@ -191,6 +198,11 @@ if ($conn) {
       </div>
 
       <div class="form-group">
+        <label for="ngay_sinh">Ngày sinh:</label>
+        <input type="date" id="ngay_sinh" name="ngay_sinh" required>
+      </div>
+
+      <div class="form-group">
         <label for="contact_sv">Số điện thoại:</label>
         <input type="tel" id="contact_sv" name="contact_sv" required placeholder="Nhập số điện thoại">
       </div>
@@ -214,8 +226,8 @@ if ($conn) {
         <select id="id_room" name="id_room" required>
           <option value="" disabled selected>-- Chọn phòng --</option>
           <?php foreach ($rooms as $room): ?>
-            <option value="<?= $room['ID_ROOM'] ?>" data-gender="<?= $room['GIOI_TINH'] ?>">
-              <?= htmlspecialchars($room['ROOM_NAME']) ?> (<?= htmlspecialchars($room['GIOI_TINH']) ?>) - <?= $room['OCCUPIED_SLOT'] ?>/<?= $room['CAPACITY'] ?> chỗ
+            <option value="<?= $room['ROOM_ID'] ?>" data-gender="<?= $room['GENDER'] ?>">
+              <?= htmlspecialchars($room['ROOM_ID']) ?> (<?= htmlspecialchars($room['GENDER']) ?>) - <?= $room['OCCUPIED'] ?>/<?= $room['CAPACITY'] ?> chỗ
             </option>
           <?php endforeach; ?>
         </select>

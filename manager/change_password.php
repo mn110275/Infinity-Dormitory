@@ -1,7 +1,7 @@
 <?php
 // change-password.php - Trang đổi mật khẩu cho user
 session_start();
-require_once 'database_connection.php';
+require_once '../database_connection.php';
 
 // Giả sử user đã đăng nhập, lấy ID từ session
 // Bạn cần thêm logic login thực tế
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Mật khẩu mới phải có ít nhất 6 ký tự!";
     } else {
         // Lấy password hiện tại từ DB
-        $query = "SELECT PASSWORD_ND FROM NGUOIDUNG WHERE ID_USER = ?";
+        $query = "SELECT PASS FROM USERS WHERE USER_ID = ?";
         $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param($stmt, "i", $user_id);
         mysqli_stmt_execute($stmt);
@@ -37,12 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (!$user) {
             $error = "Không tìm thấy user!";
-        } elseif (!password_verify($current_password, $user['PASSWORD_ND'])) {
+        } elseif (!password_verify($current_password, $user['PASS'])) {
             $error = "Mật khẩu hiện tại không đúng!";
         } else {
             // Đổi password
             $new_hashed = password_hash($new_password, PASSWORD_DEFAULT);
-            $update_query = "UPDATE NGUOIDUNG SET PASSWORD_ND = ? WHERE ID_USER = ?";
+            $update_query = "UPDATE USERS SET PASS = ? WHERE USER_ID = ?";
             $update_stmt = mysqli_prepare($conn, $update_query);
             mysqli_stmt_bind_param($update_stmt, "si", $new_hashed, $user_id);
             
@@ -56,7 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Lấy thông tin user
-$query = "SELECT NAME, EMAIL FROM NGUOIDUNG WHERE ID_USER = ?";
+$query = "SELECT EMAIL, MNG_NAME
+        FROM USERS U
+            JOIN MANAGER M ON U.USER_ID = M.USER_ID
+        WHERE U.USER_ID = ?";
 $stmt = mysqli_prepare($conn, $query);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
@@ -194,7 +197,7 @@ mysqli_close($conn);
         <h1>🔐 Đổi mật khẩu</h1>
         
         <div class="user-info">
-            <p><strong>Tên:</strong> <?php echo htmlspecialchars($user_info['NAME']); ?></p>
+            <p><strong>Tên:</strong> <?php echo htmlspecialchars($user_info['MNG_NAME']); ?></p>
             <p><strong>Email:</strong> <?php echo htmlspecialchars($user_info['EMAIL']); ?></p>
         </div>
 

@@ -9,17 +9,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     $sql = "
-        SELECT * FROM NGUOIDUNG nd
-        JOIN QUANLY ql ON nd.ID_USER = ql.ID_USER
-        WHERE nd.EMAIL = '$email' AND nd.PASSWORD_ND = '$password'
+        SELECT * FROM USERS U
+        JOIN MANAGER m ON u.USER_ID = m.USER_ID
+        WHERE u.EMAIL = '$email' AND u.PASS = '$password'
     ";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_num_rows($result) == 1) {
         $user = mysqli_fetch_assoc($result);
-        $_SESSION['role'] = $user['ROLE'];
-        $_SESSION['user_id'] = $user['ID_USER'];
-        $_SESSION['name'] = $user['HO_TEN_QL'];
+        $_SESSION['role'] = $user['USER_ROLE'];
+        $_SESSION['user_id'] = $user['USER_ID'];
+        $_SESSION['email'] = $user['EMAIL'];
+        $_SESSION['name'] = $user['MNG_NAME'];
+        $_SESSION['block'] = $user['MNG_BLOCK'];
         header("Location: dashboard.php");
         exit;
     } else {
@@ -61,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p class="message"><?php echo $error; ?></p>
     <?php endif; ?>
 
-    <p class="note">Tài khoản mẫu: <strong>adm@example.com</strong> / <strong>123</strong></p>
+    <p class="note">Tài khoản mẫu: <strong>manager@infidorm.com</strong> / <strong>123456</strong></p>
   </main>
 </body>
 </html>

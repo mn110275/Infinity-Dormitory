@@ -19,117 +19,113 @@ if (!$idDon || !$action) {
 
 if ($action === 'accept') {
   $idDon = $_POST['id'] ?? null;
-  $mssv = $_POST['mssv'] ?? null;
-  $hoTen = $_POST['ho_ten'] ?? null;
-  $contact = $_POST['contact_sv'] ?? null;
+  $studentId = $_POST['mssv'] ?? null;
+  $name = $_POST['ho_ten'] ?? null;
+  $dob = $_POST['ngay_sinh'] ?? null;
+  $phone = $_POST['contact_sv'] ?? null;
   $address = $_POST['address_sv'] ?? null;
-  $gioiTinh = $_POST['gioi_tinh'] ?? null;
-  $idRoom = $_POST['id_room'] ?? null;
+  $gender = $_POST['gioi_tinh'] ?? null;
+  $roomId = $_POST['id_room'] ?? null;
 
   // Kiểm tra đầy đủ dữ liệu
-  if (!$idDon || !$mssv || !$hoTen || !$contact || !$address || !$gioiTinh || !$idRoom) {
+  if (!$idDon || !$studentId || !$name || !$dob || !$phone || !$address || !$gender || !$roomId) {
     echo json_encode(['success' => false, 'message' => 'Missing student info']);
     exit;
+  }
+
+  if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
+    throw new Exception('Ngày sinh không hợp lệ');
   }
 
   mysqli_begin_transaction($conn);
 
   try {
-    // 1. Kiểm tra phòng còn chỗ
-    $sqlCheckRoom = "SELECT CAPACITY, OCCUPIED_SLOT FROM PHONG WHERE ID_ROOM = ?";
-    $stmtCheckRoom = mysqli_prepare($conn, $sqlCheckRoom);
-    mysqli_stmt_bind_param($stmtCheckRoom, 'i', $idRoom);
-    mysqli_stmt_execute($stmtCheckRoom);
-    $resRoom = mysqli_stmt_get_result($stmtCheckRoom);
-    $roomData = mysqli_fetch_assoc($resRoom);
-
-    if (!$roomData) {
-        throw new Exception('Phòng không tồn tại');
-    }
-    if ($roomData['OCCUPIED_SLOT'] >= $roomData['CAPACITY']) {
-        throw new Exception('Phòng đã đầy, vui lòng chọn phòng khác');
-    }
-
-    // 2. Lấy email từ đơn đăng ký (để tạo NGUOIDUNG)
-    $sqlGetEmail = "SELECT EMAIL_NDK FROM DONDANGKY WHERE ID_DON = ? AND STATUS_DON = 'Chưa xử lý'";
-    $stmtGetEmail = mysqli_prepare($conn, $sqlGetEmail);
-    mysqli_stmt_bind_param($stmtGetEmail, 'i', $idDon);
-    mysqli_stmt_execute($stmtGetEmail);
-    $res = mysqli_stmt_get_result($stmtGetEmail);
+    // 1. Lấy email từ đơn đăng ký 
+    $stmt = mysqli_prepare($conn,
+        "SELECT REG_EMAIL FROM REGIFORM 
+          WHERE REG_ID = ? AND REG_STATUS = 'Chưa xử lý'"
+    );
+    mysqli_stmt_bind_param($stmt, 'i', $idDon);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
     $row = mysqli_fetch_assoc($res);
-    if (!$row) throw new Exception('Đơn không tồn tại hoặc đã xử lý');
 
-    $email = $row['EMAIL_NDK'];
+    if (!$row) throw new Exception('Đơn không hợp lệ');
 
-    // 3. Tạo NGUOIDUNG
-    $sqlInsertUser = "INSERT INTO NGUOIDUNG (NAME, EMAIL, PASSWORD_ND, ROLE) VALUES (?, ?, '', 'student')";
-    $stmtInsertUser = mysqli_prepare($conn, $sqlInsertUser);
-    mysqli_stmt_bind_param($stmtInsertUser, 'ss', $hoTen, $email);
-    if (!mysqli_stmt_execute($stmtInsertUser)) throw new Exception('Lỗi tạo người dùng');
+    $email = $row['REG_EMAIL'];
 
-    $idUser = mysqli_insert_id($conn);
+    // 2. Tạo USERS
+    $defaultPassword = 123456;
+    $hashedPass = password_hash($defaultPassword, PASSWORD_DEFAULT);
+    $stmt = mysqli_prepare($conn,
+        "INSERT INTO USERS (EMAIL, PASS, USER_ROLE) VALUES (?, ?, 'student')"
+    );
+    mysqli_stmt_bind_param($stmt, 'ss', $email, $hashedPass);
+    mysqli_stmt_execute($stmt);
 
-    // 4. Tạo SINHVIEN
-    $sqlInsertSv = "INSERT INTO SINHVIEN (MSSV, HO_TEN_SV, CONTACT_SV, ADDRESS_SV, GIOI_TINH, ID_USER, ID_ROOM)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $stmtInsertSv = mysqli_prepare($conn, $sqlInsertSv);
-    mysqli_stmt_bind_param($stmtInsertSv, 'sssssii', $mssv, $hoTen, $contact, $address, $gioiTinh, $idUser, $idRoom);
-    if (!mysqli_stmt_execute($stmtInsertSv)) throw new Exception('Lỗi tạo sinh viên');
+    $userId = mysqli_insert_id($conn);
 
-    // 5. Cập nhật số lượng sinh viên trong phòng
-    $sqlUpdateRoom = "UPDATE PHONG SET OCCUPIED_SLOT = OCCUPIED_SLOT + 1 WHERE ID_ROOM = ?";
-    $stmtUpdateRoom = mysqli_prepare($conn, $sqlUpdateRoom);
-    mysqli_stmt_bind_param($stmtUpdateRoom, 'i', $idRoom);
-    if (!mysqli_stmt_execute($stmtUpdateRoom)) throw new Exception('Lỗi cập nhật số lượng sinh viên trong phòng');
+    // 3. Lấy BLOCK_ID từ ROOM 
+    $stmt = mysqli_prepare($conn,
+        "SELECT BLOCK_ID FROM ROOM WHERE ROOM_ID = ?"
+    );
+    mysqli_stmt_bind_param($stmt, 's', $roomId);
+    mysqli_stmt_execute($stmt);
+    $room = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+
+    if (!$room) throw new Exception('Phòng không tồn tại');
+
+    // 4. Tạo STUDENT
+    $stmt = mysqli_prepare($conn,
+        "INSERT INTO STUDENT
+        (STD_ID, STD_NAME, STD_PHONE, STD_ADR, STD_GD, STD_DOB, USER_ID, ROOM_ID, BLOCK_ID)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    );
+    mysqli_stmt_bind_param(
+        $stmt,
+        'ssssssiss',
+        $studentId, $name, $phone, $address, $gender,
+        $dob, $userId, $roomId, $room['BLOCK_ID']
+    );
+    mysqli_stmt_execute($stmt);
 
     // 6. Cập nhật trạng thái đơn
-    $sqlUpdateDon = "UPDATE DONDANGKY SET STATUS_DON = 'Đã chấp nhận' WHERE ID_DON = ?";
-    $stmtUpdateDon = mysqli_prepare($conn, $sqlUpdateDon);
-    mysqli_stmt_bind_param($stmtUpdateDon, 'i', $idDon);
-    if (!mysqli_stmt_execute($stmtUpdateDon)) throw new Exception('Lỗi cập nhật đơn');
+    $stmt = mysqli_prepare($conn,
+        "UPDATE REGIFORM SET REG_STATUS = 'Đã chấp nhận' WHERE REG_ID = ?"
+    );
+    mysqli_stmt_bind_param($stmt, 'i', $idDon);
+    mysqli_stmt_execute($stmt);
 
     mysqli_commit($conn);
-
     echo json_encode(['success' => true]);
-    exit;
 
   } catch (Exception $e) {
     mysqli_rollback($conn);
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-    exit;
   }
-} elseif ($action === 'reject') {
-  $sql = "
-    UPDATE DONDANGKY
-    SET STATUS_DON = 'Đã từ chối'
-    WHERE ID_DON = ? AND STATUS_DON = 'Chưa xử lý'
-  ";
-} elseif ($action === 'undo') {
-  $sql = "
-    UPDATE DONDANGKY
-    SET STATUS_DON = 'Chưa xử lý'
-    WHERE ID_DON = ? AND STATUS_DON = 'Đã từ chối'
-  ";
-} else {
-  echo json_encode(['success' => false, 'message' => 'Invalid action']);
   exit;
 }
 
-$stmt = mysqli_prepare($conn, $sql);
-if (!$stmt) {
-  echo json_encode(['success' => false, 'message' => 'Prepare failed']);
-  exit;
+// reject
+if ($action === 'reject') {
+    $stmt = mysqli_prepare($conn,
+        "UPDATE REGIFORM SET REG_STATUS = 'Đã từ chối'
+         WHERE REG_ID = ? AND REG_STATUS = 'Chưa xử lý'"
+    );
+    mysqli_stmt_bind_param($stmt, 'i', $idDon);
+    mysqli_stmt_execute($stmt);
+    echo json_encode(['success' => true]);
+    exit;
 }
 
-mysqli_stmt_bind_param($stmt, 'i', $idDon);
-mysqli_stmt_execute($stmt);
-
-if (mysqli_stmt_affected_rows($stmt) === 0) {
-  echo json_encode([
-    'success' => false,
-    'message' => 'Đơn không tồn tại hoặc trạng thái không hợp lệ'
-  ]);
-  exit;
+// undo
+if ($action === 'undo') {
+    $stmt = mysqli_prepare($conn,
+        "UPDATE REGIFORM SET REG_STATUS = 'Chưa xử lý'
+         WHERE REG_ID = ? AND REG_STATUS = 'Đã từ chối'"
+    );
+    mysqli_stmt_bind_param($stmt, 'i', $idDon);
+    mysqli_stmt_execute($stmt);
+    echo json_encode(['success' => true]);
+    exit;
 }
-
-echo json_encode(['success' => true]);

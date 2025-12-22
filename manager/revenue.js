@@ -142,8 +142,8 @@ const RevenueManager = {
     if (editable) {
       html += `
         <div class="revenue-actions">
-          <button id="btnSaveDraft" class="btn btn-warning">💾 Lưu tạm</button>
-          <button id="btnSaveAndNotify" class="btn btn-success">✅ Lưu & Gửi thông báo</button>
+          <button id="btnSaveDraft" class="btn btn-warning">Lưu tạm</button>
+          <button id="btnSaveAndNotify" class="btn btn-success">Lưu & Gửi thông báo</button>
         </div>
       `;
     }

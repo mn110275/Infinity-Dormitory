@@ -9,9 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password']);
     
     $sql = "
-        SELECT ID_USER, NAME, ROLE
-        FROM NGUOIDUNG
-        WHERE EMAIL = ? AND PASSWORD_ND = ? AND ROLE = 'admin'
+        SELECT USER_ID, USER_ROLE
+        FROM USERS
+        WHERE EMAIL = ? AND PASS = ? AND USER_ROLE = 'admin'
         LIMIT 1
     ";
 
@@ -23,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result && mysqli_num_rows($result) === 1) {
         $user = mysqli_fetch_assoc($result);
-        $_SESSION['role'] = $user['ROLE'];
-        $_SESSION['user_id'] = $user['ID_USER'];
+        $_SESSION['role'] = $user['USER_ROLE'];
+        $_SESSION['user_id'] = $user['USER_ID'];
         header("Location: dashboard.php");
         exit;
     } else {
