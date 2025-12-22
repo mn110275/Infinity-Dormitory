@@ -1,11 +1,7 @@
 <?php
 session_start();
-
-// Kiểm tra phân quyền hiện tại
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
-    header("Location: student_login.php?error=unauthorized");
-    exit;
-}
+require_once __DIR__ . '/../auth/require_role.php';
+requireRole('student');
 
 // Lấy thông tin từ session để dùng bên dưới (ghi ra cái Chào mừng + tên [Nguyễn Văn A]!)
 $student_name = $_SESSION['name'];

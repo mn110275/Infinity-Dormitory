@@ -193,16 +193,16 @@ DELIMITER ;
 
 INSERT INTO USERS (EMAIL, PASS, EMAIL_VERIFIED_AT, USER_ROLE)
 VALUES
-('admin@infidorm.com', '123456', NOW(), 'admin'),
-('manager@infidorm.com', '123456', NOW(), 'manager'),
-('s1@infidorm.com', '123456', NOW(), 'student'),
-('s2@infidorm.com', '123456', NOW(), 'student'),
-('s3@infidorm.com', '123456', NOW(), 'student'),
-('s4@infidorm.com', '123456', NOW(), 'student'),
-('s5@infidorm.com', '123456', NOW(), 'student'),
-('s6@infidorm.com', '123456', NOW(), 'student'),
-('s7@infidorm.com', '123456', NOW(), 'student'),
-('s8@infidorm.com', '123456', NOW(), 'student');
+('admin@infidorm.com', '$2y$10$z4QQOj51Iibj2.QJcBs4gOMj1oBR5RzC.zJ.hlkU02emAz9zqARaq', NOW(), 'admin'),
+('manager@infidorm.com', '$2y$10$6FKGXdTsTjKaxIK8g7eRROifgIJ8cM4Lrnq6U3KdJ1PeOyZXUwCnK', NOW(), 'manager'),
+('s1@infidorm.com', '$2y$10$rJ9zgMpcNG2AlOXr4WkAwu3JZQdlz10YyfVVhBrR19SzzmdTvvh5.', NOW(), 'student'),
+('s2@infidorm.com', '$2y$10$r8ofz1rneGih6eWs9yvVzOLYzJzQseTO/l1H4mA1chxmiZmLYsFoq', NOW(), 'student'),
+('s3@infidorm.com', '$2y$10$OzbI7iil2G5BwcTrufNlN.UZf08pGJ1q/quyRy94gomDiym3n5HpS', NOW(), 'student'),
+('s4@infidorm.com', '$2y$10$a4yRD2lKM2lbEXVPqA9WwuIlpox/fB4s239P3nArNYksxfRI2WbVe', NOW(), 'student'),
+('s5@infidorm.com', '$2y$10$0dRDjaHiB9qYyKeHwy19vOloC6RX7j23i6.Sv4p9cscMgYx1ok05W', NOW(), 'student'),
+('s6@infidorm.com', '$2y$10$1AvPfFudlTzQtOLBuJIto.U/UKAmaCyrFbIUsYxdwS22HoI5xDhaW', NOW(), 'student'),
+('s7@infidorm.com', '$2y$10$KBNMYS9wkRu0AIp4.ghF0OE7Evp1dIJomO/ZCdq7lEy7BtBtO.SOC', NOW(), 'student'),
+('s8@infidorm.com', '$2y$10$ss3Cf0NJt9mPwJYxwWiGduvFjH2LyFCm855F3A0A5O3DWEKLVaWzC', NOW(), 'student');
 
 INSERT INTO BLOCK (BLOCK_ID)
 VALUES ('A'), ('B'), ('C'), ('D');

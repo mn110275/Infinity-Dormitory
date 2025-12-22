@@ -1,12 +1,8 @@
 <?php
 // manager/dashboard.php - Main shell
 session_start();
-
-// Check authentication
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
-    header('Location: login.php');
-    exit;
-}
+require_once __DIR__ . '/../auth/require_role.php';
+requireRole('manager');
 
 if (!isset($_SESSION['block'])) {
     die('Lỗi: Không xác định được tòa quản lý. Vui lòng đăng nhập lại.');
@@ -100,7 +96,7 @@ if (!file_exists($viewFile)) {
   <script>
     // Logout button
     document.getElementById('logoutAdmin')?.addEventListener('click', () => {
-      location.href = '../index.html';
+      location.href = '../logout.php';
     });
   </script>
 

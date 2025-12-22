@@ -1,34 +1,25 @@
 <?php
 session_start();
 require '../database_connection.php';
+require '../auth/auth_core.php';
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
-    
-    $sql = "
-        SELECT USER_ID, USER_ROLE
-        FROM USERS
-        WHERE EMAIL = ? AND PASS = ? AND USER_ROLE = 'admin'
-        LIMIT 1
-    ";
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'ss', $email, $password);
-    mysqli_stmt_execute($stmt);
-    
-    $result = mysqli_stmt_get_result($stmt);
+    $user = loginWithRole($conn, $email, $password, 'admin');
 
-    if ($result && mysqli_num_rows($result) === 1) {
-        $user = mysqli_fetch_assoc($result);
-        $_SESSION['role'] = $user['USER_ROLE'];
+    if (!$user) {
+        $error = "Email hoặc mật khẩu không đúng";
+    } else {
         $_SESSION['user_id'] = $user['USER_ID'];
+        $_SESSION['role']    = $user['USER_ROLE'];
+        $_SESSION['email']   = $email;
+
         header("Location: dashboard.php");
         exit;
-    } else {
-        $error = "Sai email hoặc mật khẩu admin!";
     }
 }
 ?>
@@ -67,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p class="message"><?php echo $error; ?></p>
     <?php endif; ?>
 
-    <p class="note">Tài khoản mẫu: <strong>adm@example.com</strong> / <strong>123</strong></p>
+    <p class="note">Tài khoản mẫu: <strong>admin@infidorm.com</strong> / <strong>123456</strong></p>
   </main>
 </body>
 </html>

@@ -1,10 +1,7 @@
 <?php
 session_start();
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header('Location: login.php');
-    exit;
-}
+require_once __DIR__ . '/../auth/require_role.php';
+requireRole('admin');
 
 $tab = $_GET['tab'] ?? 'student';
 $allowedTabs = ['student', 'application', 'manager'];
@@ -69,7 +66,7 @@ if (!in_array($tab, $allowedTabs)) {
     </nav>
 
     <div class="sidebar-footer">
-      <a href="logout.php" class="btn ghost">Đăng xuất</a>
+      <a href="../logout.php" class="btn ghost">Đăng xuất</a>
     </div>
   </aside>
 

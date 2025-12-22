@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../../database_connection.php';
+require_once __DIR__ . '/../../auth/require_role.php';
+requireRole('admin');
 
 $applications = [];
 $appError = null;
@@ -21,8 +23,8 @@ try {
             ORDER BY 
               CASE REG_STATUS
                   WHEN 'Chưa xử lý' THEN 1
-                  WHEN 'Đã chấp nhận' THEN 2
-                  WHEN 'Đã từ chối' THEN 3
+                  WHEN 'Đã từ chối' THEN 2
+                  WHEN 'Đã chấp nhận' THEN 3
                   ELSE 4
               END,
               CREATED_AT DESC
@@ -141,7 +143,7 @@ try {
               Từ chối
             </button>
 
-          <?php elseif ($a['REG_ID'] === 'Đã từ chối'): ?>
+          <?php elseif ($a['REG_STATUS'] === 'Đã từ chối'): ?>
             <button class="btn btn-warning btn-undo"
                     data-id="<?= $a['REG_ID'] ?>">
               Hoàn tác

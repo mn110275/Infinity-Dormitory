@@ -1,12 +1,8 @@
 <?php
 session_start();
 require '../database_connection.php'; // dùng chung database
-
-// Kiểm tra phân quyền admin
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
-    header("Location: login.php");
-    exit;
-}
+require_once __DIR__ . '/../auth/require_role.php';
+requireRole('manager');
 ?>
 
 <!DOCTYPE html>
