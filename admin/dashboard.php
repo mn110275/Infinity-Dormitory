@@ -96,6 +96,7 @@ if (!in_array($tab, $allowedTabs)) {
 
 <!-- JS -->
 <script src="js/application.js"></script>
+<script src="js/manager.js"></script>
 
 </body>
 </html>
