@@ -24,7 +24,7 @@ $student_name = $_SESSION['name'];
   <header class="nav">
     <div style="display:flex; gap:12px;">
       <a href="home.php" class="active">Trang chủ</a>
-      <a href="dashboard.html">Quản lý thông tin</a>
+      <a href="dashboard.php">Quản lý thông tin</a>
     </div>
     <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
       <a href="../logout.php">Đăng xuất</a>
