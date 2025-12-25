@@ -19,19 +19,16 @@ const Facility = {
   },
 
   bindEvents() {
-    // Close viewer
     if (this.viewer.closeBtn) {
       this.viewer.closeBtn.addEventListener('click', () => this.hideViewer());
     }
 
-    // Close on outside click
     if (this.viewer.el) {
       this.viewer.el.addEventListener('click', (e) => {
         if (e.target === this.viewer.el) this.hideViewer();
       });
     }
 
-    // Bind qty cells
     document.querySelectorAll('.qty-cell').forEach(cell => {
       cell.addEventListener('click', () => {
         const roomId = cell.dataset.roomId;
@@ -95,26 +92,21 @@ const Facility = {
   }
 };
 
-// Sidebar switching
 document.addEventListener('DOMContentLoaded', () => {
   Facility.init();
 
-  // Sidebar click
   document.querySelectorAll('.sidebar-item').forEach(item => {
     item.addEventListener('click', () => {
       const view = item.dataset.view;
-      
-      // Update active
+
       document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
       item.classList.add('active');
-      
-      // Switch view
+
       document.getElementById('studentView').style.display = view === 'students' ? 'block' : 'none';
       document.getElementById('facilityView').style.display = view === 'facility' ? 'block' : 'none';
     });
   });
 
-  // Export button
   document.getElementById('exportBtn')?.addEventListener('click', () => {
     const data = {
       timestamp: new Date().toISOString(),
@@ -143,14 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
     URL.revokeObjectURL(url);
   });
 
-  // Clear/Refresh button
   document.getElementById('clearBtn')?.addEventListener('click', () => {
     if (confirm('Làm mới dữ liệu (reload trang)?')) {
       location.reload();
     }
   });
 
-  // Logout button
   document.getElementById('logoutAdmin')?.addEventListener('click', () => {
     location.href = '../index.html';
   });

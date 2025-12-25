@@ -93,7 +93,7 @@ sort($items);
 </script>
 
 <?php if (isset($inventoryError)): ?>
-  <div class="alert alert-error">⚠️ Lỗi: <?= htmlspecialchars($inventoryError) ?></div>
+  <div class="alert alert-error">Lỗi: <?= htmlspecialchars($inventoryError) ?></div>
 <?php elseif (empty($items)): ?>
   <div class="alert alert-info">Chưa có dữ liệu thiết bị nào.</div>
 <?php else: ?>

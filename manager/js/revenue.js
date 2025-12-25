@@ -2,7 +2,7 @@
 
 const RevenueManager = {
   data: null,
-  currentMode: null, // 'view' or 'create'
+  currentMode: null,
   currentPeriod: null,
   revenueData: {},
 
@@ -36,7 +36,7 @@ const RevenueManager = {
         this.currentMode = 'view';
         this.currentPeriod = { year, month };
         this.revenueData = result.data;
-        this.renderTable(false); // Read-only mode
+        this.renderTable(false);
       } else {
         alert(result.error || 'Không tìm thấy hóa đơn cho tháng này');
         this.showEmptyState();
@@ -142,8 +142,8 @@ const RevenueManager = {
     if (editable) {
       html += `
         <div class="revenue-actions">
-          <button id="btnSaveDraft" class="btn btn-warning">💾 Lưu tạm</button>
-          <button id="btnSaveAndNotify" class="btn btn-success">✅ Lưu & Gửi thông báo</button>
+          <button id="btnSaveDraft" class="btn btn-warning">Lưu tạm</button>
+          <button id="btnSaveAndNotify" class="btn btn-success">Lưu & Gửi thông báo</button>
         </div>
       `;
     }

@@ -1,8 +1,7 @@
 <?php
 session_start();
-require '../database_connection.php'; // dùng chung database
+require '../database_connection.php';
 
-// Kiểm tra phân quyền admin
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
     header("Location: login.php");
     exit;
@@ -15,13 +14,12 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Quản lý InfiDorm >//<</title>
-  <link rel="stylesheet" href="../assets/css/public.css" />
+  <link rel="stylesheet" href="../css/public.css" />
 </head>
 <body>
   <header class="nav">
     <a href="home.php" class="active"> Trang chủ</a>
     <a href="dashboard.php">Quản lý</a>
-    <a href="change_password.php">Đổi mật khẩu</a>
     <a href="../logout.php" style="margin-left:auto">Đăng xuất</a>
   </header>
 
@@ -38,7 +36,5 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
 
     </section>
   </main>
-
-  <script src="assets/js/main.js"></script>
 </body>
 </html>

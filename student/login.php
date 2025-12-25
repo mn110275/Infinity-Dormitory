@@ -1,7 +1,6 @@
 <?php
 session_start();
-require '../database_connection.php'; // dùng chung database_connection.php
-
+require '../database_connection.php'; 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -39,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Đăng nhập Sinh viên</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../css/public.css" />
 </head>
 <body>
   <header class="nav">
@@ -62,12 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button type="submit" class="btn">Đăng nhập</button>
     </form>
 
-    <!-- Hiển thị lỗi -->
     <?php if($error): ?>
       <p class="message"><?php echo $error; ?></p>
     <?php endif; ?>
 
-    <p class="note">Tài khoản mẫu: <strong>SV001</strong> / <strong>123</strong></p>
+    <p class="note">Tài khoản mẫu: <strong>s1@infidorm.com</strong> / <strong>123456</strong></p>
   </main>
 </body>
 </html>
