@@ -32,7 +32,7 @@ if ($result && mysqli_num_rows($result) == 1) {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Thông tin Sinh viên</title>
+  <title>Quản lý thông tin sinh viên</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
     .info-section {
@@ -91,7 +91,7 @@ if ($result && mysqli_num_rows($result) == 1) {
   </header>
 
   <main class="container">
-    <h1>Thông tin sinh viên</h1>
+    <h1>Thông tin chi tiết: </h1>
 
     <?php if ($error): ?>
       <div class="error-message"><?php echo htmlspecialchars($error); ?></div>

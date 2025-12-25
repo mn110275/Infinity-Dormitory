@@ -1,5 +1,6 @@
 <?php
 session_start();
+require '../database_connection.php';
 
 // Kiểm tra phân quyền hiện tại
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
@@ -9,6 +10,22 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
 
 // Lấy thông tin từ session để dùng bên dưới (ghi ra cái Chào mừng + tên [Nguyễn Văn A]!)
 $student_name = $_SESSION['name'];
+
+// Lấy thông tin cơ bản của sinh viên từ database
+$user_id = $_SESSION['user_id'];
+$student_info = null;
+
+$sql = "
+    SELECT s.STD_ID, s.STD_NAME, s.STD_PHONE, u.EMAIL
+    FROM STUDENT s
+    JOIN USERS u ON s.USER_ID = u.USER_ID
+    WHERE s.USER_ID = '$user_id'
+";
+
+$result = mysqli_query($conn, $sql);
+if ($result && mysqli_num_rows($result) == 1) {
+    $student_info = mysqli_fetch_assoc($result);
+}
 ?>
 
 <!DOCTYPE html>
@@ -74,7 +91,16 @@ $student_name = $_SESSION['name'];
 
       <section id="profile" class="card">
         <h1>Thông tin sinh viên</h1>
-        <div id="info"></div>
+        <?php if ($student_info): ?>
+          <div style="margin-top: 1rem;">
+            <p><strong>Họ và tên:</strong> <?php echo htmlspecialchars($student_info['STD_NAME']); ?></p>
+            <p><strong>MSSV:</strong> <?php echo htmlspecialchars($student_info['STD_ID']); ?></p>
+            <p><strong>Email:</strong> <?php echo htmlspecialchars($student_info['EMAIL']); ?></p>
+            <p><strong>Số điện thoại:</strong> <?php echo !empty($student_info['STD_PHONE']) ? htmlspecialchars($student_info['STD_PHONE']) : 'Chưa cập nhật'; ?></p>
+          </div>
+        <?php else: ?>
+          <p>Không thể tải thông tin sinh viên.</p>
+        <?php endif; ?>
       </section>
 
       
