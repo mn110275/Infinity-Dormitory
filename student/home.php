@@ -33,7 +33,7 @@ $student_name = $_SESSION['name'];
     </div>
   </header>
 
-  <main class="container">
+  <!-- <main class="container">
     <h1>Xin chào, <?php echo htmlspecialchars($student_name); ?>!</h1>
     <p>Đây là trang chính của sinh viên sau khi đăng nhập thành công.</p>
 
@@ -44,6 +44,46 @@ $student_name = $_SESSION['name'];
         <a class="btn" href="#">Đi tới quản lý dịch vụ</a>
       </div>
     </section>
+  </main> -->
+
+  <main class="container">
+    <!-- Hàng 1: Quick Actions & Announcements -->
+    <div class="cards">
+      <section id="quick-actions" class="card">
+        <h1>Quick Actions</h1>
+        <div class="actions">
+          <button class="btn">Báo hỏng CSVC</button>
+          <button class="btn">Thanh toán</button>
+        </div>
+      </section>
+
+      <section id="announcements" class="card">
+        <h1>Thông báo mới nhất</h1>
+        <p>Không có thông báo mới</p>
+      </section>
+
+      
+    </div>
+
+    <!-- Hàng 2: Finance & Profile -->
+    <div class="cards" style="margin-top: 20px;">
+      <section id="finance" class="card">
+        <h1>Trạng thái tài chính</h1>
+        <p>Công nợ tháng hiện tại: <strong>0 VND</strong></p>
+      </section>
+
+      <section id="profile" class="card">
+        <h1>Thông tin sinh viên</h1>
+        <div id="info"></div>
+      </section>
+
+      
+    </div>
+
+    <!-- Placeholder CSVC nếu sau này cần -->
+    <section id="facilities" hidden></section>
   </main>
+
+
 </body>
 </html>
