@@ -1,9 +1,16 @@
 <?php
 session_start();
+<<<<<<< HEAD
 require_once __DIR__ . '/../auth/require_role.php';
 requireRole('student');
+=======
 
-// Lấy thông tin từ session để dùng bên dưới (ghi ra cái Chào mừng + tên [Nguyễn Văn A]!)
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
+    header("Location: student_login.php?error=unauthorized");
+    exit;
+}
+>>>>>>> origin/main
+
 $student_name = $_SESSION['name'];
 ?>
 
@@ -13,19 +20,17 @@ $student_name = $_SESSION['name'];
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trang chủ Sinh viên</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../css/public.css" />
 </head>
 <body>
-  <!-- Header là cái thanh ở đầu ấy, có chữ trang chủ các thứ -->
   <header class="nav">
     <div style="display:flex; gap:12px;">
       <a href="home.php" class="active">Trang chủ</a>
-      <a href="dashboard.html">Quản lý thông tin</a>
+      <a href="dashboard.php">Quản lý thông tin</a>
     </div>
     <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
-      <a href="../logout.php">Đăng xuất</a>
-      <a href="../change_password.php">Đổi mật khẩu</a>
-      <a href="profile.php">Chào mừng <?php echo htmlspecialchars($student_name); ?>!</a>
+      <a href="../logout.php" style="margin-left:auto">Đăng xuất</a>
+      <p>Chào mừng <?php echo htmlspecialchars($student_name); ?>!</p>
     </div>
   </header>
 

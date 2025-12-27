@@ -35,7 +35,7 @@ try {
 ?>
 
 <?php if (isset($studentError)): ?>
-  <div class="alert alert-error">⚠️ Lỗi: <?= htmlspecialchars($studentError) ?></div>
+  <div class="alert alert-error">Lỗi: <?= htmlspecialchars($studentError) ?></div>
 <?php elseif (empty($students)): ?>
   <div class="alert alert-info">Chưa có sinh viên nào trong hệ thống.</div>
 <?php else: ?>

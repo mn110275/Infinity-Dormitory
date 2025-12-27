@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>InfiDorm - Đăng ký vào KTX</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../css/public.css" />
 </head>
 
 <body>
@@ -70,15 +70,13 @@
       if (data.success) {
         messageEl.style.color = 'green';
         document.getElementById('registerForm').reset();
-        // loadStudentList(); // reload danh sách sinh viên
       } else {
         messageEl.style.color = 'red';
       }
     });
 
-    // Load danh sách đăng ký để hiện cho quản lý (hoặc hiển thị ngay ở form demo)
     async function loadStudentList() {
-      const res = await fetch('list_register.php'); // PHP trả danh sách JSON
+      const res = await fetch('list_register.php');
       const data = await res.json();
       const div = document.getElementById('studentList');
       if (!data.length) {
@@ -88,18 +86,17 @@
       let html = '<table><thead><tr><th>Họ và tên</th><th>MSSV</th><th>Email</th><th>SĐT</th><th>Trạng thái</th></tr></thead><tbody>';
       data.forEach(d => {
         html += `<tr>
-      <td>${d.HO_TEN_NDK}</td>
-      <td>${d.MSSV_NDK}</td>
-      <td>${d.EMAIL_NDK}</td>
-      <td>${d.SDT_NDK}</td>
-      <td>${d.STATUS_DON}</td>
+      <td>${d.REG_NAME}</td>
+      <td>${d.REG_STD_ID}</td>
+      <td>${d.REG_EMAIL}</td>
+      <td>${d.REG_PHONE}</td>
+      <td>${d.REG_STATUS}</td>
     </tr>`;
       });
       html += '</tbody></table>';
       div.innerHTML = html;
     }
 
-    // Gọi lần đầu
     loadStudentList();
   </script>
 </body>

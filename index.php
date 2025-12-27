@@ -22,7 +22,7 @@ if (isset($_SESSION['role'])) {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Welcome to InfiDorm >//<</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="css/public.css" />
 </head>
 <body>
   <header class="nav">
@@ -57,6 +57,5 @@ if (isset($_SESSION['role'])) {
     </section>
   </main>
 
-  <script src="assets/js/main.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../database_connection.php'; // kết nối chung
+require '../database_connection.php';
 
 // Biến trả về cho JS nếu cần JSON
 $response = ['success' => false, 'message' => ''];
@@ -14,9 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$name || !$mssv || !$email) {
         $response['message'] = 'Vui lòng điền đủ thông tin bắt buộc';
     } else {
-        // Chèn vào DB, mặc định STATUS_DON = 'Chưa xử lý', ID_QL = NULL
-        $sql = "INSERT INTO DONDANGKY (HO_TEN_NDK, MSSV_NDK, SDT_NDK, EMAIL_NDK, STATUS_DON, ID_QL)
-                VALUES ('$name','$mssv','$phone','$email','Chưa xử lý',NULL)";
+        $sql = "INSERT INTO REGIFORM (REG_NAME, REG_STD_ID, REG_PHONE, REG_EMAIL)
+                VALUES ('$name','$mssv','$phone','$email')";
         if (mysqli_query($conn, $sql)) {
             $response['success'] = true;
             $response['message'] = 'Đăng ký thành công!';
@@ -28,6 +27,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response['message'] = 'Phải gửi POST';
 }
 
-// Nếu JS muốn JSON, dùng:
 header('Content-Type: application/json');
 echo json_encode($response);

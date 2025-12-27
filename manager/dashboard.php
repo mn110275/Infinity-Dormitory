@@ -1,16 +1,23 @@
 <?php
 // manager/dashboard.php - Main shell
 session_start();
+<<<<<<< HEAD
 require_once __DIR__ . '/../auth/require_role.php';
 requireRole('manager');
+=======
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
+    header('Location: login.php');
+    exit;
+}
+>>>>>>> origin/main
 
 if (!isset($_SESSION['block'])) {
     die('Lỗi: Không xác định được tòa quản lý. Vui lòng đăng nhập lại.');
 }
 
-// Determine which view to load
 $view = $_GET['view'] ?? 'students';
-$allowedViews = ['students', 'facility', 'revenue'];
+$allowedViews = ['students', 'facility', 'revenue', 'notifications', 'profile'];
 
 if (!in_array($view, $allowedViews)) {
     $view = 'students';
@@ -27,7 +34,7 @@ if (!file_exists($viewFile)) {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Quản lý InfiDorm</title>
-  <link rel="stylesheet" href="../assets/css/manager.css" />
+  <link rel="stylesheet" href="../css/manager.css" />
 </head>
 <body>
   <header class="nav">
@@ -62,6 +69,18 @@ if (!file_exists($viewFile)) {
           <div>
             <div class="item-title">Quản lý thu phí</div>
             <div class="item-desc">Điện, nước, chi phí khác</div>
+          </div>
+        </a>
+        <a href="?view=notifications" class="sidebar-item <?= $view === 'notifications' ? 'active' : '' ?>">
+          <div>
+            <div class="item-title">Gửi thông báo</div>
+            <div class="item-desc">Thông báo đến sinh viên</div>
+          </div>
+        </a>
+        <a href="?view=profile" class="sidebar-item <?= $view === 'profile' ? 'active' : '' ?>">
+          <div>
+            <div class="item-title">Thông tin cá nhân</div>
+            <div class="item-desc">Xem và chỉnh sửa hồ sơ</div>
           </div>
         </a>
       </nav>
@@ -103,9 +122,11 @@ if (!file_exists($viewFile)) {
   <?php
   // Load view-specific JS
   $jsFiles = [
-    'students' => 'student_list.js',
-    'facility' => 'facility.js',
-    'revenue' => 'revenue.js'
+    'students' => 'js/student_list.js',
+    'facility' => 'js/facility.js',
+    'revenue' => 'js/revenue.js',
+    'notifications' => 'js/notifications.js',
+    'profile' => 'js/profile.js'
   ];
   
   if (isset($jsFiles[$view]) && file_exists($jsFiles[$view])) {

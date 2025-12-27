@@ -1,8 +1,17 @@
 <?php
 session_start();
+<<<<<<< HEAD
 require '../database_connection.php'; // dùng chung database
 require_once __DIR__ . '/../auth/require_role.php';
 requireRole('manager');
+=======
+require '../database_connection.php';
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
+    header("Location: login.php");
+    exit;
+}
+>>>>>>> origin/main
 ?>
 
 <!DOCTYPE html>
@@ -11,13 +20,12 @@ requireRole('manager');
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Quản lý InfiDorm >//<</title>
-  <link rel="stylesheet" href="../assets/css/public.css" />
+  <link rel="stylesheet" href="../css/public.css" />
 </head>
 <body>
   <header class="nav">
     <a href="home.php" class="active"> Trang chủ</a>
     <a href="dashboard.php">Quản lý</a>
-    <a href="change_password.php">Đổi mật khẩu</a>
     <a href="../logout.php" style="margin-left:auto">Đăng xuất</a>
   </header>
 
@@ -34,7 +42,5 @@ requireRole('manager');
 
     </section>
   </main>
-
-  <script src="assets/js/main.js"></script>
 </body>
 </html>
