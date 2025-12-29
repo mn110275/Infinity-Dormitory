@@ -40,6 +40,15 @@ $student_name = $_SESSION['name'];
         <a class="btn" href="#">Đi tới quản lý dịch vụ</a>
       </div>
     </section>
+
+    <section class="cards">
+      <div class="card">
+        <h3>Quản lý thông tin</h3>
+        <p>Ở đây sinh viên có thể cập nhật thông tin cá nhân, kiểm tra thông tin phòng, quản lý các khoản phí, đọc các thông báo mới nhất và gửi yêu cầu hỗ trợ.</p>
+        <a class="btn" href="dashboard.php">Đi tới quản lý thông tin</a>
+      </div>
+    </section>
+
   </main>
 </body>
 </html>
