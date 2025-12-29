@@ -443,9 +443,11 @@ Code sinh dữ liệu ngẫu nhiên cho:
 -- 1. Điền đơn giá cho điện, nước trong bảng UNIT (Tháng 12/2025)
 INSERT INTO UNIT (UYEAR, UMONTH, ELEC, WATER)
 VALUES (2025, 12, 3500, 15000); 
+VALUES (2025, 11, 3500, 15000); 
+VALUES (2025, 10, 3500, 15000); 
 -- Giả định: 3,500đ/số điện và 15,000đ/khối nước
 
--- 2. Điền các khoản thu cho TẤT CẢ các phòng hiện có trong tháng 12/2025
+-- 2.1. Điền các khoản thu cho TẤT CẢ các phòng hiện có trong tháng 12/2025
 -- Sử dụng INSERT INTO ... SELECT để tự động lấy danh sách phòng từ bảng ROOM
 INSERT INTO REVENUE (REV_YEAR, REV_MONTH, BLOCK_ID, ROOM_ID, ELEC, WATER, OTHER, NOTE)
 SELECT 
@@ -458,6 +460,33 @@ SELECT
     50000,                    -- Chi phí khác mặc định (ví dụ vệ sinh/wifi)
     'Tiền điện nước tháng 12'
 FROM ROOM;
+
+-- 2.2. Điền các khoản thu cho TẤT CẢ các phòng hiện có trong tháng 11/2025 và tháng 10/2025 
+-- (thử nghiệm tính năng tra cứu hóa đơn những tháng trước)
+INSERT INTO REVENUE (REV_YEAR, REV_MONTH, BLOCK_ID, ROOM_ID, ELEC, WATER, OTHER, NOTE)
+SELECT 
+    2025, 
+    11, 
+    BLOCK_ID, 
+    ROOM_ID, 
+    FLOOR(RAND() * 200 + 50), -- Số điện ngẫu nhiên từ 50 - 250 số
+    FLOOR(RAND() * 20 + 5),   -- Số nước ngẫu nhiên từ 5 - 25 khối
+    50000,                    -- Chi phí khác mặc định (ví dụ vệ sinh/wifi)
+    'Tiền điện nước tháng 11'
+FROM ROOM;
+
+INSERT INTO REVENUE (REV_YEAR, REV_MONTH, BLOCK_ID, ROOM_ID, ELEC, WATER, OTHER, NOTE)
+SELECT 
+    2025, 
+    10, 
+    BLOCK_ID, 
+    ROOM_ID, 
+    FLOOR(RAND() * 200 + 50), -- Số điện ngẫu nhiên từ 50 - 250 số
+    FLOOR(RAND() * 20 + 5),   -- Số nước ngẫu nhiên từ 5 - 25 khối
+    50000,                    -- Chi phí khác mặc định (ví dụ vệ sinh/wifi)
+    'Tiền điện nước tháng 10'
+FROM ROOM;
+
 
 -- 3. Thông báo nghỉ Tết dương lịch năm 2026
 -- Giả định MNG_ID 'M01' là người đăng thông báo này
