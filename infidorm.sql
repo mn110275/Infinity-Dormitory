@@ -433,3 +433,38 @@ INSERT INTO FACILITY (FCLT_TYPE, FCLT_STATUS, FCLT_NOTE, FCLT_IMG, ROOM_ID, BLOC
 ('Bình nước', 'Tốt', '20L', 'water_jug.jpg', '102', 'B'),
 ('Giỏ đựng', 'Tốt', 'Giỏ nhựa', 'basket.jpg', '102', 'B'),
 ('Móc dán tường', 'Tốt', '10 móc 3M', 'wall_hook.jpg', '102', 'B');
+
+/* ------------------------
+Code sinh dữ liệu ngẫu nhiên cho:
+1. Đơn giá điện, nước tháng 12/2025 (bảng UNIT)
+2. Khoản thu cho TẤT CẢ các phòng hiện có trong tháng 12/2025 (bảng REVENUE)
+-------------------------- */
+
+-- 1. Điền đơn giá cho điện, nước trong bảng UNIT (Tháng 12/2025)
+INSERT INTO UNIT (UYEAR, UMONTH, ELEC, WATER)
+VALUES (2025, 12, 3500, 15000); 
+-- Giả định: 3,500đ/số điện và 15,000đ/khối nước
+
+-- 2. Điền các khoản thu cho TẤT CẢ các phòng hiện có trong tháng 12/2025
+-- Sử dụng INSERT INTO ... SELECT để tự động lấy danh sách phòng từ bảng ROOM
+INSERT INTO REVENUE (REV_YEAR, REV_MONTH, BLOCK_ID, ROOM_ID, ELEC, WATER, OTHER, NOTE)
+SELECT 
+    2025, 
+    12, 
+    BLOCK_ID, 
+    ROOM_ID, 
+    FLOOR(RAND() * 200 + 50), -- Số điện ngẫu nhiên từ 50 - 250 số
+    FLOOR(RAND() * 20 + 5),   -- Số nước ngẫu nhiên từ 5 - 25 khối
+    50000,                    -- Chi phí khác mặc định (ví dụ vệ sinh/wifi)
+    'Tiền điện nước tháng 12'
+FROM ROOM;
+
+-- 3. Thông báo nghỉ Tết dương lịch năm 2026
+-- Giả định MNG_ID 'M01' là người đăng thông báo này
+INSERT INTO NOTI (TITLE, CONTENT, NOTI_DATE, MNG_ID)
+VALUES (
+    'Thông báo nghỉ Tết Dương lịch 2026', 
+    'Theo quy định của Nhà trường, sinh viên nội trú được nghỉ Tết Dương lịch 04 ngày, từ ngày 01/01/2026 đến hết ngày 04/01/2026. Yêu cầu sinh viên trước khi về nghỉ phải ngắt toàn bộ thiết bị điện và khóa vòi nước.', 
+    '2025-12-25 08:00:00', 
+    'M01'
+);
