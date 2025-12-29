@@ -442,8 +442,8 @@ Code sinh dữ liệu ngẫu nhiên cho:
 
 -- 1. Điền đơn giá cho điện, nước trong bảng UNIT (Tháng 12/2025)
 INSERT INTO UNIT (UYEAR, UMONTH, ELEC, WATER)
-VALUES (2025, 12, 3500, 15000); 
-VALUES (2025, 11, 3500, 15000); 
+VALUES (2025, 12, 3500, 15000), 
+VALUES (2025, 11, 3500, 15000), 
 VALUES (2025, 10, 3500, 15000); 
 -- Giả định: 3,500đ/số điện và 15,000đ/khối nước
 
