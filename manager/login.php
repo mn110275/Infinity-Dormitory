@@ -37,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Đăng nhập Quản lý</title>
   <link rel="stylesheet" href="../css/public.css" />
+  <link rel="stylesheet" href="../css/login.css" />
 </head>
 <body>
   <header class="nav">
@@ -55,10 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label for="password">Mật khẩu</label>
       <input type="password" id="password" name="password" required>
 
-      <button type="submit" class="btn">Đăng nhập</button>
+      <button type="submit" class="btn btn-pro">Đăng nhập</button>
     </form>
 
-    <!-- Hiển thị lỗi -->
     <?php if($error): ?>
       <p class="message"><?php echo $error; ?></p>
     <?php endif; ?>

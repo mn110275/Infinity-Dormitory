@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       header("Location: home.php");
       exit;
     } else {
-        $error = "Sai email hoặc mật khẩu sinh viên!";
+        $error = "Sai email hoặc mật khẩu, vui lòng thử lại.";
     }
 
 }
@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Đăng nhập Sinh viên</title>
   <link rel="stylesheet" href="../css/public.css" />
+  <link rel="stylesheet" href="../css/login.css" />
 </head>
 <body>
   <header class="nav">
@@ -58,11 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label for="password">Mật khẩu</label>
       <input type="password" id="password" name="password" required>
 
-      <button type="submit" class="btn">Đăng nhập</button>
+      <button type="submit" class="btn btn-pro">Đăng nhập</button>
     </form>
 
     <?php if($error): ?>
-      <p class="message"><?php echo $error; ?></p>
+      <p class="message error"><?php echo $error; ?></p>
     <?php endif; ?>
 
     <p class="note">Tài khoản mẫu: <strong>s1@infidorm.com</strong> / <strong>123456</strong></p>

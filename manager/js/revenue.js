@@ -1,194 +1,245 @@
-// manager/revenue.js
+// manager/js/revenue.js
 
 const RevenueManager = {
   data: null,
   currentMode: null,
   currentPeriod: null,
-  revenueData: {},
+  revenueData:
+  {},
 
-  init() {
+  init()
+  {
     this.data = window.REVENUE_DATA;
     this.bindEvents();
   },
 
-  bindEvents() {
-    // Search existing
-    document.getElementById('btnSearch')?.addEventListener('click', () => {
+  bindEvents()
+  {
+    document.getElementById('btnSearch')?.addEventListener('click', () =>
+    {
       const month = document.getElementById('searchMonth').value;
       const year = document.getElementById('searchYear').value;
       this.loadExistingRevenue(year, month);
     });
 
-    // Create new
-    document.getElementById('btnCreateNew')?.addEventListener('click', () => {
+    document.getElementById('btnCreateNew')?.addEventListener('click', () =>
+    {
       const month = document.getElementById('newMonth').value;
       const year = document.getElementById('newYear').value;
       this.createNewRevenue(year, month);
     });
   },
 
-  async loadExistingRevenue(year, month) {
-    try {
-      const response = await fetch(`revenue_api.php?action=load&year=${year}&month=${month}&block=${this.data.block}`);
+  async loadExistingRevenue(year, month)
+  {
+    try
+    {
+      const response = await fetch(`api/revenue_api.php?year=${year}&month=${month}&block=${this.data.block}`);
       const result = await response.json();
 
-      if (result.success) {
-        this.currentMode = 'view';
-        this.currentPeriod = { year, month };
+      if (result.success)
+      {
+        this.currentPeriod = {
+          year,
+          month
+        };
         this.revenueData = result.data;
+        this.data.unitPrices = {
+          ELEC: result.unitPrices.elec,
+          WATER: result.unitPrices.water
+        };
+
+        this.currentMode = 'view';
         this.renderTable(false);
-      } else {
-        alert(result.error || 'Không tìm thấy hóa đơn cho tháng này');
+      }
+      else
+      {
+        alert(result.error);
         this.showEmptyState();
       }
-    } catch (error) {
-      console.error('Load error:', error);
-      alert('Lỗi khi tải dữ liệu');
+    }
+    catch (error)
+    {
+      alert('Lỗi kết nối server');
     }
   },
 
-  createNewRevenue(year, month) {
-    // Check if already exists
-    if (confirm(`Tạo hóa đơn mới cho tháng ${month}/${year}?`)) {
-      this.currentMode = 'create';
-      this.currentPeriod = { year, month };
-      this.revenueData = {};
-      
-      // Initialize empty data
-      this.data.rooms.forEach(roomId => {
-        this.revenueData[roomId] = {
-          elec: 0,
-          water: 0,
-          other: 0,
-          note: ''
+  async createNewRevenue(year, month)
+  {
+    if (confirm(`Tạo/Cập nhật hóa đơn cho tháng ${month}/${year}?`))
+    {
+      try
+      {
+        // Load nếu có
+        const response = await fetch(`api/revenue_api.php?year=${year}&month=${month}&block=${this.data.block}`);
+        const result = await response.json();
+
+        this.currentPeriod = {
+          year,
+          month
         };
-      });
-      
-      this.renderTable(true); // Editable mode
+        this.currentMode = 'create';
+
+        if (result.success && Object.keys(result.data).length > 0)
+        {
+          // Nếu có
+          this.revenueData = result.data;
+          this.data.unitPrices = {
+            ELEC: result.unitPrices.elec,
+            WATER: result.unitPrices.water
+          };
+        }
+        else
+        {
+          // Nếu không có thì tạo mới
+          this.revenueData = {};
+          this.data.rooms.forEach(roomId =>
+          {
+            this.revenueData[roomId] = {
+              elec: 0,
+              water: 0,
+              other: 0,
+              note: ''
+            };
+          });
+        }
+
+        this.renderTable(true);
+      }
+      catch (error)
+      {
+        alert('Không thể kiểm tra dữ liệu cũ. Vui lòng thử lại.');
+      }
     }
   },
 
-  renderTable(editable) {
+  renderTable(editable)
+  {
     const container = document.getElementById('revenueTableContainer');
-    const { year, month } = this.currentPeriod;
+    const
+    {
+      year,
+      month
+    } = this.currentPeriod;
     const elecPrice = this.data.unitPrices?.ELEC || 0;
     const waterPrice = this.data.unitPrices?.WATER || 0;
 
     let html = `
-      <div class="revenue-table-wrapper">
-        <h3 style="padding: 16px;">Hóa đơn tháng ${month}/${year}</h3>
-        <table class="revenue-table">
+      <div class="revenue-header-actions">
+          <h3>Hóa đơn tháng ${month}/${year}</h3>
+          ${!editable ? `<button id="btnEditMode" class="btn btn-primary">Chỉnh sửa</button>` : ''}
+      </div>
+      <table class="revenue-table">
           <thead>
-            <tr>
-              <th>Phòng</th>
-              <th>Điện (kWh)<br><small>${elecPrice.toLocaleString()} VNĐ/kWh</small></th>
-              <th>Nước (m³)<br><small>${waterPrice.toLocaleString()} VNĐ/m³</small></th>
-              <th>Tổng Điện (VNĐ)</th>
-              <th>Tổng Nước (VNĐ)</th>
-              <th>Chi phí khác (VNĐ)</th>
-              <th>Ghi chú</th>
-              <th>TỔNG (VNĐ)</th>
-            </tr>
+              <tr>
+                  <th style="width:50px">Phòng</th>
+                  <th style="width:80px"> Điện (kWh)</th>
+                  <th style="width:80px">Nước (m³)</th>
+                  <th style="width:140px">Tiền Điện</th>
+                  <th style="width:140px">Tiền Nước</th>
+                  <th style="width:120px">Phí khác</th>
+                  <th>Ghi chú</th>
+                  <th>TỔNG</th>
+              </tr>
           </thead>
           <tbody>
     `;
 
-    this.data.rooms.forEach(roomId => {
-      const data = this.revenueData[roomId] || { elec: 0, water: 0, other: 0, note: '' };
-      const elecTotal = data.elec * elecPrice;
-      const waterTotal = data.water * waterPrice;
-      const total = elecTotal + waterTotal + (data.other || 0);
+    this.data.rooms.forEach(roomId =>
+    {
+      const rowData = this.revenueData[roomId] ||
+      {
+        elec: 0,
+        water: 0,
+        other: 0,
+        note: ''
+      };
+      const elecTotal = rowData.elec * elecPrice;
+      const waterTotal = rowData.water * waterPrice;
+      const total = elecTotal + waterTotal + (rowData.other || 0);
 
       html += `
-        <tr>
-          <th>${roomId}</th>
-          <td>
-            ${editable 
-              ? `<input type="number" class="elec-input" data-room="${roomId}" value="${data.elec}" min="0" step="1">`
-              : data.elec
-            }
-          </td>
-          <td>
-            ${editable
-              ? `<input type="number" class="water-input" data-room="${roomId}" value="${data.water}" min="0" step="1">`
-              : data.water
-            }
-          </td>
-          <td class="calculated">${elecTotal.toLocaleString()}</td>
-          <td class="calculated">${waterTotal.toLocaleString()}</td>
-          <td>
-            ${editable
-              ? `<input type="number" class="other-input" data-room="${roomId}" value="${data.other || 0}" min="0" step="1000">`
-              : (data.other || 0).toLocaleString()
-            }
-          </td>
-          <td>
-            ${editable
-              ? `<input type="text" class="note-input" data-room="${roomId}" value="${data.note || ''}" placeholder="Ghi chú...">`
-              : data.note || '-'
-            }
-          </td>
-          <td class="calculated"><strong>${total.toLocaleString()}</strong></td>
+        <tr data-room-id="${roomId}">
+            <td><strong>${roomId}</strong></td>
+            <td>${editable ? `<input type="number" class="elec-input" style="width: 60px" data-room="${roomId}" value="${rowData.elec}">` : rowData.elec}</td>
+            <td>${editable ? `<input type="number" class="water-input" style="width: 60px" data-room="${roomId}" value="${rowData.water}">` : rowData.water}</td>
+            <td class="cell-elec-total">${elecTotal.toLocaleString()}</td>
+            <td class="cell-water-total">${waterTotal.toLocaleString()}</td>
+            <td>${editable ? `<input type="number" class="other-input" style="width: 100px" data-room="${roomId}" value="${rowData.other}">` : rowData.other.toLocaleString()}</td>
+            <td>${editable ? `<input type="text" placeholder="Nhập ghi chú" class="note-input" style="width: 300px" data-room="${roomId}" value="${rowData.note}">` : (rowData.note || '-')}</td>
+            <td class="cell-row-total"><strong>${total.toLocaleString()}</strong></td>
         </tr>
       `;
     });
 
-    html += `
-          </tbody>
-        </table>
-      </div>
-    `;
-
-    if (editable) {
+    html += `</tbody></table>`;
+    if (editable)
+    {
       html += `
         <div class="revenue-actions">
-          <button id="btnSaveDraft" class="btn btn-warning">Lưu tạm</button>
-          <button id="btnSaveAndNotify" class="btn btn-success">Lưu & Gửi thông báo</button>
+            <button id="btnSaveDraft" class="btn btn-secondary">Lưu</button>
+            <button id="btnSaveAndNotify" class="btn btn-success">Lưu & Gửi thông báo</button>
         </div>
       `;
     }
-
     container.innerHTML = html;
 
-    if (editable) {
-      this.bindTableEvents();
-    }
+    document.getElementById('btnEditMode')?.addEventListener('click', () =>
+    {
+      this.currentMode = 'edit';
+      this.renderTable(true);
+    });
+
+    if (editable) this.bindTableEvents();
   },
 
-  bindTableEvents() {
-    // Auto-calculate on input change
+  bindTableEvents()
+  {
     const inputs = document.querySelectorAll('.elec-input, .water-input, .other-input, .note-input');
-    inputs.forEach(input => {
-      input.addEventListener('input', (e) => {
+    inputs.forEach(input =>
+    {
+      input.addEventListener('input', (e) =>
+      {
         const roomId = e.target.dataset.room;
         const type = e.target.className.split('-')[0];
-        
-        if (!this.revenueData[roomId]) {
-          this.revenueData[roomId] = { elec: 0, water: 0, other: 0, note: '' };
+
+        if (!this.revenueData[roomId])
+        {
+          this.revenueData[roomId] = {
+            elec: 0,
+            water: 0,
+            other: 0,
+            note: ''
+          };
         }
-        
-        if (type === 'note') {
+
+        if (type === 'note')
+        {
           this.revenueData[roomId].note = e.target.value;
-        } else {
+        }
+        else
+        {
           this.revenueData[roomId][type] = parseFloat(e.target.value) || 0;
         }
-        
+
         this.updateRowCalculation(roomId);
       });
     });
 
-    // Save buttons
-    document.getElementById('btnSaveDraft')?.addEventListener('click', () => {
+    document.getElementById('btnSaveDraft')?.addEventListener('click', () =>
+    {
       this.saveRevenue(false);
     });
 
-    document.getElementById('btnSaveAndNotify')?.addEventListener('click', () => {
+    document.getElementById('btnSaveAndNotify')?.addEventListener('click', () =>
+    {
       this.saveRevenue(true);
     });
   },
 
-  updateRowCalculation(roomId) {
-    const row = document.querySelector(`input[data-room="${roomId}"]`).closest('tr');
+  updateRowCalculation(roomId)
+  {
+    const row = document.querySelector(`tr[data-room-id="${roomId}"]`);
     const data = this.revenueData[roomId];
     const elecPrice = this.data.unitPrices?.ELEC || 0;
     const waterPrice = this.data.unitPrices?.WATER || 0;
@@ -197,16 +248,17 @@ const RevenueManager = {
     const waterTotal = data.water * waterPrice;
     const total = elecTotal + waterTotal + (data.other || 0);
 
-    const cells = row.querySelectorAll('td');
-    cells[2].textContent = elecTotal.toLocaleString();
-    cells[3].textContent = waterTotal.toLocaleString();
-    cells[6].innerHTML = `<strong>${total.toLocaleString()}</strong>`;
+    row.querySelector('.cell-elec-total').textContent = elecTotal.toLocaleString();
+    row.querySelector('.cell-water-total').textContent = waterTotal.toLocaleString();
+    row.querySelector('.cell-row-total').innerHTML = `<strong>${total.toLocaleString()}</strong>`;
   },
 
-  async saveRevenue(sendNotification) {
-    if (!confirm(sendNotification 
-      ? 'Xác nhận lưu và gửi thông báo đến toàn bộ sinh viên?' 
-      : 'Lưu tạm thời hóa đơn?')) {
+  async saveRevenue(sendNotification)
+  {
+    if (!confirm(sendNotification ?
+        'Xác nhận lưu và gửi thông báo đến toàn bộ sinh viên?' :
+        'Lưu tạm thời hóa đơn?'))
+    {
       return;
     }
 
@@ -219,31 +271,42 @@ const RevenueManager = {
       sendNotification
     };
 
-    try {
-      const response = await fetch('revenue_api.php', {
+    try
+    {
+      const response = await fetch('api/revenue_api.php',
+      {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers:
+        {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(payload)
       });
 
       const result = await response.json();
 
-      if (result.success) {
-        alert(sendNotification 
-          ? 'Đã lưu và gửi thông báo thành công!' 
-          : 'Đã lưu tạm hóa đơn');
+      if (result.success)
+      {
+        alert(sendNotification ?
+          'Đã lưu và gửi thông báo thành công!' :
+          'Đã lưu tạm hóa đơn');
         this.currentMode = 'view';
         this.renderTable(false);
-      } else {
+      }
+      else
+      {
         alert('Lỗi: ' + (result.error || 'Không thể lưu'));
       }
-    } catch (error) {
+    }
+    catch (error)
+    {
       console.error('Save error:', error);
       alert('Lỗi khi lưu dữ liệu');
     }
   },
 
-  showEmptyState() {
+  showEmptyState()
+  {
     document.getElementById('revenueTableContainer').innerHTML = `
       <div class="empty-state">
         <p>Không tìm thấy dữ liệu. Vui lòng thử tháng khác hoặc tạo hóa đơn mới.</p>
@@ -252,5 +315,4 @@ const RevenueManager = {
   }
 };
 
-// Initialize
 document.addEventListener('DOMContentLoaded', () => RevenueManager.init());

@@ -19,27 +19,15 @@ $student_name = $_SESSION['name'];
 </head>
 <body>
   <header class="nav">
-    <div style="display:flex; gap:12px;">
-      <a href="home.php" class="active">Trang chủ</a>
-      <a href="dashboard.php">Quản lý thông tin</a>
-    </div>
-    <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
-      <a href="../logout.php" style="margin-left:auto">Đăng xuất</a>
-      <p>Chào mừng <?php echo htmlspecialchars($student_name); ?>!</p>
-    </div>
+    <a href="home.php" style="font-style: italic; font-size: 30px;">Infinity Dormitory</a>
+    <p style="font-size: 20px; font-style: italic">Chào mừng <?= htmlspecialchars($_SESSION['name'] ?? 'Admin') ?>!</p>
+    <a href="dashboard.php" style="margin-left:auto">Danh mục quản lý</a>
+    <a href="../logout.php">Đăng xuất</a>
   </header>
 
   <main class="container">
     <h1>Xin chào, <?php echo htmlspecialchars($student_name); ?>!</h1>
-    <p>Đây là trang chính của sinh viên sau khi đăng nhập thành công.</p>
 
-    <section class="cards">
-      <div class="card">
-        <h3>Quản lý dịch vụ KTX</h3>
-        <p>Ở đây sinh viên có thể quản lý dịch vụ: đặt phòng, thanh toán, đăng ký tiện ích,…</p>
-        <a class="btn" href="#">Đi tới quản lý dịch vụ</a>
-      </div>
-    </section>
   </main>
 </body>
 </html>
