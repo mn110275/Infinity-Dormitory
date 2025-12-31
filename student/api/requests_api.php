@@ -4,9 +4,8 @@ session_start();
 header('Content-Type: application/json');
 require_once '../../database_connection.php';
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'error' => 'Unauthorized']); exit;
-}
+require_once __DIR__ . '/../../auth/require_role.php';
+requireRole('student');
 
 try {
     $input = json_decode(file_get_contents('php://input'), true);

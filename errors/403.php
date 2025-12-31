@@ -13,7 +13,7 @@ $userRole = $_SESSION['role'] ?? null;
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>403 - Không có quyền truy cập</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../css/public.css" />
   <style>
     body, html {
       height: 100%;
@@ -57,14 +57,7 @@ $userRole = $_SESSION['role'] ?? null;
   <div class="error-container">
     <h1>403</h1>
     <p>Xin lỗi, bạn không có quyền truy cập trang này.</p>
-    <a href="<?php
-      switch ($userRole) {
-        case 'admin': echo '../admin/dashboard.php'; break;
-        case 'manager': echo '../manager/dashboard.php'; break;
-        case 'student': echo '../student/home.php'; break;
-        default: echo '/index.php'; break;
-      }
-    ?>" class="btn btn-primary">Về trang chính</a>
+    <a href="../index.php" class="btn btn-pro">Quay lại</a>
   </div>
 </body>
 </html>

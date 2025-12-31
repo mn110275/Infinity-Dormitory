@@ -1,0 +1,116 @@
+.noti-list-student {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.noti-card {
+  background: #fff;
+  border-radius: 12px;
+  display: flex;
+  overflow: hidden;
+  transition: transform 0.2s;
+  border: 1px solid #edf2f7;
+}
+
+.noti-card:hover {
+  background-color: #f1f5f9;
+}
+
+.noti-sidebar-line {
+  width: 6px;
+  background: #3b82f6;
+  /* Màu xanh chủ đạo */
+}
+
+.noti-main {
+  padding: 20px;
+  flex: 1;
+}
+
+.noti-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.noti-tag {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.noti-time {
+  font-size: 16px;
+  color: #94a3b8;
+}
+
+.noti-title {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #1e293b;
+}
+
+.noti-content-preview {
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.noti-footer {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 10px;
+  font-size: 16px;
+  color: #64748b;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  background: #f8fafc;
+  border-radius: 12px;
+  color: #64748b;
+}
+
+.empty-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.noti-sidebar-line {
+  width: 6px;
+  background-color: #3b82f6;
+  /* Xanh dương */
+  flex-shrink: 0;
+}
+
+.noti-main {
+  padding: 16px;
+  flex-grow: 1;
+}
+
+.noti-tag {
+  background: #dbeafe;
+  color: #1e40af;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.noti-card.is-read .noti-sidebar-line {
+  background-color: #cbd5e1;
+}
+
+.noti-card.is-read .noti-tag {
+  display: none;
+}
+
+.noti-card.is-read .noti-title {
+  color: #64748b;
+}

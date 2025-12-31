@@ -126,7 +126,7 @@ CREATE TABLE NOTI
 (
     NOTI_ID INT AUTO_INCREMENT PRIMARY KEY,
     TITLE VARCHAR(255) NOT NULL,
-    CONTENT VARCHAR(255),
+    CONTENT VARCHAR(1000),
     NOTI_DATE DATETIME,
     MNG_ID VARCHAR(20),
     FOREIGN KEY (MNG_ID) REFERENCES MANAGER(MNG_ID)
@@ -219,6 +219,7 @@ END$$
 DELIMITER ;
 
 
+-- PASS: 123456 đã được hash
 INSERT INTO USERS (EMAIL, PASS, EMAIL_VERIFIED_AT, USER_ROLE)
 VALUES
 ('admin@infidorm.com', '$2y$10$z4QQOj51Iibj2.QJcBs4gOMj1oBR5RzC.zJ.hlkU02emAz9zqARaq', NOW(), 'admin'),
@@ -231,6 +232,19 @@ VALUES
 ('s6@infidorm.com', '$2y$10$1AvPfFudlTzQtOLBuJIto.U/UKAmaCyrFbIUsYxdwS22HoI5xDhaW', NOW(), 'student'),
 ('s7@infidorm.com', '$2y$10$KBNMYS9wkRu0AIp4.ghF0OE7Evp1dIJomO/ZCdq7lEy7BtBtO.SOC', NOW(), 'student'),
 ('s8@infidorm.com', '$2y$10$ss3Cf0NJt9mPwJYxwWiGduvFjH2LyFCm855F3A0A5O3DWEKLVaWzC', NOW(), 'student');
+
+INSERT INTO USERS (EMAIL, PASS, USER_ROLE)
+VALUES
+('s11@infidorm.com', '$2y$10$l.PQKY7ZtipExu3/JaGOdeKxTPlFNsVOZsCM7QUaQgkhPGIPQAyRy', 'student'),
+('s12@infidorm.com', '$2y$10$iMZ.iVJrauVxVwUxuSWEPukjbkmQoq2iUmFo4/XHEiGdk5rNYA1AO', 'student'),
+('s13@infidorm.com', '$2y$10$dp4SJU0pcUbfDvjS2buQ8efq4n01rihslxUPexBCIq97PKLV6AzPC', 'student'),
+('s14@infidorm.com', '$2y$10$1oCi9n.svN.qUP.I8EaikOuiBd/UiD4pENoho9nvlk2/z5bcZLNlW', 'student'),
+('s15@infidorm.com', '$2y$10$QUIcZeMnLJL06pq5O2aPguRihz6G4GZdUISyqyFaAY5l0FJuo/OJm', 'student'),
+('s16@infidorm.com', '$2y$10$w.o7U2slLhl4p1WfgI884uYfcfO0a3Wn7xxUiux4nUmxpFmGFXMxK', 'student'),
+('s17@infidorm.com', '$2y$10$zTxU4oKdblWgXxKe46tlDOivx86poJNbBfl1/MZmoBKyNcWEngIRu', 'student'),
+('s18@infidorm.com', '$2y$10$2reFIjAR0O9scPrrZBDj.u.5WP4QiN.2Ghv1QrdyayK5q7HHDNn.q', 'student'),
+('s19@infidorm.com', '$2y$10$ODhh0PCgc.TmK7XDga5pN.gB1rT8rc0jUN.4FAKvDAfNBZ/sogBkq', 'student'),
+('s20@infidorm.com', '$2y$10$vdU.fxPcCwWiQNTze1PT..CyXIlWhGpdU6qKJgAPF817w1TMU/9eG', 'student');
 
 INSERT INTO BLOCK (BLOCK_ID)
 VALUES ('A'), ('B'), ('C'), ('D');
@@ -247,6 +261,31 @@ VALUES
 ('102', 'Nam', 8, 'A'),
 ('201', 'Nữ', 8, 'A'),
 ('202', 'Nữ', 6, 'A'),
+('301', 'Nữ', 6, 'A'),
+('302', 'Nữ', 6, 'A'),
+('303', 'Nữ', 6, 'A'),
+('304', 'Nữ', 6, 'A'),
+('305', 'Nữ', 6, 'A'),
+('306', 'Nữ', 6, 'A'),
+('307', 'Nữ', 6, 'A'),
+('308', 'Nữ', 6, 'A'),
+('309', 'Nữ', 6, 'A'),
+('310', 'Nữ', 6, 'A'),
+('401', 'Nam', 6, 'A'),
+('402', 'Nam', 6, 'A'),
+('403', 'Nam', 6, 'A'),
+('404', 'Nam', 6, 'A'),
+('405', 'Nam', 6, 'A'),
+('406', 'Nam', 6, 'A'),
+('407', 'Nam', 6, 'A'),
+('408', 'Nam', 6, 'A'),
+('409', 'Nam', 6, 'A'),
+('410', 'Nam', 6, 'A'),
+('411', 'Nam', 6, 'A'),
+('412', 'Nam', 6, 'A'),
+('413', 'Nam', 6, 'A'),
+('414', 'Nam', 6, 'A'),
+('415', 'Nam', 6, 'A'),
 ('101', 'Nam', 6, 'B'),
 ('102', 'Nam', 8, 'B'),
 ('201', 'Nữ', 6, 'B'),
@@ -263,6 +302,20 @@ VALUES
 ('20210002', 'Lê Thị Hoa', '2003-08-15', 'Nữ', '0987654322', 'Hải Phòng', 6, 'B', '201'),
 ('20210003', 'Hoàng Văn Nam', '2003-02-20', 'Nam', '0987654323', 'Nam Định', 7, 'B', '102'),
 ('20210004', 'Nguyễn Thị Lan', '2003-11-05', 'Nữ', '0987654324', 'Thanh Hóa', 8, 'B', '201');
+
+INSERT INTO STUDENT 
+(STD_ID, STD_NAME, STD_DOB, STD_GD, STD_PHONE, STD_ADR, USER_ID, BLOCK_ID, ROOM_ID) 
+VALUES
+('20210010', 'Nguyễn Hoàng Long', '2003-01-15', 'Nam', '0912345678', 'Hải Phòng', 11, 'A', '101'),
+('20210011', 'Đặng Thu Thảo', '2003-12-20', 'Nữ', '0922334455', 'Nam Định', 12, 'A', '201'),
+('20210012', 'Ngô Phương Anh', '2003-11-05', 'Nữ', '0933445566', 'Hà Nam', 13, 'A', '201'),
+('20210013', 'Lê Thị Mai', '2003-05-25', 'Nữ', '0944556677', 'Thanh Hóa', 14, 'A', '301'),
+('20210014', 'Bùi Bích Phương', '2003-09-12', 'Nữ', '0955667788', 'Quảng Ninh', 15, 'A', '310'),
+('20210015', 'Trịnh Đình Quang', '2003-02-28', 'Nam', '0966778899', 'Phú Thọ', 16, 'A', '401'),
+('20210016', 'Vũ Anh Tuấn', '2003-07-07', 'Nam', '0977889900', 'Bắc Ninh', 17, 'A', '405'),
+('20210017', 'Đỗ Hùng Dũng', '2003-10-10', 'Nam', '0988990011', 'Gia Lai', 18, 'A', '415'),
+('20210018', 'Hoàng Văn Thái', '2003-03-03', 'Nam', '0999001122', 'Lạng Sơn', 19, 'A', '102'),
+('20210019', 'Nguyễn Khánh Ly', '2003-04-14', 'Nữ', '0900112233', 'Đà Nẵng', 20, 'A', '305');
 
 
 INSERT INTO REGIFORM (REG_NAME, REG_STD_ID, REG_PHONE, REG_EMAIL)

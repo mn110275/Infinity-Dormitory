@@ -15,23 +15,14 @@ requireRole('manager');
 </head>
 <body>
   <header class="nav">
-    <a href="home.php" class="active"> Trang chủ</a>
-    <a href="dashboard.php">Quản lý</a>
-    <a href="../logout.php" style="margin-left:auto">Đăng xuất</a>
+    <a href="home.php" style="font-style: italic; font-size: 30px;">Infinity Dormitory</a>
+    <p style="font-size: 20px; font-style: italic">Chào mừng <?= htmlspecialchars($_SESSION['name'] ?? 'Admin') ?>!</p>
+    <a href="dashboard.php" style="margin-left:auto">Danh mục quản lý</a>
+    <a href="../logout.php">Đăng xuất</a>
   </header>
 
   <main class="container">
     <h1>Chào mừng đến với Infinity Dormitory (InfiDorm)</h1>
-
-    <!-- Cần thêm card: "Quản lý sinh viên đã đăng ký" + "Quản lý cơ sở vật chất" + "Quản lý đóng tiền" -->
-    <section class="cards">
-      <div class="card">
-        <h3>Đăng ký ở KTX</h3>
-        <p>Đăng ký khi bạn mới muốn ở KTX.</p>
-        <a class="btn" href="../register/register.html">Đến trang đăng ký</a>
-      </div>
-
-    </section>
   </main>
 </body>
 </html>

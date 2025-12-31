@@ -27,10 +27,10 @@ const ProblemManager = {
 
         form.addEventListener('submit', (e) => {
             const title = document.getElementById('title').value.trim();
-            if (title.length < 5) {
+            if (!title.length) {
                 e.preventDefault();
-                alert('Tiêu đề phải có ít nhất 5 ký tự!');
-            } else if (!confirm('Xác nhận gửi báo cáo sự cố này?')) {
+                alert('Tiêu đề không được để trống.');
+            } else if (!confirm('Xác nhận gửi báo cáo này?')) {
                 e.preventDefault();
             }
         });

@@ -7,12 +7,12 @@ requireRole('manager');
 $students = [];
 $managerBlock = $_SESSION['block'];
 
-try {
+try
+{
     if ($conn) {
         mysqli_set_charset($conn, "utf8mb4");
         
-        $studentQuery = "SELECT s.STD_ID, s.STD_NAME, s.STD_GD, s.STD_PHONE, 
-                         s.STD_ADR, s.STARTDATE, s.STD_IMG, r.ROOM_ID, r.BLOCK_ID
+        $studentQuery = "SELECT s.*, r.ROOM_ID, r.BLOCK_ID
                          FROM STUDENT s
                          INNER JOIN ROOM r ON r.ROOM_ID = s.ROOM_ID
                          WHERE r.BLOCK_ID = ?
@@ -29,10 +29,15 @@ try {
             }
         }
     }
-} catch (Exception $e) {
-    $studentError = $e->getMessage();
+} 
+catch (Exception $e) {
+  $studentError = $e->getMessage();
 }
 ?>
+
+<script>
+  window.ALL_STUDENTS = <?= json_encode($students) ?>;
+</script>
 
 <?php if (isset($studentError)): ?>
   <div class="alert alert-error">Lỗi: <?= htmlspecialchars($studentError) ?></div>
@@ -67,33 +72,44 @@ try {
           </th>
           <th style="width: 150px">
             <div class="th-content" data-col="3">
+              <span>Ngày sinh</span>
+              <span class="sort-icon">⇅</span>
+            </div>
+            <input type="text" class="col-search" data-col="3" placeholder="Tìm ngày...">
+          </th>
+          <th style="width: 150px">
+            <div class="th-content" data-col="4">
               <span>Điện thoại</span>
               <span class="sort-icon">⇅</span>
             </div>
-            <input type="text" class="col-search" data-col="3" placeholder="Tìm SĐT...">
+            <input type="text" class="col-search" data-col="4" placeholder="Tìm SĐT...">
           </th>
           <th>
-            <div class="th-content" data-col="4">
+            <div class="th-content" data-col="5">
               <span>Địa chỉ</span>
               <span class="sort-icon">⇅</span>
             </div>
-            <input type="text" class="col-search" data-col="4" placeholder="Tìm địa chỉ...">
+            <input type="text" class="col-search" data-col="5" placeholder="Tìm địa chỉ...">
           </th>
           <th style="width: 120px">
-            <div class="th-content" data-col="5">
+            <div class="th-content" data-col="6">
               <span>Ngày bắt đầu</span>
               <span class="sort-icon">⇅</span>
             </div>
-            <input type="text" class="col-search" data-col="5" placeholder="Tìm ngày...">
+            <input type="text" class="col-search" data-col="6" placeholder="Tìm ngày...">
           </th>
         </tr>
       </thead>
       <tbody>
         <?php foreach ($students as $s): ?>
-        <tr>
+        <tr class="student-row" 
+            data-id="<?= htmlspecialchars($s['STD_ID']) ?>" 
+            data-room="<?= htmlspecialchars($s['ROOM_ID']) ?>" 
+            style="cursor: pointer;">
           <td><span class="room-badge"><?= htmlspecialchars($s['ROOM_ID']) ?></span></td>
           <td><?= htmlspecialchars($s['STD_NAME']) ?></td>
           <td><?= htmlspecialchars($s['STD_ID']) ?></td>
+          <td><?= date('d/m/Y', strtotime($s['STD_DOB'])) ?></td>
           <td><?= htmlspecialchars($s['STD_PHONE']) ?></td>
           <td><?= htmlspecialchars($s['STD_ADR']) ?></td>
           <td><?= htmlspecialchars($s['STARTDATE']) ?></td>

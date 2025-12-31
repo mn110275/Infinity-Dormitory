@@ -31,14 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Đăng nhập Admin</title>
   <link rel="stylesheet" href="../css/public.css" />
+  <link rel="stylesheet" href="../css/login.css" />
 </head>
 <body>
   <header class="nav">
     <a href="../index.php">Trang chủ</a>
-    <a href="../register/register.html">Đăng ký KTX</a>
-    <a href="../student/login.php">Đăng nhập Sinh viên</a>
-    <a href="../student/login.php">Đăng nhập Quản lý</a>
-    <a href="login.php" class="active">Đăng nhập Admin</a>
   </header>
 
   <main class="container">
@@ -50,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label for="password">Mật khẩu</label>
       <input type="password" id="password" name="password" required>
 
-      <button type="submit" class="btn">Đăng nhập</button>
+      <button type="submit" class="btn btn-pro">Đăng nhập</button>
     </form>
 
     <!-- Hiển thị lỗi -->
