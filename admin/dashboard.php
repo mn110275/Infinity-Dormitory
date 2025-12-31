@@ -4,7 +4,7 @@ require_once __DIR__ . '/../auth/require_role.php';
 requireRole('admin');
 
 $tab = $_GET['tab'] ?? 'student';
-$allowedTabs = ['student', 'application', 'manager'];
+$allowedTabs = ['student', 'application', 'manager', 'unit'];
 if (!in_array($tab, $allowedTabs)) {
     $tab = 'student';
 }
@@ -16,9 +16,8 @@ if (!in_array($tab, $allowedTabs)) {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin InfiDorm</title>
-  <link rel="stylesheet" href="../assets/css/style.css" />
-  <link rel="stylesheet" href="../assets/css/manager_dashboard.css" />
-  <link rel="stylesheet" href="../assets/css/dashboard-style.css" />
+  <link rel="stylesheet" href="../css/public.css" />
+  <link rel="stylesheet" href="../css/manager.css" />
   <link rel="stylesheet" href="css/admin.css" />
   <link rel="stylesheet" href="css/modal.css" />
 </head>
@@ -63,6 +62,14 @@ if (!in_array($tab, $allowedTabs)) {
           <div class="item-desc">Tài khoản quản lý</div>
         </div>
       </a>
+
+      <a href="dashboard.php?tab=unit"
+         class="sidebar-item <?= $tab === 'unit' ? 'active' : '' ?>">
+        <div>
+          <div class="item-title">Quản lý đơn giá</div>
+          <div class="item-desc">Điện, nước của các tòa</div>
+        </div>
+      </a>
     </nav>
 
     <div class="sidebar-footer">
@@ -84,6 +91,10 @@ if (!in_array($tab, $allowedTabs)) {
             include 'views/managers.php';
             break;
 
+          case 'unit':
+            include 'views/unit.php';
+            break;
+
           default:
             include 'views/students.php';
         }
@@ -97,6 +108,7 @@ if (!in_array($tab, $allowedTabs)) {
 <!-- JS -->
 <script src="js/application.js"></script>
 <script src="js/manager.js"></script>
+<script src="js/unit.js"></script>
 
 </body>
 </html>

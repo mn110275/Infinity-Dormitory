@@ -33,13 +33,8 @@ CREATE TABLE MANAGER
 
 CREATE TABLE ROOM
 (
-<<<<<<< HEAD
-    ROOM_ID VARCHAR(10) PRIMARY KEY,
-    GENDER ENUM('Nam', 'Nữ') NOT NULL DEFAULT 'Nam',
-=======
     ROOM_ID VARCHAR(10),
-    GENDER VARCHAR(10),
->>>>>>> origin/main
+    GENDER ENUM('Nam', 'Nữ') NOT NULL DEFAULT 'Nam',
     CAPACITY INT,
     OCCUPIED INT NOT NULL DEFAULT 0,
     BLOCK_ID VARCHAR(10),
@@ -196,10 +191,36 @@ BEGIN
 END$$
 DELIMITER ;
 
+SET GLOBAL event_scheduler = ON;
+DELIMITER $$
+CREATE EVENT IF NOT EXISTS ev_insert_unit_new_month
+ON SCHEDULE EVERY 1 MONTH
+STARTS CONCAT(DATE_FORMAT(CURDATE(), '%Y-%m-01'), ' 00:00:00')
+DO
+BEGIN
+    DECLARE cur_year INT;
+    DECLARE cur_month INT;
+    SET cur_year = YEAR(CURDATE());
+    SET cur_month = MONTH(CURDATE());
+
+    -- Nếu sang tháng mới mà chưa chốt đơn giá thì lấy dữ liệu từ tháng trước đó
+    IF NOT EXISTS (
+        SELECT 1 FROM UNIT WHERE UYEAR = cur_year AND UMONTH = cur_month
+    ) THEN
+        INSERT INTO UNIT (UYEAR, UMONTH, ELEC, WATER)
+        SELECT cur_year, cur_month, ELEC, WATER
+        FROM UNIT
+        WHERE (UYEAR < cur_year OR (UYEAR = cur_year AND UMONTH < cur_month))
+        ORDER BY UYEAR DESC, UMONTH DESC
+        LIMIT 1;
+    END IF;
+END$$
+
+DELIMITER ;
+
 
 INSERT INTO USERS (EMAIL, PASS, EMAIL_VERIFIED_AT, USER_ROLE)
 VALUES
-<<<<<<< HEAD
 ('admin@infidorm.com', '$2y$10$z4QQOj51Iibj2.QJcBs4gOMj1oBR5RzC.zJ.hlkU02emAz9zqARaq', NOW(), 'admin'),
 ('manager@infidorm.com', '$2y$10$6FKGXdTsTjKaxIK8g7eRROifgIJ8cM4Lrnq6U3KdJ1PeOyZXUwCnK', NOW(), 'manager'),
 ('s1@infidorm.com', '$2y$10$rJ9zgMpcNG2AlOXr4WkAwu3JZQdlz10YyfVVhBrR19SzzmdTvvh5.', NOW(), 'student'),
@@ -210,19 +231,6 @@ VALUES
 ('s6@infidorm.com', '$2y$10$1AvPfFudlTzQtOLBuJIto.U/UKAmaCyrFbIUsYxdwS22HoI5xDhaW', NOW(), 'student'),
 ('s7@infidorm.com', '$2y$10$KBNMYS9wkRu0AIp4.ghF0OE7Evp1dIJomO/ZCdq7lEy7BtBtO.SOC', NOW(), 'student'),
 ('s8@infidorm.com', '$2y$10$ss3Cf0NJt9mPwJYxwWiGduvFjH2LyFCm855F3A0A5O3DWEKLVaWzC', NOW(), 'student');
-=======
-('admin@infidorm.com', '123456', NOW()),
-('manager@infidorm.com', '123456', NOW()),
-('mng@infidorm.com', '123456', NOW()),
-('s1@infidorm.com', '123456', NOW()),
-('s2@infidorm.com', '123456', NOW()),
-('s3@infidorm.com', '123456', NOW()),
-('s4@infidorm.com', '123456', NOW()),
-('s5@infidorm.com', '123456', NOW()),
-('s6@infidorm.com', '123456', NOW()),
-('s7@infidorm.com', '123456', NOW()),
-('s8@infidorm.com', '123456', NOW());
->>>>>>> origin/main
 
 INSERT INTO BLOCK (BLOCK_ID)
 VALUES ('A'), ('B'), ('C'), ('D');

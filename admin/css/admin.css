@@ -609,3 +609,7 @@ tr.rejected {
 .btn:active {
     background-color: #ddd;
 }
+
+.d-none {
+    display: none !important;
+  }

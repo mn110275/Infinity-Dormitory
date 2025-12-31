@@ -1,17 +1,8 @@
 <?php
 session_start();
-<<<<<<< HEAD
-require '../database_connection.php'; // dùng chung database
+require '../database_connection.php';
 require_once __DIR__ . '/../auth/require_role.php';
 requireRole('manager');
-=======
-require '../database_connection.php';
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
-    header("Location: login.php");
-    exit;
-}
->>>>>>> origin/main
 ?>
 
 <!DOCTYPE html>

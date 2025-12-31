@@ -1,15 +1,7 @@
 <?php
 session_start();
-<<<<<<< HEAD
 require_once __DIR__ . '/../auth/require_role.php';
 requireRole('student');
-=======
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
-    header("Location: student_login.php?error=unauthorized");
-    exit;
-}
->>>>>>> origin/main
 
 $student_name = $_SESSION['name'];
 ?>

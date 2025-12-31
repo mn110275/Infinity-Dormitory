@@ -1,16 +1,8 @@
 <?php
 // manager/dashboard.php - Main shell
 session_start();
-<<<<<<< HEAD
 require_once __DIR__ . '/../auth/require_role.php';
 requireRole('manager');
-=======
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
-    header('Location: login.php');
-    exit;
-}
->>>>>>> origin/main
 
 if (!isset($_SESSION['block'])) {
     die('Lỗi: Không xác định được tòa quản lý. Vui lòng đăng nhập lại.');
