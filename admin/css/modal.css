@@ -17,9 +17,9 @@
   background-color: #fff;
   padding: 25px 30px 30px 30px;
   border-radius: 12px;
-  width: 420px;
-  max-width: 100%;
-  max-height: 80vh;
+  width: 90vw;
+  max-width: 1000px;
+  max-height: 90vh;
   overflow-y: auto;
   box-sizing: border-box;
   position: relative;
@@ -27,25 +27,40 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+#acceptForm {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px 30px;
+}
+
+.form-group.span-2 { grid-column: span 2; }
+.form-group.span-3 { grid-column: span 3; }
+
+
 .modal-content input[type="text"],
 .modal-content input[type="email"],
-.modal-content select {
+.modal-content input[type="tel"],
+.modal-content select,
+.modal-content input[type="date"] {
   width: 100%;
   box-sizing: border-box;
   padding: 8px;
   font-size: 14px;
+  font-family: inherit;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  outline-offset: 2px;
+  outline-color: transparent;
+  transition: border-color 0.3s ease;
 }
 
-/* Nút xác nhận */
-.modal-content button[type="submit"] {
-  padding: 10px 15px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  background-color: #28a745;
-  color: white;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
+.modal-content input[type="text"]:focus,
+.modal-content input[type="tel"]:focus,
+.modal-content input[type="email"]:focus,
+.modal-content select:focus,
+.modal-content input[type="date"]:focus {
+  border-color: #007BFF;
+  outline-color: #007BFF;
 }
 
 .modal-content button[type="submit"]:hover {
@@ -74,54 +89,20 @@
   font-size: 24px;
   color: #333;
   text-align: center;
+  grid-column: span 3;
 }
 
-.form-group {
-  margin-bottom: 18px;
+.btn-group {  
+  grid-column: 1 / -1; 
   display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  margin-bottom: 6px;
-  font-weight: 600;
-  font-size: 14px;
-  color: #555;
-}
-
-.form-group input[type="text"],
-.form-group input[type="tel"],
-.form-group select {
-  padding: 10px 12px;
-  font-size: 15px;
-  border: 1.5px solid #ccc;
-  border-radius: 6px;
-  outline-offset: 2px;
-  outline-color: transparent;
-  transition: border-color 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
-  font-family: inherit;
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="tel"]:focus,
-.form-group select:focus {
-  border-color: #007BFF;
-  outline-color: #007BFF;
-}
-
-.btn-group {
-  display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 15px;
-  margin-top: 15px;
+  margin-top: 25px;
+  flex-direction: row !important;
 }
 
-.btn-submit,
-.btn-cancel {
-  flex: 1;
-  padding: 12px 0;
+.btn-modal {
+  padding: 10px 14px;
   font-size: 16px;
   font-weight: 600;
   border: none;
@@ -130,24 +111,8 @@
   transition: background-color 0.3s ease;
   user-select: none;
   font-family: inherit;
-}
-
-.btn-submit {
-  background-color: #28a745;
-  color: white;
-}
-
-.btn-submit:hover {
-  background-color: #218838;
-}
-
-.btn-cancel {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-cancel:hover {
-  background-color: #c82333;
+  min-width: auto;
+  white-space: nowrap;
 }
 
 .modal-content::-webkit-scrollbar {

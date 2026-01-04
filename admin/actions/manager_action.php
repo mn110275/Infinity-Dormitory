@@ -64,8 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $block = $_POST['mng_block'] ?? null;
         $email = $_POST['mng_email'] ?? null;
 
-        if (!$name || !$dob || !$block || !$email) {
-            echo json_encode(['success' => false, 'message' => 'Thiếu dữ liệu']);
+        if (empty($name) || empty($email) || empty($block)) {
+            echo json_encode(['success' => false, 'message' => 'Thiếu thông tin bắt buộc']);
             exit;
         }
 
@@ -131,8 +131,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $block = $_POST['mng_block'] ?? null;
         $email = $_POST['mng_email'] ?? null;
 
-        if (!$id || !$name || !$dob || !$block || !$email) {
-            echo json_encode(['success' => false, 'message' => 'Thiếu dữ liệu']);
+        if (empty($id) || empty($name) || empty($email) || empty($block)) {
+            echo json_encode(['success' => false, 'message' => 'Thiếu thông tin bắt buộc']);
             exit;
         }
 

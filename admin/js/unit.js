@@ -11,20 +11,20 @@ const Unit = {
   yearSelect: null,
   addButton: null,
   addForm: null,  
-  form: null,
-  unitNoteDiv: null,  // div cảnh báo dự tính
+  dateForm: null,
+  formAddUnit: null,
+  cancelAddBtn: null,
 
   /* ================= INIT ================= */
   init() {
     this.monthSelect = document.querySelector('select[name="month"]');
     this.yearSelect  = document.querySelector('select[name="year"]');
-    this.form        = document.querySelector('.date-inputs');
-    this.unitNoteDiv = document.querySelector('.unit-note');  
+    this.dateForm = document.getElementById('unitDateForm');
 
-    this.addButton = document.getElementById('btnAddFirstUnit');
-    this.addForm = document.getElementById('addFirstUnitForm');
-    this.btnCancelAdd = document.getElementById('btnCancelAdd');
+    this.addButton = document.getElementById('btnAddUnit');
+    this.addForm = document.querySelector('.unit-create-form');
     this.formAddUnit = document.getElementById('formAddUnit');
+    this.cancelAddBtn = document.getElementById('cancelAddUnit');
 
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('.btn-unit-edit');
@@ -34,41 +34,39 @@ const Unit = {
     });
 
     this.yearSelect?.addEventListener('change', () => {
-      this.updateMonthOptions();
-
+      this.updateMonthOptions(true, false);
       this.monthSelect.value = this.monthSelect.options[0]?.value || '';
     });
 
-    this.form?.addEventListener('submit', (e) => {
+    this.dateForm?.addEventListener('submit', (e) => {
       e.preventDefault();
       this.loadByMonthYear();
     });
 
-    // Bật/tắt hiển thị form thêm
-    if (this.addButton && this.addForm && this.btnCancelAdd) {
-      this.addButton.addEventListener('click', () => {
-        this.addForm.style.display = 'block';
-        this.addButton.style.display = 'none';
-      });
+    this.addButton && (this.addButton.onclick = () => {
+      this.addForm.style.display = 'block';
+      this.addButton.style.display = 'none';
+    });
 
-      this.btnCancelAdd.addEventListener('click', () => {
-        this.addForm.style.display = 'none';
-        this.addButton.style.display = 'inline-block';
-      });
-    }
+    this.cancelAddBtn && (this.cancelAddBtn.onclick = () => {
+      this.addForm.style.display = 'none';
+      this.addButton.style.display = 'inline-flex';
+    });
 
-    // Xử lý submit form thêm bằng AJAX
     if (this.formAddUnit) {
       this.formAddUnit.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const formData = new FormData(this.formAddUnit);
-
         try {
-          const res = await fetch(this.formAddUnit.getAttribute('action'), {
+          const formData = new URLSearchParams(new FormData(this.formAddUnit));
+          
+          const res = await fetch(this.formAddUnit.action, {
             method: 'POST',
-            body: new URLSearchParams(formData),
-            headers: { 'Accept': 'application/json' }
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData
           });
 
           const data = await res.json();
@@ -80,118 +78,79 @@ const Unit = {
 
           alert('Thêm đơn giá thành công');
 
-          this.addForm.style.display = 'none';
-          this.addButton.style.display = 'inline-block';
+          this.monthSelect.value = formData.get('month');
+          this.yearSelect.value  = formData.get('year');
 
-          // Tải lại toàn bộ trang
-          location.reload(); 
+          this.loadByMonthYear();
         } catch (err) {
           console.error(err);
-          alert('Lỗi kết nối hoặc hệ thống');
+          alert('Lỗi hệ thống');
         }
       });
     }
 
-    // Load lần đầu theo giá trị hiện tại trong dropdown
-    this.loadByMonthYear();
+    this.updateMonthOptions(false, true);
   },
 
   /* ================= LOAD (XEM) ================= */
-  async loadByMonthYear() {
+  loadByMonthYear() {
     this.resetEditState();
 
-    const month = this.monthSelect.value;
-    const year  = this.yearSelect.value;
+    const params = new URLSearchParams(window.location.search);
+    params.set('tab', 'unit');
+    params.set('month', this.monthSelect.value);
+    params.set('year', this.yearSelect.value);
 
-    try {
-      const res = await fetch(
-        `actions/unit_action.php?action=get&month=${month}&year=${year}`,
-        { headers: { 'Accept': 'application/json' } }
-      );
-
-      const data = await res.json();
-
-      this.renderUnit(data);
-
-      // Hiển thị hoặc ẩn thông báo dự tính
-      if (this.unitNoteDiv) {
-        if (data.status === 'forecast') {
-          this.unitNoteDiv.classList.remove('d-none');
-        } else {
-          this.unitNoteDiv.classList.add('d-none');
-        }
-      }
-
-      // Nếu là tháng dự tính, gọi updateMonthOptions để cập nhật lại dropdown (loại bỏ tháng dự tính đã thành dữ liệu thật)
-      if (data.status !== 'forecast') {
-        this.updateMonthOptions();
-
-        // Giữ lại giá trị tháng đã chọn nếu vẫn còn tồn tại trong dropdown
-        if ([...this.monthSelect.options].some(opt => opt.value === month)) {
-          this.monthSelect.value = month;
-        } else if (this.monthSelect.options.length > 0) {
-          this.monthSelect.value = this.monthSelect.options[0].value;
-        }
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Không thể tải đơn giá');
-    }
+    window.location.search = params.toString();
   },
 
-  /* ================= RENDER VIEW ================= */
-  renderUnit(data) {
-    const container = document.querySelector('.unit-container');
-
-    if (this.addButton) {
-      this.addButton.style.display = (data.electric_unit === null && data.water_unit === null) ? 'inline-block' : 'none';
-    }     
-
-    const elecCell  = document.querySelector('[data-unit="elec"]');
-    const waterCell = document.querySelector('[data-unit="water"]');
-
-    const elecAction  = elecCell.closest('tr').querySelector('.action-cell');
-    const waterAction = waterCell.closest('tr').querySelector('.action-cell');
-
-    /* ===== ĐƠN GIÁ ===== */
-    elecCell.textContent =
-      data.electric_unit !== null
-        ? `${numberFormat(data.electric_unit)}`
-        : '—';
-
-    waterCell.textContent =
-      data.water_unit !== null
-        ? `${numberFormat(data.water_unit)}`
-        : '—';
-
-    /* ===== ACTION ===== */
-    const editable = data.status !== 'past';
-
-    elecAction.innerHTML = editable
-      ? `<button class="btn btn-warning btn-unit-edit" data-type="elec">Sửa</button>`
-      : `<button class="btn btn-secondary" disabled style="opacity:.5">Sửa</button>`;
-
-    waterAction.innerHTML = editable
-      ? `<button class="btn btn-warning btn-unit-edit" data-type="water">Sửa</button>`
-      : `<button class="btn btn-secondary" disabled style="opacity:.5">Sửa</button>`;
-  },
-
-  /* ================= YEAR → MONTH ================= */
-  updateMonthOptions() {
+  /* ================= MONTH DROPDOWN ================= */
+  updateMonthOptions(keepSelected = false, autoLoad = false) {
     const year = parseInt(this.yearSelect.value);
-    const real = realMonthsByYear[year] || [];
-    const proj = projectedMonthsByYear[year] || [];
-
     this.monthSelect.innerHTML = '';
 
-    [...real, ...proj].forEach(m => {
+    const years = Object.keys(monthsByYear).map(Number).sort((a, b) => a - b);
+    const systemStartYear = years[0];
+    const systemStartMonth = Math.min(...monthsByYear[systemStartYear]);
+
+    for (let m = 1; m <= 12; m++) {
       const opt = document.createElement('option');
       opt.value = m;
-      opt.textContent = real.includes(m)
-        ? `Tháng ${m}`
-        : `Tháng ${m} (Dự tính)`;
+      opt.textContent = `Tháng ${m}`;
+
+      const isBeforeSystemStart =
+        year < systemStartYear ||
+        (year === systemStartYear && m < systemStartMonth);
+
+      if (isBeforeSystemStart) {
+        opt.disabled = true;
+        opt.textContent += ' (không tồn tại)';
+      }
+
       this.monthSelect.appendChild(opt);
-    });
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlMonth = parseInt(urlParams.get('month'));
+
+    if (keepSelected && this.monthSelect.value) return;
+
+    const trySelect = (m) => {
+      const opt = [...this.monthSelect.options]
+        .find(o => parseInt(o.value) === m && !o.disabled);
+      if (opt) this.monthSelect.value = opt.value;
+      return !!opt;
+    };
+
+    if (urlMonth && trySelect(urlMonth)) return;
+    if (trySelect(currentMonth)) return;
+
+    const firstValid = [...this.monthSelect.options].find(o => !o.disabled);
+    if (firstValid) this.monthSelect.value = firstValid.value;
+
+    if (autoLoad) {
+      this.loadByMonthYear(false, false);
+    }
   },
 
   /* ================= EDIT ================= */
@@ -209,7 +168,7 @@ const Unit = {
     const raw = this.oldText.replace(/[^\d]/g, '');
 
     valueCell.innerHTML = `
-      <input type="number" id="unitInput"
+      <input type="number" id="unitInput" class="form-control"
         value="${raw}" min="0" style="width:140px">
     `;
 
@@ -272,7 +231,10 @@ const Unit = {
 
     const res = await fetch('actions/unit_action.php', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
       body
     });
 
@@ -282,14 +244,8 @@ const Unit = {
       return;
     }
 
-    this.editingValueCell.textContent =
-      `${numberFormat(input.value)}`;
-
-    this.restoreAction();
-    this.clearEditState();
     alert('Lưu thành công');
 
-    // Sau khi lưu thành công, load lại đơn giá để cập nhật trạng thái và dropdown
     this.loadByMonthYear();
   }
 };

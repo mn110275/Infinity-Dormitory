@@ -2,12 +2,10 @@
 // manager/api/student_api.php
 session_start();
 require_once '../../database_connection.php'; // Điều chỉnh đường dẫn cho đúng file kết nối của bạn
-header('Content-Type: application/json; charset=utf-8');
+require_once __DIR__ . '/../../auth/require_role.php';
+requireRole('manager');
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
-  echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
-  exit;
-}
+header('Content-Type: application/json; charset=utf-8');
 
 $input = json_decode(file_get_contents('php://input'), true);
 

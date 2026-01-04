@@ -34,7 +34,7 @@ CREATE TABLE MANAGER
 CREATE TABLE ROOM
 (
     ROOM_ID VARCHAR(10),
-    GENDER ENUM('Nam', 'Nữ') NOT NULL DEFAULT 'Nam',
+    GENDER ENUM('Nam', 'Nữ') NOT NULL,
     CAPACITY INT,
     OCCUPIED INT NOT NULL DEFAULT 0,
     BLOCK_ID VARCHAR(10),
@@ -45,7 +45,7 @@ CREATE TABLE ROOM
 CREATE TABLE STUDENT
 (
     STD_ID VARCHAR(20) NOT NULL PRIMARY KEY,
-    STD_NAME VARCHAR(100) NOT NULL,
+    STD_NAME ENUM('Nam', 'Nữ') NOT NULL,
     STD_DOB DATETIME NOT NULL,
     STD_GD VARCHAR(10) NOT NULL,
     STD_PHONE VARCHAR(20),
@@ -191,31 +191,27 @@ BEGIN
 END$$
 DELIMITER ;
 
-SET GLOBAL event_scheduler = ON;
 DELIMITER $$
-CREATE EVENT IF NOT EXISTS ev_insert_unit_new_month
-ON SCHEDULE EVERY 1 MONTH
-STARTS CONCAT(DATE_FORMAT(CURDATE(), '%Y-%m-01'), ' 00:00:00')
-DO
+CREATE TRIGGER trg_check_capacity_update
+BEFORE UPDATE ON STUDENT
+FOR EACH ROW
 BEGIN
-    DECLARE cur_year INT;
-    DECLARE cur_month INT;
-    SET cur_year = YEAR(CURDATE());
-    SET cur_month = MONTH(CURDATE());
+  DECLARE cur INT;
+  DECLARE cap INT;
 
-    -- Nếu sang tháng mới mà chưa chốt đơn giá thì lấy dữ liệu từ tháng trước đó
-    IF NOT EXISTS (
-        SELECT 1 FROM UNIT WHERE UYEAR = cur_year AND UMONTH = cur_month
-    ) THEN
-        INSERT INTO UNIT (UYEAR, UMONTH, ELEC, WATER)
-        SELECT cur_year, cur_month, ELEC, WATER
-        FROM UNIT
-        WHERE (UYEAR < cur_year OR (UYEAR = cur_year AND UMONTH < cur_month))
-        ORDER BY UYEAR DESC, UMONTH DESC
-        LIMIT 1;
+  IF OLD.ROOM_ID <> NEW.ROOM_ID OR OLD.BLOCK_ID <> NEW.BLOCK_ID THEN
+    SELECT OCCUPIED, CAPACITY
+    INTO cur, cap
+    FROM ROOM
+    WHERE ROOM_ID = NEW.ROOM_ID
+      AND BLOCK_ID = NEW.BLOCK_ID;
+
+    IF cur >= cap THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Phòng đã đủ người';
     END IF;
+  END IF;
 END$$
-
 DELIMITER ;
 
 

@@ -3,11 +3,44 @@ session_start();
 require_once __DIR__ . '/../auth/require_role.php';
 requireRole('admin');
 
+$menuItems = [
+    'student' => [
+        'title' => 'Sinh viên',
+        'desc' => 'Danh sách sinh viên',
+        'js' => 'js/student.js',
+        'css' => 'css/modal-info.css',
+        'view' => 'students.php'
+    ],
+    'application' => [
+        'title' => 'Đơn đăng ký',
+        'desc' => 'Xét duyệt sinh viên',
+        'js' => 'js/application.js',
+        'css' => ['css/modal-info.css', 'css/application.css'],
+        'view' => 'applications.php'
+    ],
+    'manager' => [
+        'title' => 'Quản lý',
+        'desc' => 'Tài khoản quản lý',
+        'js' => 'js/manager.js',
+        'css' => null,
+        'view' => 'managers.php'
+    ],
+    'unit' => [
+        'title' => 'Đơn giá',
+        'desc' => 'Điện, nước của các tòa',
+        'js' => 'js/unit.js',
+        'css' => 'css/unit.css', 
+        'view' => 'unit.php'
+    ],
+];
+
 $tab = $_GET['tab'] ?? 'student';
-$allowedTabs = ['student', 'application', 'manager', 'unit'];
-if (!in_array($tab, $allowedTabs)) {
+
+if (!array_key_exists($tab, $menuItems)) {
     $tab = 'student';
 }
+
+$current = $menuItems[$tab];
 ?>
 
 <!DOCTYPE html>
@@ -15,23 +48,32 @@ if (!in_array($tab, $allowedTabs)) {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin InfiDorm</title>
+  <title>Admin InfiDorm - <?= $current['title'] ?></title>
   <link rel="stylesheet" href="../css/public.css" />
-  <link rel="stylesheet" href="../css/manager.css" />
   <link rel="stylesheet" href="css/admin.css" />
   <link rel="stylesheet" href="css/modal.css" />
+  <?php 
+  if (!empty($current['css'])): 
+      $cssList = is_array($current['css']) ? $current['css'] : [$current['css']];
+      foreach ($cssList as $cssFile): 
+  ?>
+      <link rel="stylesheet" href="<?= htmlspecialchars($cssFile) ?>" />
+  <?php 
+      endforeach; 
+  endif; 
+  ?>
 </head>
 
 <body>
 
 <header class="nav">
-  <a href="home.php">Trang chủ</a>
-  <a href="dashboard.php" class="active">Admin</a>
+  <a href="home.php" style="font-style: italic; font-size: 30px;">Infinity Dormitory</a>
+  <p style="font-size: 20px; font-style: italic">Chào mừng <?= htmlspecialchars($_SESSION['name'] ?? 'Admin') ?>!</p>
+  <a href="dashboard.php" class="active" style="margin-left:auto">Admin Dashboard</a>
+  <a href="../logout.php">Đăng xuất</a>
 </header>
 
-<main class="admin-container">
-
-  <!-- SIDEBAR -->
+<main class="container">
   <aside class="sidebar">
     <div class="sidebar-header">
       <h3>Danh mục quản lý KTX</h3>
@@ -39,76 +81,28 @@ if (!in_array($tab, $allowedTabs)) {
     </div>
 
     <nav class="sidebar-list">
-      <a href="dashboard.php?tab=student"
-         class="sidebar-item <?= $tab === 'student' ? 'active' : '' ?>">
-        <div>
-          <div class="item-title">Sinh viên</div>
-          <div class="item-desc">Danh sách sinh viên</div>
-        </div>
-      </a>
-
-      <a href="dashboard.php?tab=application"
-         class="sidebar-item <?= $tab === 'application' ? 'active' : '' ?>">
-        <div>
-          <div class="item-title">Đơn đăng ký</div>
-          <div class="item-desc">Xét duyệt sinh viên</div>
-        </div>
-      </a>
-
-      <a href="dashboard.php?tab=manager"
-         class="sidebar-item <?= $tab === 'manager' ? 'active' : '' ?>">
-        <div>
-          <div class="item-title">Quản lý</div>
-          <div class="item-desc">Tài khoản quản lý</div>
-        </div>
-      </a>
-
-      <a href="dashboard.php?tab=unit"
-         class="sidebar-item <?= $tab === 'unit' ? 'active' : '' ?>">
-        <div>
-          <div class="item-title">Quản lý đơn giá</div>
-          <div class="item-desc">Điện, nước của các tòa</div>
-        </div>
-      </a>
+      <?php foreach ($menuItems as $key => $item): ?>
+          <a href="dashboard.php?tab=<?= urlencode($key) ?>" class="sidebar-item <?= $tab === $key ? 'active' : '' ?>">
+              <div>
+                  <div class="item-title"><?= htmlspecialchars($item['title']) ?></div>
+                  <div class="item-desc"><?= htmlspecialchars($item['desc']) ?></div>
+              </div>
+          </a>
+      <?php endforeach; ?>
     </nav>
-
-    <div class="sidebar-footer">
-      <a href="../logout.php" class="btn ghost">Đăng xuất</a>
-    </div>
   </aside>
 
-  <!-- CONTENT -->
   <section class="content-area">
     <div class="content-inner">
-
-      <?php
-        switch ($tab) {
-          case 'application':
-            include 'views/applications.php';
-            break;
-
-          case 'manager':
-            include 'views/managers.php';
-            break;
-
-          case 'unit':
-            include 'views/unit.php';
-            break;
-
-          default:
-            include 'views/students.php';
-        }
-      ?>
-
+      <?php include "views/" . $current['view']; ?>
     </div>
   </section>
-
 </main>
 
 <!-- JS -->
-<script src="js/application.js"></script>
-<script src="js/manager.js"></script>
-<script src="js/unit.js"></script>
+ <?php if (!empty($current['js'])): ?>
+    <script src="<?= htmlspecialchars($current['js']) ?>"></script>
+<?php endif; ?>
 
 </body>
 </html>
