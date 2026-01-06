@@ -1,11 +1,9 @@
 <?php
-// manager/views/students.php
-require_once '../database_connection.php';
+require_once __DIR__ . '/../../database_connection.php';
 require_once __DIR__ . '/../../auth/require_role.php';
-requireRole('manager');
+requireRole('admin');
 
 $students = [];
-$managerBlock = $_SESSION['block'];
 
 try
 {
@@ -14,12 +12,10 @@ try
         
         $studentQuery = "SELECT s.*, r.ROOM_ID, r.BLOCK_ID
                          FROM STUDENT s
-                         INNER JOIN ROOM r ON r.ROOM_ID = s.ROOM_ID
-                         WHERE r.BLOCK_ID = ?
+                         LEFT JOIN ROOM r ON r.ROOM_ID = s.ROOM_ID
                          ORDER BY r.ROOM_ID, s.STD_NAME";
         
         $stmt = mysqli_prepare($conn, $studentQuery);
-        mysqli_stmt_bind_param($stmt, "s", $managerBlock);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
         
@@ -33,10 +29,46 @@ try
 catch (Exception $e) {
   $studentError = $e->getMessage();
 }
+
+$blocks = [];
+
+$blockQuery = "
+  SELECT 
+      b.BLOCK_ID,
+      SUM(r.CAPACITY - r.OCCUPIED) AS available
+  FROM BLOCK b
+  LEFT JOIN ROOM r ON r.BLOCK_ID = b.BLOCK_ID
+  GROUP BY b.BLOCK_ID
+";
+
+$result = mysqli_query($conn, $blockQuery);
+while ($row = mysqli_fetch_assoc($result)) {
+    $blocks[] = $row;
+}
+
+$rooms = [];
+
+$roomQuery = "
+  SELECT 
+      ROOM_ID,
+      BLOCK_ID,
+      GENDER,
+      CAPACITY,
+      OCCUPIED,
+      (CAPACITY - OCCUPIED) AS available
+  FROM ROOM;
+";
+
+$result = mysqli_query($conn, $roomQuery);
+while ($row = mysqli_fetch_assoc($result)) {
+    $rooms[] = $row;
+}
 ?>
 
 <script>
   window.ALL_STUDENTS = <?= json_encode($students) ?>;
+  window.ALL_BLOCKS = <?= json_encode($blocks, JSON_UNESCAPED_UNICODE) ?>;
+  window.ALL_ROOMS  = <?= json_encode($rooms, JSON_UNESCAPED_UNICODE) ?>;
 </script>
 
 <?php if (isset($studentError)): ?>

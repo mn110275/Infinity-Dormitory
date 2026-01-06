@@ -4,7 +4,7 @@ USE infidorm;
 CREATE TABLE USERS
 (
     USER_ID INT AUTO_INCREMENT PRIMARY KEY,
-    USER_ROLE INT,
+    USER_ROLE ENUM('admin', 'manager', 'student') NOT NULL DEFAULT 'student',
     EMAIL VARCHAR(100) UNIQUE NOT NULL,
     PASS VARCHAR(255) NOT NULL,
     EMAIL_VERIFIED_AT DATETIME NULL,
@@ -34,7 +34,7 @@ CREATE TABLE MANAGER
 CREATE TABLE ROOM
 (
     ROOM_ID VARCHAR(10),
-    GENDER VARCHAR(10),
+    GENDER ENUM('Nam', 'Nữ') NOT NULL,
     CAPACITY INT,
     OCCUPIED INT NOT NULL DEFAULT 0,
     BLOCK_ID VARCHAR(10),
@@ -45,7 +45,7 @@ CREATE TABLE ROOM
 CREATE TABLE STUDENT
 (
     STD_ID VARCHAR(20) NOT NULL PRIMARY KEY,
-    STD_NAME VARCHAR(100) NOT NULL,
+    STD_NAME ENUM('Nam', 'Nữ') NOT NULL,
     STD_DOB DATETIME NOT NULL,
     STD_GD VARCHAR(10) NOT NULL,
     STD_PHONE VARCHAR(20),
@@ -118,7 +118,8 @@ CREATE TABLE REGIFORM
     REG_STD_ID VARCHAR(20) NOT NULL,
     REG_PHONE VARCHAR(20) NOT NULL,
     REG_EMAIL VARCHAR(100) NOT NULL,
-    REG_STATUS VARCHAR(50)
+    REG_STATUS ENUM('Chưa xử lý', 'Đã chấp nhận', 'Đã từ chối') NOT NULL DEFAULT 'Chưa xử lý',
+    CREATED_AT DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE NOTI
@@ -190,33 +191,56 @@ BEGIN
 END$$
 DELIMITER ;
 
+DELIMITER $$
+CREATE TRIGGER trg_check_capacity_update
+BEFORE UPDATE ON STUDENT
+FOR EACH ROW
+BEGIN
+  DECLARE cur INT;
+  DECLARE cap INT;
 
-INSERT INTO USERS (EMAIL, PASS, EMAIL_VERIFIED_AT)
-VALUES
-('admin@infidorm.com', '123456', NOW()),
-('manager@infidorm.com', '123456', NOW()),
-('mng@infidorm.com', '123456', NOW()),
-('s1@infidorm.com', '123456', NOW()),
-('s2@infidorm.com', '123456', NOW()),
-('s3@infidorm.com', '123456', NOW()),
-('s4@infidorm.com', '123456', NOW()),
-('s5@infidorm.com', '123456', NOW()),
-('s6@infidorm.com', '123456', NOW()),
-('s7@infidorm.com', '123456', NOW()),
-('s8@infidorm.com', '123456', NOW());
+  IF OLD.ROOM_ID <> NEW.ROOM_ID OR OLD.BLOCK_ID <> NEW.BLOCK_ID THEN
+    SELECT OCCUPIED, CAPACITY
+    INTO cur, cap
+    FROM ROOM
+    WHERE ROOM_ID = NEW.ROOM_ID
+      AND BLOCK_ID = NEW.BLOCK_ID;
 
-INSERT INTO USERS (EMAIL, PASS)
+    IF cur >= cap THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Phòng đã đủ người';
+    END IF;
+  END IF;
+END$$
+DELIMITER ;
+
+
+-- PASS: 123456 đã được hash
+INSERT INTO USERS (EMAIL, PASS, EMAIL_VERIFIED_AT, USER_ROLE)
 VALUES
-('s11@infidorm.com', '123456'),
-('s12@infidorm.com', '123456'),
-('s13@infidorm.com', '123456'),
-('s14@infidorm.com', '123456'),
-('s15@infidorm.com', '123456'),
-('s16@infidorm.com', '123456'),
-('s17@infidorm.com', '123456'),
-('s18@infidorm.com', '123456'),
-('s19@infidorm.com', '123456'),
-('s20@infidorm.com', '123456');
+('admin@infidorm.com', '$2y$10$z4QQOj51Iibj2.QJcBs4gOMj1oBR5RzC.zJ.hlkU02emAz9zqARaq', NOW(), 'admin'),
+('manager@infidorm.com', '$2y$10$6FKGXdTsTjKaxIK8g7eRROifgIJ8cM4Lrnq6U3KdJ1PeOyZXUwCnK', NOW(), 'manager'),
+('s1@infidorm.com', '$2y$10$rJ9zgMpcNG2AlOXr4WkAwu3JZQdlz10YyfVVhBrR19SzzmdTvvh5.', NOW(), 'student'),
+('s2@infidorm.com', '$2y$10$r8ofz1rneGih6eWs9yvVzOLYzJzQseTO/l1H4mA1chxmiZmLYsFoq', NOW(), 'student'),
+('s3@infidorm.com', '$2y$10$OzbI7iil2G5BwcTrufNlN.UZf08pGJ1q/quyRy94gomDiym3n5HpS', NOW(), 'student'),
+('s4@infidorm.com', '$2y$10$a4yRD2lKM2lbEXVPqA9WwuIlpox/fB4s239P3nArNYksxfRI2WbVe', NOW(), 'student'),
+('s5@infidorm.com', '$2y$10$0dRDjaHiB9qYyKeHwy19vOloC6RX7j23i6.Sv4p9cscMgYx1ok05W', NOW(), 'student'),
+('s6@infidorm.com', '$2y$10$1AvPfFudlTzQtOLBuJIto.U/UKAmaCyrFbIUsYxdwS22HoI5xDhaW', NOW(), 'student'),
+('s7@infidorm.com', '$2y$10$KBNMYS9wkRu0AIp4.ghF0OE7Evp1dIJomO/ZCdq7lEy7BtBtO.SOC', NOW(), 'student'),
+('s8@infidorm.com', '$2y$10$ss3Cf0NJt9mPwJYxwWiGduvFjH2LyFCm855F3A0A5O3DWEKLVaWzC', NOW(), 'student');
+
+INSERT INTO USERS (EMAIL, PASS, USER_ROLE)
+VALUES
+('s11@infidorm.com', '$2y$10$l.PQKY7ZtipExu3/JaGOdeKxTPlFNsVOZsCM7QUaQgkhPGIPQAyRy', 'student'),
+('s12@infidorm.com', '$2y$10$iMZ.iVJrauVxVwUxuSWEPukjbkmQoq2iUmFo4/XHEiGdk5rNYA1AO', 'student'),
+('s13@infidorm.com', '$2y$10$dp4SJU0pcUbfDvjS2buQ8efq4n01rihslxUPexBCIq97PKLV6AzPC', 'student'),
+('s14@infidorm.com', '$2y$10$1oCi9n.svN.qUP.I8EaikOuiBd/UiD4pENoho9nvlk2/z5bcZLNlW', 'student'),
+('s15@infidorm.com', '$2y$10$QUIcZeMnLJL06pq5O2aPguRihz6G4GZdUISyqyFaAY5l0FJuo/OJm', 'student'),
+('s16@infidorm.com', '$2y$10$w.o7U2slLhl4p1WfgI884uYfcfO0a3Wn7xxUiux4nUmxpFmGFXMxK', 'student'),
+('s17@infidorm.com', '$2y$10$zTxU4oKdblWgXxKe46tlDOivx86poJNbBfl1/MZmoBKyNcWEngIRu', 'student'),
+('s18@infidorm.com', '$2y$10$2reFIjAR0O9scPrrZBDj.u.5WP4QiN.2Ghv1QrdyayK5q7HHDNn.q', 'student'),
+('s19@infidorm.com', '$2y$10$ODhh0PCgc.TmK7XDga5pN.gB1rT8rc0jUN.4FAKvDAfNBZ/sogBkq', 'student'),
+('s20@infidorm.com', '$2y$10$vdU.fxPcCwWiQNTze1PT..CyXIlWhGpdU6qKJgAPF817w1TMU/9eG', 'student');
 
 INSERT INTO BLOCK (BLOCK_ID)
 VALUES ('A'), ('B'), ('C'), ('D');

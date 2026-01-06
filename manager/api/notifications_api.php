@@ -4,13 +4,8 @@ session_start();
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../database_connection.php';
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager' || !isset($_SESSION['user_id']))
-{
-  http_response_code(401);
-  echo json_encode(['success' => false, 'error' => 'Unauthorized']);
-  exit;
-}
+require_once __DIR__ . '/../../auth/require_role.php';
+requireRole('manager');
 
 $userId = $_SESSION['user_id'];
 

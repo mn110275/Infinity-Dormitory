@@ -20,7 +20,7 @@
 
 @font-face {
   font-family: 'Google Sans';
-  src: url('GoogleSans-Regular.ttf') format('truetype');
+  src: url('../GoogleSans-Regular.ttf') format('truetype');
   font-weight: normal;
 }
 

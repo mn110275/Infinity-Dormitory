@@ -3,13 +3,8 @@
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 require_once '../../database_connection.php';
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager' || !isset($_SESSION['user_id']))
-{
-  http_response_code(401);
-  echo json_encode(['success' => false, 'error' => 'Unauthorized']);
-  exit;
-}
+require_once __DIR__ . '/../../auth/require_role.php';
+requireRole('manager');
 
 $userId = $_SESSION['user_id'];
 
@@ -44,14 +39,17 @@ try
 
     if ($row = mysqli_fetch_assoc($result))
     {
-      if ($row['PASS'] !== $currentPassword)
+      if (!password_verify($currentPassword, $row['PASS']))
       {
         throw new Exception('Mật khẩu hiện tại không đúng');
       }
 
+      // Hash mật khẩu mới trước khi lưu
+      $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
       $updateQuery = "UPDATE USERS SET PASS = ? WHERE USER_ID = ?";
       $stmt = mysqli_prepare($conn, $updateQuery);
-      mysqli_stmt_bind_param($stmt, "si", $newPassword, $userId);
+      mysqli_stmt_bind_param($stmt, "si", $hashedNewPassword, $userId);
 
       if (mysqli_stmt_execute($stmt))
       {

@@ -1,3 +1,21 @@
+<?php
+session_start();
+
+if (isset($_SESSION['role'])) {
+    switch ($_SESSION['role']) {
+        case 'student':
+            header("Location: student/home.php");
+            exit;
+        case 'manager':
+            header("Location: manager/dashboard.php");
+            exit;
+        case 'admin':
+            header("Location: admin/dashboard.php");
+            exit;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>

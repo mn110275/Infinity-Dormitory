@@ -1,11 +1,8 @@
 <?php
 session_start();
 require '../database_connection.php';
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager') {
-    header("Location: login.php");
-    exit;
-}
+require_once __DIR__ . '/../auth/require_role.php';
+requireRole('manager');
 ?>
 
 <!DOCTYPE html>

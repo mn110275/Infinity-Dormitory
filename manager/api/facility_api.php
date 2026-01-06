@@ -3,12 +3,8 @@
 session_start();
 header('Content-Type: application/json');
 require_once '../../database_connection.php';
-
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'manager')
-{
-  echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
-  exit;
-}
+require_once __DIR__ . '/../../auth/require_role.php';
+requireRole('manager');
 
 // Lấy dữ liệu từ JSON (khi DELETE/UPDATE) hoặc $_POST (khi UPLOAD)
 $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;

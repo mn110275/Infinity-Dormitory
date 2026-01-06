@@ -1,32 +1,44 @@
 <?php
 session_start();
 require '../database_connection.php';
+require '../auth/auth_core.php';
 
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    $sql = "
-        SELECT * FROM USERS U
-        JOIN MANAGER m ON u.USER_ID = m.USER_ID
-        WHERE u.EMAIL = '$email' AND u.PASS = '$password'
-    ";
-    $result = mysqli_query($conn, $sql);
+    $user = loginWithRole($conn, $email, $password, 'manager');
 
-    if (mysqli_num_rows($result) == 1) {
-        $user = mysqli_fetch_assoc($result);
-        $_SESSION['role'] = 'manager';
-        $_SESSION['user_id'] = $user['USER_ID'];
-        $_SESSION['email'] = $user['EMAIL'];
-        $_SESSION['name'] = $user['MNG_NAME'];
-        $_SESSION['block'] = $user['MNG_BLOCK'];
-        header("Location: dashboard.php");
-        exit;
-    } else {
+    if (!$user) {
         $error = "Sai email hoặc mật khẩu quản lý!";
-    }
+    } else {
+        $sql = "SELECT *
+                FROM MANAGER
+                WHERE USER_ID = ?
+                LIMIT 1";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $user['USER_ID']);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        if ($result->num_rows !== 1) {
+            $error = "Không tìm thấy thông tin quản lý";
+        } else {
+            $manager = $result->fetch_assoc();
+
+            $_SESSION['user_id'] = $user['USER_ID'];
+            $_SESSION['role']    = $user['USER_ROLE']; 
+            $_SESSION['email']   = $email;
+            $_SESSION['name']    = $manager['MNG_NAME'];
+            $_SESSION['block']   = $manager['MNG_BLOCK'];
+
+            header("Location: dashboard.php");
+            exit;
+        }
+    } 
 }
 ?>
 

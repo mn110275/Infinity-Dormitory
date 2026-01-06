@@ -1,6 +1,8 @@
 <?php
 // student/views/my_room.php
 require_once '../database_connection.php';
+require_once __DIR__ . '/../../auth/require_role.php';
+requireRole('student');
 
 $userId = $_SESSION['user_id'];
 $roomInfo = null;

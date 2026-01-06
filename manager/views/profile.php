@@ -1,6 +1,8 @@
 <?php
 // manager/views/profile.php
 require_once '../database_connection.php';
+require_once __DIR__ . '/../../auth/require_role.php';
+requireRole('manager');
 
 $userId = $_SESSION['user_id'];
 $manager = null;

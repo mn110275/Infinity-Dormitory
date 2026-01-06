@@ -1,34 +1,43 @@
 <?php
 session_start();
 require '../database_connection.php'; 
+require '../auth/auth_core.php';
+
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    $sql = "
-        SELECT * FROM STUDENT s
-        JOIN USERS u ON s.USER_ID = u.USER_ID
-        WHERE u.EMAIL = '$email' AND u.PASS = '$password'
-    ";
+    $user = loginWithRole($conn, $email, $password, 'student');
 
-    $result = mysqli_query($conn, $sql);
-
-    if (mysqli_num_rows($result) == 1) {
-      $user = mysqli_fetch_assoc($result);
-
-      $_SESSION['role'] = 'student';
-      $_SESSION['user_id'] = $user['USER_ID'];
-      $_SESSION['email'] = $user['EMAIL'];
-      $_SESSION['name'] = $user['STD_NAME'];
-
-      header("Location: home.php");
-      exit;
-    } else {
+    if (!$user) {
         $error = "Sai email hoặc mật khẩu, vui lòng thử lại.";
-    }
+    } else {
+      $sql = "SELECT *
+                FROM STUDENT 
+                WHERE USER_ID = ?
+                LIMIT 1";
+      
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("i", $user['USER_ID']);
+      $stmt->execute();
 
+      $result = $stmt->get_result();
+      if ($result->num_rows !== 1) {
+          $error = "Không tìm thấy thông tin sinh viên";
+      } else {
+          $student = $result->fetch_assoc();
+
+          $_SESSION['role'] = $user['USER_ROLE'];
+          $_SESSION['user_id'] = $user['USER_ID'];
+          $_SESSION['email'] = $email;
+          $_SESSION['name'] = $student['STD_NAME'];
+
+          header("Location: home.php");
+          exit;
+      } 
+    }
 }
 ?>
 
