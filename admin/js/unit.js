@@ -78,13 +78,19 @@ const Unit = {
 
           alert('Thêm đơn giá thành công');
 
-          this.monthSelect.value = formData.get('month');
-          this.yearSelect.value  = formData.get('year');
+          const newParams = new URLSearchParams();
+          newParams.set('tab', 'unit');
+          newParams.set('month', formData.get('month'));
+          newParams.set('year', formData.get('year'));
 
-          this.loadByMonthYear();
+          window.location.href = window.location.pathname + '?' + newParams.toString();
         } catch (err) {
+          if (err.name === 'AbortError') return;
+
           console.error(err);
-          alert('Lỗi hệ thống');
+          if (!window.closing) { 
+              alert('Lỗi hệ thống');
+    }
         }
       });
     }

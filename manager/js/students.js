@@ -102,7 +102,6 @@ const StudentManager = {
                 <select id="edit-gd" class="form-control">
                 <option value="Nam" ${s.STD_GD === 'Nam' ? 'selected' : ''}>Nam</option>
                 <option value="Nữ" ${s.STD_GD === 'Nữ' ? 'selected' : ''}>Nữ</option>
-                <option value="Khác" ${s.STD_GD === 'Khác' ? 'selected' : ''}>Khác</option>
                 </select>
               </div>
               <div class="form-group">
