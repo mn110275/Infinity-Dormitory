@@ -7,6 +7,7 @@ const ApplicationAdmin = {
         body: null
     },
     selectedRoom: null,
+    selectedBlock: null,
 
     init() {
         this.table = document.getElementById('applicationTable');
@@ -294,6 +295,8 @@ const ApplicationAdmin = {
             if (isGenderMatch && hasSlot) {
                 div.onclick = () => {
                     this.selectedRoom = r.ROOM_ID;
+                    this.selectedBlock = blockId;
+
                     document.querySelectorAll('.room-card').forEach(c => c.classList.remove('active'));
                     div.classList.add('active');
                     
@@ -316,8 +319,8 @@ const ApplicationAdmin = {
         const gd = document.getElementById('reg-gender').value;
         const adr = document.getElementById('reg-adr').value;
 
-        if (!name || !stdId || !dob || !gd || !this.selectedRoom) {
-            alert('Vui lòng nhập đầy đủ thông tin bắt buộc và chọn phòng!');
+        if (!name || !stdId || !dob || !gd || !this.selectedRoom || !this.selectedBlock) {
+            alert('Vui lòng nhập thông tin và chọn phòng đầy đủ!');
             return;
         }
 
@@ -334,6 +337,7 @@ const ApplicationAdmin = {
         formData.append('gioi_tinh', gd);
         formData.append('address_sv', adr);
         formData.append('id_room', this.selectedRoom);
+        formData.append('id_block', this.selectedBlock);
 
         try {
             const res = await fetch('actions/application_action.php', { method: 'POST', body: formData });

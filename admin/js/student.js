@@ -176,6 +176,7 @@ const StudentAdmin = {
             </div>
 
             <div class="form-actions">
+              <button class="btn btn-danger" onclick="StudentAdmin.deleteStudent('${s.STD_ID}')" style="margin-right: auto;">Kết thúc lưu trú</button>
               <button class="btn btn-secondary" onclick="StudentAdmin.closeModal()">Hủy</button>
               <button class="btn btn-primary" onclick="StudentAdmin.saveStudent('${s.STD_ID}')">Lưu thay đổi</button>
             </div>
@@ -443,6 +444,31 @@ const StudentAdmin = {
     {
       alert('Lỗi kết nối hệ thống.');
     }
+  },
+
+  async deleteStudent(stdId) {
+      if (!confirm('Bạn có chắc chắn muốn kết thúc lưu trú cho sinh viên này?')) return;
+
+      try {
+          const res = await fetch('actions/student_action.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  action: 'delete_student', 
+                  std_id: stdId
+              })
+          });
+          const result = await res.json();
+
+          if (result.status === 'success') {
+              alert('Đã kết thúc lưu trú cho sinh viên thành công!');
+              location.reload(); 
+          } else {
+              alert('Lỗi: ' + result.message);
+          }
+      } catch (e) {
+          alert('Lỗi kết nối hệ thống.');
+      }
   },
 
   sort(colIndex, headerEl)
