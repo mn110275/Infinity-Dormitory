@@ -10,10 +10,18 @@ try
     if ($conn) {
         mysqli_set_charset($conn, "utf8mb4");
         
-        $studentQuery = "SELECT s.*, r.ROOM_ID, r.BLOCK_ID
-                         FROM STUDENT s
-                         LEFT JOIN ROOM r ON r.ROOM_ID = s.ROOM_ID
-                         ORDER BY r.ROOM_ID, s.STD_NAME";
+        $studentQuery = "SELECT DISTINCT
+                            s.*, 
+                            c.ROOM_ID, 
+                            c.BLOCK_ID, 
+                            sem.STARTDATE 
+                        FROM STUDENT s
+                        LEFT JOIN CONTRACT c ON s.STD_ID = c.STD_ID
+                        LEFT JOIN SEMESTER sem ON c.SEM_ID = sem.SEM_ID
+                        WHERE sem.IS_CURRENT = 1 
+                          AND c.STATUS = 'Active'
+                          AND s.IS_ACTIVE = 1
+                        ORDER BY c.BLOCK_ID, c.ROOM_ID, s.STD_NAME";
         
         $stmt = mysqli_prepare($conn, $studentQuery);
         mysqli_stmt_execute($stmt);
@@ -76,7 +84,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 <?php elseif (empty($students)): ?>
   <div class="alert alert-info">Chưa có sinh viên nào trong hệ thống.</div>
 <?php else: ?>
-  <h2>Danh sách phòng & sinh viên</h2>
+  <h2>Danh sách sinh viên</h2>
   <div class="student-table-wrapper">
     <table class="table student-table" id="studentTable">
       <thead>
@@ -138,7 +146,11 @@ while ($row = mysqli_fetch_assoc($result)) {
             data-id="<?= htmlspecialchars($s['STD_ID']) ?>" 
             data-room="<?= htmlspecialchars($s['ROOM_ID']) ?>" 
             style="cursor: pointer;">
-          <td><span class="room-badge"><?= htmlspecialchars($s['ROOM_ID']) ?></span></td>
+          <td>
+              <span class="room-badge">
+                  <?= $s['ROOM_ID'] ? htmlspecialchars($s['BLOCK_ID'] . $s['ROOM_ID']) : 'Chưa xếp' ?>
+              </span>
+          </td>
           <td><?= htmlspecialchars($s['STD_NAME']) ?></td>
           <td><?= htmlspecialchars($s['STD_ID']) ?></td>
           <td><?= date('d/m/Y', strtotime($s['STD_DOB'])) ?></td>
