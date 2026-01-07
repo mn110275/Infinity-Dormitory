@@ -102,15 +102,15 @@ catch (Exception $e)
 <h2>Thông tin cá nhân</h2>
 
 <?php if ($success): ?>
-  <div class="alert alert-success">
-    Cập nhật thông tin thành công.
-  </div>
+  <script>
+    alert("Cập nhật thông tin thành công!");
+  </script>
 <?php endif; ?>
 
 <?php if ($error): ?>
-  <div class="alert alert-error">
-    Lỗi: <?= htmlspecialchars($error) ?>
-  </div>
+    <script>
+        alert("Lỗi: <?= addslashes(htmlspecialchars($error)) ?>");
+    </script>
 <?php endif; ?>
 
 <?php if ($manager): ?>

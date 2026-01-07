@@ -8,10 +8,9 @@
   $student = null;
   $problems = [];
   $error = null;
-  
-  // 1. Lấy thông tin sinh viên (STD_ID và BLOCK_ID)
+
   try {
-      $stdQuery = "SELECT STD_ID, BLOCK_ID FROM STUDENT WHERE USER_ID = ?";
+      $stdQuery = "SELECT S.STD_ID, BLOCK_ID FROM STUDENT S JOIN CONTRACT C ON S.STD_ID = C.STD_ID WHERE USER_ID = ?";
       $stmt = mysqli_prepare($conn, $stdQuery);
       mysqli_stmt_bind_param($stmt, "i", $userId);
       mysqli_stmt_execute($stmt);

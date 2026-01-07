@@ -43,8 +43,9 @@ try {
     mysqli_set_charset($conn, "utf8mb4");
 
     // Lấy thông tin phòng của sinh viên
-    $studentQuery = "SELECT STD_ID, STD_NAME, BLOCK_ID, ROOM_ID 
-    FROM STUDENT
+    $studentQuery = "SELECT S.STD_ID, STD_NAME, BLOCK_ID, ROOM_ID 
+    FROM STUDENT S
+      JOIN CONTRACT C ON C.STD_ID = S.STD_ID
     WHERE USER_ID = ? ";
 
     $stmt = mysqli_prepare($conn, $studentQuery);

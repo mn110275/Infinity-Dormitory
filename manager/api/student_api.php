@@ -1,7 +1,7 @@
 <?php
 // manager/api/student_api.php
 session_start();
-require_once '../../database_connection.php'; // Điều chỉnh đường dẫn cho đúng file kết nối của bạn
+require_once '../../database_connection.php';
 require_once __DIR__ . '/../../auth/require_role.php';
 requireRole('manager');
 
@@ -23,7 +23,7 @@ $adr = $input['adr'];
 
 try {
   $sql = "UPDATE STUDENT SET 
-  STD_NAME = ? ,
+    STD_NAME = ? ,
     STD_GD = ? ,
     STD_DOB = ? ,
     STD_PHONE = ? ,

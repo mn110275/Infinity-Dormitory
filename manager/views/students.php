@@ -12,11 +12,7 @@ try
     if ($conn) {
         mysqli_set_charset($conn, "utf8mb4");
         
-        $studentQuery = "SELECT s.*, r.ROOM_ID, r.BLOCK_ID
-                         FROM STUDENT s
-                         INNER JOIN ROOM r ON r.ROOM_ID = s.ROOM_ID
-                         WHERE r.BLOCK_ID = ?
-                         ORDER BY r.ROOM_ID, s.STD_NAME";
+        $studentQuery = "SELECT * FROM STUDENT S JOIN CONTRACT C ON S.STD_ID = C.STD_ID WHERE C.STATUS = 'Active' AND BLOCK_ID = ?";
         
         $stmt = mysqli_prepare($conn, $studentQuery);
         mysqli_stmt_bind_param($stmt, "s", $managerBlock);
@@ -91,13 +87,6 @@ catch (Exception $e) {
             </div>
             <input type="text" class="col-search" data-col="5" placeholder="Tìm địa chỉ...">
           </th>
-          <th style="width: 120px">
-            <div class="th-content" data-col="6">
-              <span>Ngày bắt đầu</span>
-              <span class="sort-icon">⇅</span>
-            </div>
-            <input type="text" class="col-search" data-col="6" placeholder="Tìm ngày...">
-          </th>
         </tr>
       </thead>
       <tbody>
@@ -112,7 +101,6 @@ catch (Exception $e) {
           <td><?= date('d/m/Y', strtotime($s['STD_DOB'])) ?></td>
           <td><?= htmlspecialchars($s['STD_PHONE']) ?></td>
           <td><?= htmlspecialchars($s['STD_ADR']) ?></td>
-          <td><?= htmlspecialchars($s['STARTDATE']) ?></td>
         </tr>
         <?php endforeach; ?>
       </tbody>

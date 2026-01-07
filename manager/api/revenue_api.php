@@ -1,5 +1,5 @@
 <?php
-// manager/api/revenue_api.php - Handle revenue management
+// manager/api/revenue_api.php
 session_start();
 header('Content-Type: application/json; charset=utf-8');
 
@@ -14,7 +14,7 @@ try {
 
     // Get request data
     $method = $_SERVER['REQUEST_METHOD'];
-    
+
     if ($method === 'GET') {
         handleGet($conn, $managerBlock);
     } elseif ($method === 'POST') {
@@ -36,32 +36,30 @@ if (isset($conn)) {
     mysqli_close($conn);
 }
 
-// ============ HANDLE GET - Load existing revenue data ============
-function handleGet($conn, $managerBlock) {
+function handleGet($conn, $managerBlock)
+{
     $year = $_GET['year'] ?? date('Y');
     $month = $_GET['month'] ?? date('m');
     $block = $_GET['block'] ?? $managerBlock;
-    
-    // Validate block matches manager's block
+
     if ($block !== $managerBlock) {
         throw new Exception('Bạn chỉ có thể xem dữ liệu tòa ' . $managerBlock);
     }
 
-    // Get unit prices for this period
     $unitQuery = "SELECT ELEC, WATER FROM UNIT WHERE UYEAR = ? AND UMONTH = ?";
     $stmt = mysqli_prepare($conn, $unitQuery);
     mysqli_stmt_bind_param($stmt, "ii", $year, $month);
     mysqli_stmt_execute($stmt);
     $unitResult = mysqli_stmt_get_result($stmt);
-    
+
     $unitPrices = null;
     if ($row = mysqli_fetch_assoc($unitResult)) {
         $unitPrices = [
-            'elec' => (int)$row['ELEC'],
-            'water' => (int)$row['WATER']
+            'elec' => (int) $row['ELEC'],
+            'water' => (int) $row['WATER']
         ];
     } else {
-        throw new Exception('Chưa có đơn giá cho tháng ' . $month . '/' . $year);
+        throw new Exception('Chưa có hóa đơn cho tháng ' . $month . '/' . $year . '.');
     }
 
     // Get rooms of this block
@@ -70,7 +68,7 @@ function handleGet($conn, $managerBlock) {
     mysqli_stmt_bind_param($stmt, "s", $block);
     mysqli_stmt_execute($stmt);
     $roomResult = mysqli_stmt_get_result($stmt);
-    
+
     $rooms = [];
     while ($row = mysqli_fetch_assoc($roomResult)) {
         $rooms[] = $row['ROOM_ID'];
@@ -80,35 +78,33 @@ function handleGet($conn, $managerBlock) {
         throw new Exception('Không tìm thấy phòng nào');
     }
 
-    // Get revenue data for this period
     $revenueData = [];
-    
+
     $placeholders = str_repeat('?,', count($rooms) - 1) . '?';
     $revenueQuery = "SELECT ROOM_ID, ELEC, WATER, OTHER, NOTE 
                      FROM REVENUE 
                      WHERE BLOCK_ID = ? AND REV_YEAR = ? AND REV_MONTH = ? 
                      AND ROOM_ID IN ($placeholders)";
-    
+
     $stmt = mysqli_prepare($conn, $revenueQuery);
-    
+
     // Bind parameters
     $types = 'sii' . str_repeat('s', count($rooms));
     $params = array_merge([$block, $year, $month], $rooms);
     mysqli_stmt_bind_param($stmt, $types, ...$params);
-    
+
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
-    
+
     while ($row = mysqli_fetch_assoc($result)) {
         $revenueData[$row['ROOM_ID']] = [
-            'elec' => (int)$row['ELEC'],
-            'water' => (int)$row['WATER'],
-            'other' => (int)$row['OTHER'],
+            'elec' => (int) $row['ELEC'],
+            'water' => (int) $row['WATER'],
+            'other' => (int) $row['OTHER'],
             'note' => $row['NOTE'] ?? ''
         ];
     }
 
-    // Fill in empty data for rooms without records
     foreach ($rooms as $room) {
         if (!isset($revenueData[$room])) {
             $revenueData[$room] = [
@@ -125,15 +121,15 @@ function handleGet($conn, $managerBlock) {
         'data' => $revenueData,
         'unitPrices' => $unitPrices,
         'period' => [
-            'year' => (int)$year,
-            'month' => (int)$month
+            'year' => (int) $year,
+            'month' => (int) $month
         ],
         'rooms' => $rooms
     ]);
 }
 
-// ============ HANDLE POST - Save revenue data ============
-function handlePost($conn, $managerBlock, $input) {
+function handlePost($conn, $managerBlock, $input)
+{
     $action = $input['action'] ?? '';
 
     if ($action === 'save') {
@@ -143,14 +139,14 @@ function handlePost($conn, $managerBlock, $input) {
     }
 }
 
-function handleSave($conn, $managerBlock, $input) {
+function handleSave($conn, $managerBlock, $input)
+{
     $year = $input['year'] ?? 0;
     $month = $input['month'] ?? 0;
     $block = $input['block'] ?? '';
     $data = $input['data'] ?? [];
     $sendNotification = $input['sendNotification'] ?? false;
 
-    // Validate
     if (!$year || !$month || !$block) {
         throw new Exception('Thiếu thông tin năm/tháng/tòa');
     }
@@ -163,7 +159,6 @@ function handleSave($conn, $managerBlock, $input) {
         throw new Exception('Không có dữ liệu để lưu');
     }
 
-    // Start transaction
     mysqli_begin_transaction($conn);
 
     try {
@@ -178,17 +173,17 @@ function handleSave($conn, $managerBlock, $input) {
         $insertQuery = "INSERT INTO REVENUE 
                         (REV_YEAR, REV_MONTH, BLOCK_ID, ROOM_ID, ELEC, WATER, OTHER, NOTE) 
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = mysqli_prepare($conn, $insertQuery);
 
         foreach ($data as $roomId => $roomData) {
-            $elec = (int)($roomData['elec'] ?? 0);
-            $water = (int)($roomData['water'] ?? 0);
-            $other = (int)($roomData['other'] ?? 0);
+            $elec = (int) ($roomData['elec'] ?? 0);
+            $water = (int) ($roomData['water'] ?? 0);
+            $other = (int) ($roomData['other'] ?? 0);
             $note = $roomData['note'] ?? '';
 
             mysqli_stmt_bind_param(
-                $stmt, 
+                $stmt,
                 "iissiiis",
                 $year,
                 $month,
@@ -205,7 +200,6 @@ function handleSave($conn, $managerBlock, $input) {
             }
         }
 
-        // If sendNotification is true, create notification
         if ($sendNotification) {
             // Get manager ID
             $mngQuery = "SELECT MNG_ID FROM MANAGER 
@@ -214,14 +208,14 @@ function handleSave($conn, $managerBlock, $input) {
             mysqli_stmt_bind_param($stmt, "is", $_SESSION['user_id'], $block);
             mysqli_stmt_execute($stmt);
             $result = mysqli_stmt_get_result($stmt);
-            
+
             if ($row = mysqli_fetch_assoc($result)) {
                 $managerId = $row['MNG_ID'];
-                
+
                 // Create notification
                 $title = "Thông báo thu phí tháng {$month}/{$year}";
                 $content = "Hóa đơn điện nước tháng {$month}/{$year} đã được cập nhật. Vui lòng kiểm tra và thanh toán đúng hạn.";
-                
+
                 $notiQuery = "INSERT INTO NOTI (TITLE, CONTENT, NOTI_DATE, MNG_ID) 
                               VALUES (?, ?, NOW(), ?)";
                 $stmt = mysqli_prepare($conn, $notiQuery);
@@ -230,13 +224,12 @@ function handleSave($conn, $managerBlock, $input) {
             }
         }
 
-        // Commit transaction
         mysqli_commit($conn);
 
         echo json_encode([
             'success' => true,
-            'message' => $sendNotification 
-                ? 'Đã lưu và gửi thông báo thành công' 
+            'message' => $sendNotification
+                ? 'Đã lưu và gửi thông báo thành công'
                 : 'Đã lưu tạm hóa đơn',
             'notification_sent' => $sendNotification
         ]);

@@ -36,7 +36,7 @@
       }
       sort($itemTypes);
 
-      $stdQuery = "SELECT * FROM STUDENT WHERE BLOCK_ID = ?";
+      $stdQuery = "SELECT * FROM STUDENT S JOIN CONTRACT C ON S.STD_ID = C.STD_ID WHERE C.STATUS = 'Active' AND BLOCK_ID = ?";
       $stmtStd = $conn->prepare($stdQuery);
       $stmtStd->bind_param("s", $managerBlock);
       $stmtStd->execute();
@@ -68,8 +68,9 @@
 
 <script>
   window.APP_DATA = {
-      raw_facilities: <?= json_encode($raw_facilities) ?>,
-      students: <?= json_encode($roomStudents) ?>
+    managerBlock: <?php echo json_encode($managerBlock); ?>,
+    raw_facilities: <?= json_encode($raw_facilities) ?>,
+    students: <?= json_encode($roomStudents) ?>
   };
 </script>
 

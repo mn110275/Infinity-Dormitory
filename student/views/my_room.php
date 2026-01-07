@@ -14,9 +14,10 @@ try {
         mysqli_set_charset($conn, "utf8mb4");
         
         // Lấy thông tin phòng hiện tại của sinh viên
-        $roomQuery = "SELECT s.BLOCK_ID, s.ROOM_ID, r.CAPACITY, r.OCCUPIED, r.GENDER
+        $roomQuery = "SELECT C.BLOCK_ID, C.ROOM_ID, r.CAPACITY, r.OCCUPIED, r.GENDER
                       FROM STUDENT s
-                      LEFT JOIN ROOM r ON s.BLOCK_ID = r.BLOCK_ID AND s.ROOM_ID = r.ROOM_ID
+                      JOIN CONTRACT C ON s.STD_ID = C.STD_ID
+                      LEFT JOIN ROOM r ON C.BLOCK_ID = r.BLOCK_ID AND C.ROOM_ID = r.ROOM_ID
                       WHERE s.USER_ID = ?";
         
         $stmt = mysqli_prepare($conn, $roomQuery);
@@ -29,8 +30,9 @@ try {
             
             // Lấy danh sách tất cả sinh viên trong phòng (bao gồm cả sinh viên đang xét)
             if (!empty($row['BLOCK_ID']) && !empty($row['ROOM_ID'])) {
-                $roommatesQuery = "SELECT STD_ID, STD_NAME, STD_DOB, STD_GD, STD_PHONE, STD_IMG, USER_ID
-                                   FROM STUDENT
+                $roommatesQuery = "SELECT S.STD_ID, STD_NAME, STD_DOB, STD_GD, STD_PHONE, STD_IMG, USER_ID
+                                   FROM STUDENT S
+                                   JOIN CONTRACT C ON C.STD_ID = S.STD_ID
                                    WHERE BLOCK_ID = ? AND ROOM_ID = ?
                                    ORDER BY STD_NAME";
                 

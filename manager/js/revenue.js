@@ -64,52 +64,39 @@ const RevenueManager = {
     }
   },
 
-  async createNewRevenue(year, month)
-  {
-    if (confirm(`Tạo/Cập nhật hóa đơn cho tháng ${month}/${year}?`))
-    {
-      try
-      {
-        // Load nếu có
-        const response = await fetch(`api/revenue_api.php?year=${year}&month=${month}&block=${this.data.block}`);
-        const result = await response.json();
+  async createNewRevenue(year, month) {
+    try {
+      const response = await fetch(`api/revenue_api.php?year=${year}&month=${month}&block=${this.data.block}`);
+      const result = await response.json();
 
-        this.currentPeriod = {
-          year,
-          month
-        };
+      if (!result.unitPrices || !result.unitPrices.elec || !result.unitPrices.water) {
+        alert(`Tháng ${month}/${year} chưa được Admin cập nhật đơn giá.\nVui lòng liên hệ Admin trước khi tạo hóa đơn.`);
+        return;
+      }
+
+      // Nếu đã có đơn giá thì tạo
+      if (confirm(`Tạo mới/cập nhật hóa đơn cho tháng ${month}/${year}?`)) {
+        this.currentPeriod = { year, month };
         this.currentMode = 'create';
+        this.data.unitPrices = {
+          ELEC: result.unitPrices.elec,
+          WATER: result.unitPrices.water
+        };
 
-        if (result.success && Object.keys(result.data).length > 0)
-        {
-          // Nếu có
+        if (result.success && Object.keys(result.data).length > 0) {
           this.revenueData = result.data;
-          this.data.unitPrices = {
-            ELEC: result.unitPrices.elec,
-            WATER: result.unitPrices.water
-          };
-        }
-        else
-        {
-          // Nếu không có thì tạo mới
+        } else {
           this.revenueData = {};
-          this.data.rooms.forEach(roomId =>
-          {
-            this.revenueData[roomId] = {
-              elec: 0,
-              water: 0,
-              other: 0,
-              note: ''
-            };
+          this.data.rooms.forEach(roomId => {
+            this.revenueData[roomId] = { elec: 0, water: 0, other: 0, note: '' };
           });
         }
 
         this.renderTable(true);
       }
-      catch (error)
-      {
-        alert('Không thể kiểm tra dữ liệu cũ. Vui lòng thử lại.');
-      }
+    } catch (error) {
+      console.error(error);
+      alert('Lỗi kết nối server hoặc lỗi hệ thống.');
     }
   },
 
@@ -127,7 +114,10 @@ const RevenueManager = {
     let html = `
       <div class="revenue-header-actions">
           <h3>Hóa đơn tháng ${month}/${year}</h3>
-          ${!editable ? `<button id="btnEditMode" class="btn btn-primary">Chỉnh sửa</button>` : ''}
+          ${!editable ? `<button id="btnEditMode" class="btn btn-primary">Chỉnh sửa hóa đơn</button>` 
+                : `<button id="btnSaveDraft" class="btn btn-secondary">Lưu tạm</button>
+                   <button id="btnSaveAndNotify" class="btn btn-success">Lưu & Gửi thông báo</button>`
+          }
       </div>
       <table class="revenue-table">
           <thead>

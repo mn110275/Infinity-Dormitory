@@ -13,16 +13,16 @@ try {
   if ($conn) {
     mysqli_set_charset($conn, "utf8mb4");
 
-    // Truy vấn lấy thông báo dựa trên Block của sinh viên
-    // Cấu trúc: STUDENT -> ROOM -> BLOCK -> MANAGER -> NOTI
-    $query = "SELECT n.NOTI_ID, n.TITLE, n.CONTENT, n.NOTI_DATE, m.MNG_NAME, r.BLOCK_ID
-                    FROM NOTI n
-                    JOIN MANAGER m ON n.MNG_ID = m.MNG_ID
-                    JOIN ROOM r ON r.BLOCK_ID = m.MNG_BLOCK
-                    JOIN STUDENT s ON s.ROOM_ID = r.ROOM_ID
-                    WHERE s.USER_ID = ?
-                    GROUP BY n.NOTI_ID
-                    ORDER BY n.NOTI_DATE DESC";
+    $query = "SELECT 
+                n.NOTI_ID, n.TITLE, n.CONTENT, n.NOTI_DATE, 
+                m.MNG_NAME, c.BLOCK_ID
+              FROM NOTI n
+              JOIN MANAGER m ON n.MNG_ID = m.MNG_ID
+              JOIN CONTRACT c ON c.BLOCK_ID = m.MNG_BLOCK
+              JOIN STUDENT s ON s.STD_ID = c.STD_ID
+              WHERE s.USER_ID = ? 
+                AND c.STATUS = 'Active'
+              ORDER BY n.NOTI_DATE DESC";
 
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "i", $userId);
@@ -30,8 +30,22 @@ try {
     $result = mysqli_stmt_get_result($stmt);
 
     while ($row = mysqli_fetch_assoc($result)) {
-      $notifications[] = $row;
-      $studentBlock = $row['BLOCK_ID'];
+        $notifications[] = $row;
+    }
+
+    if (!empty($notifications)) {
+        $studentBlock = $notifications[0]['BLOCK_ID'];
+    } else {
+        $checkBlock = "SELECT BLOCK_ID FROM CONTRACT c 
+                       JOIN STUDENT s ON s.STD_ID = c.STD_ID 
+                       WHERE s.USER_ID = ? AND c.STATUS = 'Active' LIMIT 1";
+        $st = mysqli_prepare($conn, $checkBlock);
+        mysqli_stmt_bind_param($st, "i", $userId);
+        mysqli_stmt_execute($st);
+        $resBlock = mysqli_stmt_get_result($st);
+        if($r = mysqli_fetch_assoc($resBlock)) {
+            $studentBlock = $r['BLOCK_ID'];
+        }
     }
   }
 } catch (Exception $e) {

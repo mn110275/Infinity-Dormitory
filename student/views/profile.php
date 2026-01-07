@@ -59,8 +59,9 @@ try {
   if ($conn) {
     mysqli_set_charset($conn, "utf8mb4");
 
-    $query = "SELECT s.*, u.EMAIL, u.EMAIL_VERIFIED_AT
+    $query = "SELECT s.*, C.ROOM_ID, C.BLOCK_ID, u.EMAIL, u.EMAIL_VERIFIED_AT
                   FROM STUDENT s
+                  JOIN CONTRACT C ON S.STD_ID = C.STD_ID
                   INNER JOIN USERS u ON s.USER_ID = u.USER_ID
                   WHERE s.USER_ID = ?";
 
@@ -85,15 +86,15 @@ try {
 <h2>Thông tin cá nhân</h2>
 
 <?php if ($success): ?>
-  <div class="alert alert-success">
-    Cập nhật thông tin thành công!
-  </div>
+  <script>
+    alert("Cập nhật thông tin thành công!");
+  </script>
 <?php endif; ?>
 
 <?php if ($error): ?>
-  <div class="alert alert-error">
-    Lỗi: <?= htmlspecialchars($error) ?>
-  </div>
+<script>
+    alert("Lỗi: <?= addslashes(htmlspecialchars($error)) ?>");
+</script>
 <?php endif; ?>
 
 <?php if ($student): ?>
