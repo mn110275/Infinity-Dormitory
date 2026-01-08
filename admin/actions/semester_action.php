@@ -23,10 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
         echo '<table style="width:100%; border-collapse: collapse; font-size: 14px;">';
         echo '<thead style="background:#f9fafb;">
                 <tr>
-                    <th style="padding:15px; text-align:left; border-bottom:2px solid #edf2f7; color:#4a5568;">Phòng</th>
-                    <th style="padding:15px; text-align:left; border-bottom:2px solid #edf2f7; color:#4a5568;">MSSV</th>
-                    <th style="padding:15px; text-align:left; border-bottom:2px solid #edf2f7; color:#4a5568;">Họ tên</th>
-                    <th style="padding:15px; text-align:left; border-bottom:2px solid #edf2f7; color:#4a5568;">Trạng thái</th>
+                    <th style="padding:15px; font-size: 16px; text-align:center; border-bottom:2px solid #edf2f7; color:#4a5568;">Phòng</th>
+                    <th style="padding:15px; font-size: 16px; text-align:center; border-bottom:2px solid #edf2f7; color:#4a5568;">MSSV</th>
+                    <th style="padding:15px; font-size: 16px; text-align:center; border-bottom:2px solid #edf2f7; color:#4a5568;">Họ tên</th>
+                    <th style="padding:15px; font-size: 16px; text-align:center; border-bottom:2px solid #edf2f7; color:#4a5568;">Trạng thái</th>
                 </tr>
               </thead><tbody>';
         while ($row = mysqli_fetch_assoc($result)) {
@@ -43,17 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['act
             $color = $statusMap[$statusRaw]['color'] ?? '#000';
 
             echo "<tr>
-                    <td style='padding:12px 15px; border-bottom:1px solid #edf2f7; font-weight:600;'>{$row['BLOCK_ID']}{$row['ROOM_ID']}</td>
-                    <td style='padding:12px 15px; border-bottom:1px solid #edf2f7;'>{$row['STD_ID']}</td>
-                    <td style='padding:12px 15px; border-bottom:1px solid #edf2f7;'>{$row['STD_NAME']}</td>
-                    <td style='padding:12px 15px; border-bottom:1px solid #edf2f7;'>
-                        <span style='color:{$color}; font-weight:bold; font-size:12px; text-transform:uppercase;'>{$label}</span>
+                    <td style='padding:12px 15px; font-size: 16px; text-align:center; border-bottom:1px solid #edf2f7; font-weight:600;'>{$row['BLOCK_ID']}{$row['ROOM_ID']}</td>
+                    <td style='padding:12px 15px; font-size: 16px; text-align:center; border-bottom:1px solid #edf2f7;'>{$row['STD_ID']}</td>
+                    <td style='padding:12px 15px; font-size: 16px; text-align:center; border-bottom:1px solid #edf2f7;'>{$row['STD_NAME']}</td>
+                    <td style='padding:12px 15px; font-size: 16px; text-align:center; border-bottom:1px solid #edf2f7;'>
+                        <span style='color:{$color}; font-weight:bold; font-size:16px; text-transform:uppercase;'>{$label}</span>
                     </td>
                   </tr>";
         }
         echo '</tbody></table>';
     } else {
-        echo '<div style="text-align:center; color:#94a3b8; padding:40px;">Học kỳ này chưa có danh sách sinh viên hoặc hợp đồng.</div>';
+        echo '<div style="text-align:center; font-size: 16px; color:#94a3b8; padding:40px;">Học kỳ này chưa có danh sách sinh viên hoặc hợp đồng.</div>';
     }
     exit;
 }

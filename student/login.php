@@ -14,8 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$user) {
         $error = "Sai email hoặc mật khẩu, vui lòng thử lại.";
     } else {
-      $sql = "SELECT *
-                FROM STUDENT 
+      $sql = "SELECT S.*, C.BLOCK_ID
+                FROM STUDENT S
+                JOIN CONTRACT C ON S.STD_ID = C.STD_ID
                 WHERE USER_ID = ?
                 LIMIT 1";
       
@@ -33,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $_SESSION['user_id'] = $user['USER_ID'];
           $_SESSION['email'] = $email;
           $_SESSION['name'] = $student['STD_NAME'];
+          $_SESSION['block'] = $student['BLOCK_ID'];
 
           header("Location: home.php");
           exit;

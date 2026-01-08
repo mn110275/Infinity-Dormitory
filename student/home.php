@@ -1,19 +1,128 @@
 <?php
 session_start();
+require '../database_connection.php';
 require_once __DIR__ . '/../auth/require_role.php';
 requireRole('student');
 
 $student_name = $_SESSION['name'];
+// Lấy mã tòa từ session cho sinh viên
+$studentBlock = $_SESSION['block'] ?? 'N/A';
 ?>
 
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trang chủ Sinh viên</title>
+  <title>InfiDorm | Trang chủ Sinh viên</title>
   <link rel="stylesheet" href="../css/public.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    h1,
+    h3,
+    .badge,
+    strong,
+    b,
+    .nav a {
+      font-weight: 700 !important;
+    }
+
+    .hero-banner {
+      height: 350px;
+      background: linear-gradient(rgba(30, 41, 59, 0.7), rgba(30, 41, 59, 0.7)),
+        url('https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+
+    .hero-content h1 {
+      font-size: 42px;
+      margin: 0;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-content p {
+      font-size: 20px;
+      opacity: 0.9;
+      margin-top: 10px;
+      font-weight: 400 !important;
+    }
+
+    .menu-container {
+      max-width: 1000px;
+      margin: -50px auto 50px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+
+    .menu-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+    }
+
+    .menu-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 35px rgba(166, 102, 234, 0.2);
+      color: #b878d3ff;
+    }
+
+    .card-img {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card-body {
+      padding: 30px;
+    }
+
+    .card-body h3 {
+      margin: 0;
+      font-size: 24px;
+      color: var(--text);
+    }
+
+    .card-body p {
+      color: #7f648bff;
+      margin-top: 10px;
+      line-height: 1.6;
+      font-weight: 400 !important;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: #f1f5f9;
+      color: #ae5cd1ff;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .menu-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <header class="nav">
     <a href="home.php" style="font-style: italic; font-size: 30px;">Infinity Dormitory</a>
@@ -22,9 +131,36 @@ $student_name = $_SESSION['name'];
     <a href="../logout.php">Đăng xuất</a>
   </header>
 
-  <main class="container">
-    <h1>Xin chào, <?php echo htmlspecialchars($student_name); ?>!</h1>
+  <section class="hero-banner">
+    <div class="hero-content">
+      <h1>Chào mừng đến với InfiDorm!</h1>
+    </div>
+  </section>
 
+  <main class="menu-container">
+    <a href="dashboard.php?view=profile" class="menu-card">
+      <div class="card-img"
+        style="background-image: url('https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=600&q=80');">
+      </div>
+      <div class="card-body">
+        <span class="badge">Hồ sơ</span>
+        <h3>Thông tin cá nhân</h3>
+        <p>Xem thông tin chi tiết về hợp đồng, cập nhật thông tin liên hệ và quản lý hồ sơ sinh viên cá nhân của bạn.
+        </p>
+      </div>
+    </a>
+
+    <a href="dashboard.php" class="menu-card">
+      <div class="card-img"
+        style="background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80');">
+      </div>
+      <div class="card-body">
+        <span class="badge">Hệ thống</span>
+        <h3>Danh mục quản lý</h3>
+        <p>Kiểm tra thông báo từ quản lý tòa nhà, xem sơ đồ phòng ở và tình trạng cơ sở vật chất của bạn.</p>
+      </div>
+    </a>
   </main>
 </body>
+
 </html>

@@ -57,7 +57,7 @@
 
 /* Hàng 1: Phòng */
 .room-header {
-  cursor: help;
+  cursor: pointer;
   transition: background 0.2s;
   min-width: 100px;
 }

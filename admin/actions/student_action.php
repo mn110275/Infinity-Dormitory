@@ -19,22 +19,26 @@ try {
 
     $semRes = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE SEM_STATUS = 'Active' LIMIT 1");
     $currentSem = mysqli_fetch_assoc($semRes);
-    if (!$currentSem) throw new Exception('Chưa thiết lập học kỳ hiện tại');
+    if (!$currentSem)
+        throw new Exception('Chưa thiết lập học kỳ hiện tại');
     $semId = $currentSem['SEM_ID'];
 
     switch ($input['action']) {
         case 'delete_student':
             $std_id = $input['std_id'];
-            
-            $stmt = mysqli_prepare($conn,
-              " UPDATE STUDENT 
+
+            $stmt = mysqli_prepare(
+                $conn,
+                " UPDATE STUDENT 
                 SET IS_ACTIVE = 0
                 WHERE STD_ID = ?
-            ");
+            "
+            );
             mysqli_stmt_bind_param($stmt, "s", $std_id);
             mysqli_stmt_execute($stmt);
 
-            $stmt = mysqli_prepare($conn, 
+            $stmt = mysqli_prepare(
+                $conn,
                 "UPDATE CONTRACT 
                 SET STATUS = 'Terminated' 
                 WHERE STD_ID = ? AND SEM_ID = ? AND STATUS = 'Active'"
@@ -44,10 +48,11 @@ try {
 
             $resNext = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE SEM_STATUS = 'Upcoming' LIMIT 1");
             $nextSem = mysqli_fetch_assoc($resNext);
-            
+
             if ($nextSem) {
                 $nextSemId = $nextSem['SEM_ID'];
-                $stmtDeleteUpcoming = mysqli_prepare($conn, 
+                $stmtDeleteUpcoming = mysqli_prepare(
+                    $conn,
                     "DELETE FROM CONTRACT 
                     WHERE STD_ID = ? AND SEM_ID = ? AND STATUS = 'Upcoming'"
                 );
@@ -64,7 +69,7 @@ try {
             $phone = $input['phone'];
             $adr = $input['adr'];
             $newBlock = $input['block_id'] ?? null;
-            $newRoom  = $input['room_id'] ?? null;
+            $newRoom = $input['room_id'] ?? null;
 
             // 1. Cập nhật thông tin cơ bản
             $stmt = mysqli_prepare($conn, "
@@ -95,7 +100,7 @@ try {
                 }
             }
             break;
-        
+
         case 'bulk_mark_renewal':
             if (!isset($input['list']) || !is_array($input['list'])) {
                 throw new Exception('Dữ liệu gia hạn không hợp lệ');
@@ -107,8 +112,8 @@ try {
             $nextSemId = $nextSem ? $nextSem['SEM_ID'] : null;
 
             foreach ($input['list'] as $item) {
-                $is_marked = (int)$item['is_marked'];
-                $std_id = $item['std_id'];  
+                $is_marked = (int) $item['is_marked'];
+                $std_id = $item['std_id'];
 
                 if ($nextSemId) {
                     if ($is_marked === 1) {
@@ -138,8 +143,10 @@ try {
     $message = ($e->getSqlState() === '45000') ? $e->getMessage() : 'Lỗi cơ sở dữ liệu hệ thống';
     echo json_encode(['status' => 'error', 'message' => $message]);
 } catch (Exception $e) {
-    if (isset($conn)) mysqli_rollback($conn);
+    if (isset($conn))
+        mysqli_rollback($conn);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 } finally {
-    if (isset($conn)) mysqli_close($conn);
+    if (isset($conn))
+        mysqli_close($conn);
 }

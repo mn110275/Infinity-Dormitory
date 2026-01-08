@@ -60,11 +60,11 @@ try {
 }
 ?>
 
-<div class="semester-wrapper">
+
     <div class="semester-header">
         <h2 class="title">Cấu hình Học kỳ</h2>
         <div class="current-date">
-            <span class="label">Ngày hệ thống</span>
+            <span class="label">Hôm nay</span>
             <span class="value"><?= date('d/m/Y') ?></span>
         </div>
     </div>
@@ -73,7 +73,7 @@ try {
         
         <div class="card cur-sem shadow-sm ">
             <div class="status-banner">
-                <span class="badge">Học kỳ đang vận hành</span>
+                <span class="badge">Học kỳ hiện tại</span>
                 <?php if ($currentSem): ?>
                     <div class="sem-display-id"><?= htmlspecialchars($currentSem['SEM_ID']) ?></div>
                     <div class="sem-date-range">
@@ -108,7 +108,6 @@ try {
             <?php if ($upcomingSem): ?>
                 <div class="upcoming-info">
                     <h3 class="section-title">Thông tin kỳ học kế tiếp</h3>
-                    <p class="section-desc">Hệ thống đã được thiết lập để chuyển tiếp sang kỳ mới theo lịch trình sau:</p>
                     
                     <div class="details-list">
                         <div class="detail-item">
@@ -126,8 +125,8 @@ try {
                     </div>
 
                     <div class="actions-group">
-                        <button onclick="SemesterAdmin.editUpcoming('<?= $upcomingSem['SEM_ID'] ?>', '<?= $upcomingSem['ENDDATE'] ?>')" class="btn btn-secondary">Điều chỉnh ngày</button>
-                        <button onclick="SemesterAdmin.deleteUpcoming('<?= $upcomingSem['SEM_ID'] ?>')" class="btn btn-secondary text-danger">Hủy bỏ kế hoạch</button>
+                        <button onclick="SemesterAdmin.editUpcoming('<?= $upcomingSem['SEM_ID'] ?>', '<?= $upcomingSem['ENDDATE'] ?>')" class="btn">Điều chỉnh ngày</button>
+                        <button onclick="SemesterAdmin.deleteUpcoming('<?= $upcomingSem['SEM_ID'] ?>')" class="btn btn-danger">Hủy bỏ kế hoạch</button>
                     </div>
                 </div>
 
@@ -160,7 +159,7 @@ try {
 
     <div class="card shadow-sm mt-30">
         <div class="history-header">
-            <h3 class="section-title no-margin flex-title">Lịch sử dữ liệu theo kỳ</h3>
+            <h2>Lịch sử dữ liệu theo kỳ</h2>
 
             <div class="header-controls">
                 <button id="btnExportExcel" class="btn btn-success" style="display: none;" onclick="SemesterAdmin.exportToExcel()">
@@ -187,6 +186,5 @@ try {
             </div>
         </div>
     </div>
-</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>

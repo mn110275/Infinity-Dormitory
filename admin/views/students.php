@@ -94,15 +94,14 @@ while ($row = mysqli_fetch_assoc($result)) {
   <div class="alert alert-info">Chưa có sinh viên nào trong hệ thống.</div>
 <?php else: ?>
   <div class="table-controls" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-      <button type="button" class="btn btn-secondary" id="btnToggleEditRenewal" onclick="StudentAdmin.toggleRenewalMode()">
+      <button type="button" class="btn btn-primary" id="btnToggleEditRenewal" onclick="StudentAdmin.toggleRenewalMode()">
           Mở chế độ gia hạn
       </button>
       
       <div id="renewalActions" style="display: none; gap: 10px;">
-          <button type="button" class="btn btn-success" onclick="StudentAdmin.saveRenewalChanges()">
-              Lưu thay đổi
-          </button>
-          <span class="text-muted">Đã chọn: <b id="selectedCount">0</b></span>
+        <button type="button" class="btn btn-success" onclick="StudentAdmin.saveRenewalChanges()">
+            Lưu thay đổi
+        </button>
       </div>
   </div>
 
@@ -110,12 +109,13 @@ while ($row = mysqli_fetch_assoc($result)) {
     <table class="table student-table" id="studentTable">
       <thead>
         <tr>
-          <th class="col-renewal" style="display: none;">
-              <div class="th-content no-sort" style="justify-content: center;">
+          <th class="col-renewal" style="display: none; text-align: center;">
+              <div class="th-content no-sort" style="justify-content: center; flex-direction: column; gap: 5px;">
                   <span>Gia hạn</span>
+                  <input type="checkbox" id="selectAllRenewal" onclick="StudentAdmin.toggleSelectAll(this)">
               </div>
           </th>
-          <th style="width: 100px">
+          <th style="width: 130px">
             <div class="th-content" data-col="0">
               <span>Phòng</span>
               <span class="sort-icon">⇅</span>
@@ -129,28 +129,28 @@ while ($row = mysqli_fetch_assoc($result)) {
             </div>
             <input type="text" class="col-search" data-col="1" placeholder="Tìm tên...">
           </th>
-          <th style="width: 110px">
+          <th style="width: 130px">
             <div class="th-content" data-col="2">
               <span>MSSV</span>
               <span class="sort-icon">⇅</span>
             </div>
             <input type="text" class="col-search" data-col="2" placeholder="Tìm MSSV...">
           </th>
-          <th style="width: 110px">
+          <th style="width: 150px">
             <div class="th-content" data-col="3">
               <span>Ngày sinh</span>
               <span class="sort-icon">⇅</span>
             </div>
             <input type="text" class="col-search" data-col="3" placeholder="Tìm ngày...">
           </th>
-          <th style="width: 110px">
+          <th style="width: 150px">
             <div class="th-content" data-col="4">
               <span>Điện thoại</span>
               <span class="sort-icon">⇅</span>
             </div>
             <input type="text" class="col-search" data-col="4" placeholder="Tìm SĐT...">
           </th>
-          <th style="width: 130px">
+          <th style="width: 300px">
             <div class="th-content" data-col="5">
               <span>Địa chỉ</span>
               <span class="sort-icon">⇅</span>

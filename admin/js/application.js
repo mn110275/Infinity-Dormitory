@@ -30,12 +30,16 @@ const ApplicationAdmin = {
         
         table.classList.add(`view-${status}`);
         
+        // Đoạn này đặt bên trong hàm switchView(status, btnEl)
         document.querySelectorAll('.toggle-view').forEach(btn => {
-            btn.classList.remove('active', 'btn-primary');
-            btn.classList.add('btn-outline');
+            // Xóa trạng thái active và đưa tất cả về màu xám (secondary)
+            btn.classList.remove('active', 'btn-pro');
+            btn.classList.add('btn-secondary');
         });
-        btnEl.classList.add('active', 'btn-primary');
-        btnEl.classList.remove('btn-outline');
+
+        // Kích hoạt nút vừa được click thành màu chính (pro)
+        btnEl.classList.add('active', 'btn-pro');
+        btnEl.classList.remove('btn-secondary');
 
         if (typeof this.filter === 'function') this.filter();
     },

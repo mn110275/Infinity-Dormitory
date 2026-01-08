@@ -77,7 +77,7 @@ if ($conn) {
                         <div class="th-content" data-col="1"><span>Họ tên</span><span class="sort-icon">⇅</span></div>
                         <input class="col-search" data-col="1" placeholder="Tên...">
                     </th>
-                    <th style="width:100px">
+                    <th style="width:200px">
                         <div class="th-content" data-col="2"><span>Giới tính</span><span class="sort-icon">⇅</span></div>
                         <input class="col-search" data-col="2" placeholder="GĐ...">
                     </th>
@@ -85,7 +85,7 @@ if ($conn) {
                         <div class="th-content" data-col="3"><span>Email</span><span class="sort-icon">⇅</span></div>
                         <input class="col-search" data-col="3" placeholder="Email...">
                     </th>
-                    <th style="width:100px">
+                    <th style="width:200px">
                         <div class="th-content" data-col="4"><span>Quản lý tòa</span><span class="sort-icon">⇅</span></div>
                         <input class="col-search" data-col="4" placeholder="Tòa...">
                     </th>

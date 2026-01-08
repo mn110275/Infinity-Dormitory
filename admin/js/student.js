@@ -1,5 +1,5 @@
 const StudentAdmin = {
-  data: [], 
+  data: [],
   table: null,
   rows: [],
   isRenewalMode: false,
@@ -10,8 +10,7 @@ const StudentAdmin = {
     body: null
   },
 
-  init()
-  {
+  init() {
     this.table = document.getElementById('studentTable');
     if (!this.table) return;
 
@@ -29,12 +28,11 @@ const StudentAdmin = {
     required: false
   },
 
-  currentRoomGender: null, 
+  currentRoomGender: null,
   currentRoomId: null,
   currentBlockId: null,
 
-  createPopups()
-  {
+  createPopups() {
     if (document.getElementById('studentProfileModal')) return;
 
     const sm = document.createElement('div');
@@ -49,44 +47,38 @@ const StudentAdmin = {
     this.el.stdModal = sm;
   },
 
-  bindEvents()
-  {
-    this.table.querySelectorAll('.th-content').forEach(el =>
-    {
+  bindEvents() {
+    this.table.querySelectorAll('.th-content').forEach(el => {
       if (el.classList.contains('no-sort')) return;
       el.onclick = () => this.sort(parseInt(el.dataset.col), el);
     });
 
-    this.table.querySelectorAll('.col-search').forEach(input =>
-    {
+    this.table.querySelectorAll('.col-search').forEach(input => {
       input.oninput = () => this.filter();
     });
 
-    this.rows.forEach(row =>
-    {
+    this.rows.forEach(row => {
       row.style.cursor = 'pointer';
-      row.onclick = (e) =>
-      {
+      row.onclick = (e) => {
         if (e.target.closest('.col-renewal') || e.target.classList.contains('renewal-cb')) return;
         if (e.target.closest('.col-search')) return;
         this.showStudentProfile(row.dataset.id);
       };
     });
 
-    window.onclick = (e) =>
-    {
+    window.onclick = (e) => {
       if (e.target === this.el.stdModal) this.closeModal();
     };
   },
 
   toggleRenewalMode() {
     if (this.isRenewalMode) {
-        if (this.hasRenewalChanges()) {
-            if (!confirm("Các thay đổi chưa được lưu sẽ bị hủy. Bạn có chắc chắn muốn thoát?")) {
-                return;
-            }
+      if (this.hasRenewalChanges()) {
+        if (!confirm("Các thay đổi chưa được lưu sẽ bị hủy. Bạn có chắc chắn muốn thoát?")) {
+          return;
         }
-        this.resetRenewalCheckboxes();
+      }
+      this.resetRenewalCheckboxes();
     }
 
     this.isRenewalMode = !this.isRenewalMode;
@@ -96,13 +88,13 @@ const StudentAdmin = {
     const btn = document.getElementById('btnToggleEditRenewal');
 
     const displayVal = this.isRenewalMode ? 'table-cell' : 'none';
-    
+
     cols.forEach(c => c.style.display = displayVal);
     if (thRenewal) thRenewal.style.display = displayVal;
-    
+
     actionDiv.style.display = this.isRenewalMode ? 'flex' : 'none';
     btn.innerHTML = this.isRenewalMode ? 'Thoát chế độ gia hạn' : 'Mở chế độ gia hạn';
-    
+
     if (this.isRenewalMode) this.updateCounter();
   },
 
@@ -115,29 +107,28 @@ const StudentAdmin = {
   hasRenewalChanges() {
     const checkboxes = document.querySelectorAll('.renewal-cb');
     for (let cb of checkboxes) {
-        const student = this.data.find(s => s.STD_ID == cb.value);
-        if (student) {
-            const originalStatus = !!parseInt(student.is_renewed); 
-            if (cb.checked !== originalStatus) return true;
-        }
+      const student = this.data.find(s => s.STD_ID == cb.value);
+      if (student) {
+        const originalStatus = !!parseInt(student.is_renewed);
+        if (cb.checked !== originalStatus) return true;
+      }
     }
     return false;
-},
+  },
 
-resetRenewalCheckboxes() {
+  resetRenewalCheckboxes() {
     const checkboxes = document.querySelectorAll('.renewal-cb');
     checkboxes.forEach(cb => {
-        const student = this.data.find(s => s.STD_ID == cb.value);
-        if (student) {
-            cb.checked = !!parseInt(student.is_renewed);
-        }
+      const student = this.data.find(s => s.STD_ID == cb.value);
+      if (student) {
+        cb.checked = !!parseInt(student.is_renewed);
+      }
     });
     this.updateCounter();
-},
+  },
 
   // 4. HIỂN THỊ PROFILE
-  showStudentProfile(stdId)
-  {
+  showStudentProfile(stdId) {
     const s = this.data.find(item => item.STD_ID == stdId);
     if (!s) return;
 
@@ -249,7 +240,7 @@ resetRenewalCheckboxes() {
       this.roomChange.selectedRoom = null;
       document.querySelectorAll('.block-card, .room-card')
         .forEach(el => el.classList.remove('active'));
-        
+
       this.checkGenderRoomMatch();
 
       if (this.roomChange.active && this.roomChange.selectedBlock) {
@@ -262,10 +253,10 @@ resetRenewalCheckboxes() {
         this.renderBlocks();
 
         if (this.roomChange.selectedBlock) {
-        this.renderRooms(this.roomChange.selectedBlock);
-      } else {
-        document.getElementById('roomSelector').innerHTML = '';
-      }
+          this.renderRooms(this.roomChange.selectedBlock);
+        } else {
+          document.getElementById('roomSelector').innerHTML = '';
+        }
       } else {
         this.roomChange.active = false;
         document.getElementById('roomChangePanel').style.display = 'none';
@@ -273,8 +264,7 @@ resetRenewalCheckboxes() {
     };
   },
 
-  checkGenderRoomMatch()
-  {
+  checkGenderRoomMatch() {
     const gender = document.getElementById('edit-gd').value;
     const gdNote = document.getElementById('gender-note');
     const roomNote = document.getElementById('room-note');
@@ -304,16 +294,14 @@ resetRenewalCheckboxes() {
     }
   },
 
-  toggleRoomChange()
-  {
+  toggleRoomChange() {
     const panel = document.getElementById('roomChangePanel');
     if (!panel) return;
 
     this.roomChange.active = !this.roomChange.active;
     panel.style.display = this.roomChange.active ? 'block' : 'none';
 
-    if (this.roomChange.active)
-    {
+    if (this.roomChange.active) {
       this.renderBlocks();
 
       if (this.roomChange.selectedBlock) {
@@ -322,21 +310,18 @@ resetRenewalCheckboxes() {
     }
   },
 
-  renderBlocks()
-  {
+  renderBlocks() {
     const wrap = document.getElementById('blockSelector');
     if (!wrap) return;
     wrap.innerHTML = '';
 
-    if (!Array.isArray(window.ALL_BLOCKS))
-    {
+    if (!Array.isArray(window.ALL_BLOCKS)) {
       console.error('ALL_BLOCKS chưa sẵn sàng:', window.ALL_BLOCKS);
       wrap.innerHTML = '<p style="color:red">Không tải được danh sách tòa</p>';
       return;
     }
 
-    window.ALL_BLOCKS.forEach(block =>
-    {
+    window.ALL_BLOCKS.forEach(block => {
       const available = block.available ?? 0;
 
       const div = document.createElement('div');
@@ -369,8 +354,7 @@ resetRenewalCheckboxes() {
     this.renderRooms(blockId);
   },
 
-  renderRooms(blockId)
-  {
+  renderRooms(blockId) {
     const wrap = document.getElementById('roomSelector');
     if (!wrap) return;
     wrap.innerHTML = '';
@@ -387,15 +371,14 @@ resetRenewalCheckboxes() {
     rooms.sort((a, b) => {
       const rank = (r) => {
         const hasSlot = r.OCCUPIED < r.CAPACITY;
-        if (!hasSlot) return 2;    
+        if (!hasSlot) return 2;
         if (r.GENDER !== studentGender) return 1;
         return 0;
       };
       return rank(a) - rank(b);
     });
 
-    rooms.forEach(r =>
-    {
+    rooms.forEach(r => {
       const div = document.createElement('div');
       div.className = 'room-card';
       div.dataset.room = r.ROOM_ID;
@@ -412,18 +395,16 @@ resetRenewalCheckboxes() {
         <div class="room-meta">
           ${r.OCCUPIED}/${r.CAPACITY} chỗ · ${r.GENDER}
         </div>
-        ${
-          !isGenderMatch
-            ? `<div class="room-note"> Khác giới tính</div>`
-            : !hasSlot
-              ? `<div class="room-note"> Hết chỗ</div>`
-              : ''
+        ${!isGenderMatch
+          ? `<div class="room-note"> Khác giới tính</div>`
+          : !hasSlot
+            ? `<div class="room-note"> Hết chỗ</div>`
+            : ''
         }
       `;
 
       if (isGenderMatch && hasSlot) {
-        div.onclick = () =>
-        {
+        div.onclick = () => {
           document.querySelectorAll('.room-card')
             .forEach(x => x.classList.remove('active'));
 
@@ -442,8 +423,7 @@ resetRenewalCheckboxes() {
     });
   },
 
-  async saveStudent(stdId)
-  {
+  async saveStudent(stdId) {
     const data = {
       action: 'update_student',
       std_id: stdId,
@@ -466,25 +446,22 @@ resetRenewalCheckboxes() {
 
     if (!confirm('Xác nhận cập nhật toàn bộ thông tin sinh viên?')) return;
 
-    try
-    {
+    try {
       const res = await fetch('actions/student_action.php',
-      {
-        method: 'POST',
-        headers:
         {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+          method: 'POST',
+          headers:
+          {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
       const result = await res.json();
 
-      if (result.status === 'success')
-      {
+      if (result.status === 'success') {
         alert('Đã lưu thay đổi!');
         const s = this.data.find(item => item.STD_ID == stdId);
-        if (s)
-        {
+        if (s) {
           s.STD_NAME = data.name;
           s.STD_GD = data.gd;
           s.STD_DOB = data.dob;
@@ -494,74 +471,72 @@ resetRenewalCheckboxes() {
         this.closeModal();
         location.reload();
       }
-      else
-      {
+      else {
         alert('Lỗi: ' + result.message);
       }
     }
-    catch (e)
-    {
+    catch (e) {
       alert('Lỗi kết nối hệ thống.');
     }
   },
 
   async deleteStudent(stdId) {
-      if (!confirm('Bạn có chắc chắn muốn kết thúc lưu trú cho sinh viên này?')) return;
+    if (!confirm('Bạn có chắc chắn muốn kết thúc lưu trú cho sinh viên này?')) return;
 
-      try {
-          const res = await fetch('actions/student_action.php', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                  action: 'delete_student', 
-                  std_id: stdId
-              })
-          });
-          const result = await res.json();
+    try {
+      const res = await fetch('actions/student_action.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete_student',
+          std_id: stdId
+        })
+      });
+      const result = await res.json();
 
-          if (result.status === 'success') {
-              alert('Đã kết thúc lưu trú cho sinh viên thành công!');
-              location.reload(); 
-          } else {
-              alert('Lỗi: ' + result.message);
-          }
-      } catch (e) {
-          alert('Lỗi kết nối hệ thống.');
+      if (result.status === 'success') {
+        alert('Đã kết thúc lưu trú cho sinh viên thành công!');
+        location.reload();
+      } else {
+        alert('Lỗi: ' + result.message);
       }
+    } catch (e) {
+      alert('Lỗi kết nối hệ thống.');
+    }
   },
 
   async saveRenewalChanges() {
     const checkboxes = document.querySelectorAll('.renewal-cb');
     const renewalData = Array.from(checkboxes).map(cb => ({
-        std_id: cb.value,
-        is_marked: cb.checked ? 1 : 0
+      std_id: cb.value,
+      is_marked: cb.checked ? 1 : 0
     }));
 
     if (!confirm(`Xác nhận lưu trạng thái gia hạn cho danh sách sinh viên hiện tại?`)) return;
 
     try {
-        const res = await fetch('actions/student_action.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: 'bulk_mark_renewal',
-                list: renewalData
-            })
-        });
-        const result = await res.json();
+      const res = await fetch('actions/student_action.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'bulk_mark_renewal',
+          list: renewalData
+        })
+      });
+      const result = await res.json();
 
-        if (result.status === 'success') {
-            alert('Đã cập nhật trạng thái gia hạn thành công!');
-            renewalData.forEach(item => {
-                const s = this.data.find(d => d.STD_ID == item.std_id);
-                if (s) s.is_renewed = item.is_marked;
-            });
-            this.toggleRenewalMode(); 
-        } else {
-            alert('Lỗi: ' + result.message);
-        }
+      if (result.status === 'success') {
+        alert('Đã cập nhật trạng thái gia hạn thành công!');
+        renewalData.forEach(item => {
+          const s = this.data.find(d => d.STD_ID == item.std_id);
+          if (s) s.is_renewed = item.is_marked;
+        });
+        this.toggleRenewalMode();
+      } else {
+        alert('Lỗi: ' + result.message);
+      }
     } catch (e) {
-        alert('Lỗi kết nối hệ thống khi lưu gia hạn.');
+      alert('Lỗi kết nối hệ thống khi lưu gia hạn.');
     }
   },
 
@@ -581,7 +556,7 @@ resetRenewalCheckboxes() {
     this.rows.sort((a, b) => {
       const aText = a.children[colIndex + 1]?.textContent.trim().toLowerCase() || '';
       const bText = b.children[colIndex + 1]?.textContent.trim().toLowerCase() || '';
-      
+
       const comparison = aText.localeCompare(bText, 'vi');
       return this.sortOrder === 'asc' ? comparison : -comparison;
     });
@@ -598,14 +573,14 @@ resetRenewalCheckboxes() {
 
     this.rows.forEach(row => {
       const cells = Array.from(row.children);
-      
+
       const matches = searchInputs.every(input => {
         const filterValue = input.value.toLowerCase().trim();
         if (!filterValue) return true;
 
         const colIndex = parseInt(input.dataset.col) + 1;
         const cellText = cells[colIndex]?.textContent.trim().toLowerCase() || '';
-        
+
         return cellText.includes(filterValue);
       });
 
@@ -622,8 +597,46 @@ resetRenewalCheckboxes() {
     }
   },
 
-  closeModal()
-  {
+  toggleSelectAll(masterCb) {
+    const visibleCheckboxes = this.rows
+      .filter(row => row.style.display !== 'none')
+      .map(row => row.querySelector('.renewal-cb'))
+      .filter(cb => cb !== null);
+
+    visibleCheckboxes.forEach(cb => {
+      cb.checked = masterCb.checked;
+    });
+    this.updateCounter();
+  },
+
+  updateCounter() {
+    const checked = document.querySelectorAll('.renewal-cb:checked').length;
+    const infoEl = document.querySelector('.table-info');
+
+    const visibleRows = this.rows.filter(r => r.style.display !== 'none');
+    const visibleCount = visibleRows.length;
+    const total = this.rows.length;
+
+    if (this.isRenewalMode) {
+      if (infoEl) {
+        infoEl.innerHTML = `Đã gia hạn cho <b>${checked}</b> / <b>${visibleCount}</b> sinh viên`;
+      }
+    } else {
+      if (infoEl) {
+        infoEl.textContent = visibleCount === total ?
+          `Tổng: ${total} sinh viên` :
+          `Hiển thị: ${visibleCount} / ${total} sinh viên`;
+      }
+    }
+
+    const selectAllCb = document.getElementById('selectAllRenewal');
+    if (selectAllCb) {
+      const visibleCbs = visibleRows.map(r => r.querySelector('.renewal-cb')).filter(cb => cb !== null);
+      selectAllCb.checked = visibleCbs.length > 0 && visibleCbs.every(cb => cb.checked);
+    }
+  },
+
+  closeModal() {
     if (this.el.stdModal) this.el.stdModal.style.display = 'none';
   }
 };

@@ -48,6 +48,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>InfiDorm - <?= $current['title'] ?></title>
     <link rel="stylesheet" href="../css/public.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <?php if (isset($current['css'])): ?>
     <link rel="stylesheet" href="<?= $current['css'] ?>" />
     <?php endif; ?>

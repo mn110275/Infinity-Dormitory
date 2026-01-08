@@ -74,6 +74,7 @@
   };
 </script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <div class="view-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
   <h2 style="margin: 0; color: #1e293b; font-family: 'Google Sans';">Quản lý Thiết bị - Tòa <?= $managerBlock ?></h2>
   <button onclick="FacilityManager.addNewType()"
@@ -91,7 +92,7 @@
           <th class="room-header" data-room-id="<?= $id ?>">
             <div class="room-no"><?= $id ?></div>
             <div class="room-stats">
-              <i class="fa fa-users"></i> <?= $room['OCCUPIED'] ?>/<?= $room['CAPACITY'] ?>
+              <i class="fa fa-user"></i> <?= $room['OCCUPIED'] ?>/<?= $room['CAPACITY'] ?>
             </div>
           </th>
           <?php endforeach; ?>

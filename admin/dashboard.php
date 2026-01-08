@@ -59,6 +59,7 @@ $current = $menuItems[$tab];
   <link rel="stylesheet" href="../css/public.css" />
   <link rel="stylesheet" href="css/admin.css" />
   <link rel="stylesheet" href="css/modal.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <?php 
   if (!empty($current['css'])): 
       $cssList = is_array($current['css']) ? $current['css'] : [$current['css']];

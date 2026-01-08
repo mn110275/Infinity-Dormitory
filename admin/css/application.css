@@ -1,26 +1,26 @@
-
 #applicationTable .app-row {
     display: none;
 }
 
 
-#applicationTable.view-chua-xu-ly tr.status-chua-xu-ly { 
-    display: table-row !important; 
+#applicationTable.view-chua-xu-ly tr.status-chua-xu-ly {
+    display: table-row !important;
 }
 
-#applicationTable.view-da-chap-nhan tr.status-da-chap-nhan { 
-    display: table-row !important; 
+#applicationTable.view-da-chap-nhan tr.status-da-chap-nhan {
+    display: table-row !important;
 }
 
-#applicationTable.view-da-tu-choi tr.status-da-tu-choi { 
-    display: table-row !important; 
+#applicationTable.view-da-tu-choi tr.status-da-tu-choi {
+    display: table-row !important;
 }
 
 .toggle-view {
     min-width: 150px;
     transition: all 0.2s;
 }
+
 .toggle-view.active {
-    background-color: #007bff; 
+    background-color: #007bff;
     color: white !important;
 }

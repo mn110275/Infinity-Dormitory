@@ -47,17 +47,18 @@
     <meta charset="utf-8" />
     <title>Quản lý InfiDorm - <?= $current['title'] ?></title>
     <link rel="stylesheet" href="../css/public.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <?php if (isset($current['css']))
       echo "<link rel='stylesheet' href='{$current['css']}'>";
     ?>
   </head>
   <body>
     <header class="nav">
-      <a href="home.php" style="font-style: italic; font-size: 30px;">Infinity Dormitory</a>
-      <p style="font-size: 20px; font-style: italic">Chào mừng <?= htmlspecialchars($_SESSION['name'] ?? 'Admin') ?>!</p>
-      <a href="dashboard.php" class="active" style="margin-left:auto">Danh mục quản lý</a>
-      <a href="../logout.php">Đăng xuất</a>
-    </header>
+    <a href="home.php" style="font-style: italic; font-size: 30px;">Infinity Dormitory</a>
+    <p style="font-size: 20px; font-style: italic">Chào mừng <?= htmlspecialchars($_SESSION['name'] ?? 'Admin') ?>!</p>
+    <a href="dashboard.php" style="margin-left:auto">Danh mục quản lý</a>
+    <a href="../logout.php">Đăng xuất</a>
+  </header>
     <main class="container">
       <aside class="sidebar">
         <div class="sidebar-header">
