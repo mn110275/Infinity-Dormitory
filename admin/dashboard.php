@@ -8,7 +8,7 @@ $menuItems = [
         'title' => 'Sinh viên',
         'desc' => 'Danh sách sinh viên',
         'js' => 'js/student.js',
-        'css' => 'css/modal-info.css',
+        'css' => ['css/modal-info.css', 'css/student.css'],
         'view' => 'students.php'
     ],
     'application' => [
@@ -31,6 +31,13 @@ $menuItems = [
         'js' => 'js/unit.js',
         'css' => 'css/unit.css', 
         'view' => 'unit.php'
+    ],
+    'semester' => [
+        'title' => 'Học kỳ',
+        'desc' => 'Thời hạn của kỳ học',
+        'js' => 'js/semester.js',
+        'css' => 'css/semester.css', 
+        'view' => 'semester.php'
     ],
 ];
 

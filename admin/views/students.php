@@ -9,19 +9,27 @@ try
 {
     if ($conn) {
         mysqli_set_charset($conn, "utf8mb4");
+
+        $nextSemRes = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE SEM_STATUS = 'Upcoming' LIMIT 1");
+        $nextSemRow = mysqli_fetch_assoc($nextSemRes);
+        $nextSemId = $nextSemRow ? $nextSemRow['SEM_ID'] : 'NONE';
         
         $studentQuery = "SELECT DISTINCT
-                            s.*, 
-                            c.ROOM_ID, 
-                            c.BLOCK_ID, 
-                            sem.STARTDATE 
-                        FROM STUDENT s
-                        LEFT JOIN CONTRACT c ON s.STD_ID = c.STD_ID
-                        LEFT JOIN SEMESTER sem ON c.SEM_ID = sem.SEM_ID
-                        WHERE sem.IS_CURRENT = 1 
-                          AND c.STATUS = 'Active'
-                          AND s.IS_ACTIVE = 1
-                        ORDER BY c.BLOCK_ID, c.ROOM_ID, s.STD_NAME";
+                              s.*, 
+                              c.ROOM_ID, 
+                              c.BLOCK_ID, 
+                              sem.STARTDATE,
+                              (SELECT COUNT(*) FROM CONTRACT c2 
+                              WHERE c2.STD_ID = s.STD_ID 
+                              AND c2.SEM_ID = '$nextSemId' 
+                              AND c2.STATUS = 'Upcoming') as is_renewed
+                          FROM STUDENT s
+                          INNER JOIN CONTRACT c ON s.STD_ID = c.STD_ID
+                          INNER JOIN SEMESTER sem ON c.SEM_ID = sem.SEM_ID
+                          WHERE sem.SEM_STATUS = 'Active' 
+                            AND c.STATUS = 'Active'
+                            AND s.IS_ACTIVE = 1
+                          ORDER BY c.BLOCK_ID, c.ROOM_ID, s.STD_NAME";
         
         $stmt = mysqli_prepare($conn, $studentQuery);
         mysqli_stmt_execute($stmt);
@@ -79,16 +87,34 @@ while ($row = mysqli_fetch_assoc($result)) {
   window.ALL_ROOMS  = <?= json_encode($rooms, JSON_UNESCAPED_UNICODE) ?>;
 </script>
 
+<h2>Danh sách sinh viên đang ở ký túc xá</h2>
 <?php if (isset($studentError)): ?>
   <div class="alert alert-error">Lỗi: <?= htmlspecialchars($studentError) ?></div>
 <?php elseif (empty($students)): ?>
   <div class="alert alert-info">Chưa có sinh viên nào trong hệ thống.</div>
 <?php else: ?>
-  <h2>Danh sách sinh viên</h2>
+  <div class="table-controls" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+      <button type="button" class="btn btn-secondary" id="btnToggleEditRenewal" onclick="StudentAdmin.toggleRenewalMode()">
+          Mở chế độ gia hạn
+      </button>
+      
+      <div id="renewalActions" style="display: none; gap: 10px;">
+          <button type="button" class="btn btn-success" onclick="StudentAdmin.saveRenewalChanges()">
+              Lưu thay đổi
+          </button>
+          <span class="text-muted">Đã chọn: <b id="selectedCount">0</b></span>
+      </div>
+  </div>
+
   <div class="student-table-wrapper">
     <table class="table student-table" id="studentTable">
       <thead>
         <tr>
+          <th class="col-renewal" style="display: none;">
+              <div class="th-content no-sort" style="justify-content: center;">
+                  <span>Gia hạn</span>
+              </div>
+          </th>
           <th style="width: 100px">
             <div class="th-content" data-col="0">
               <span>Phòng</span>
@@ -96,47 +122,40 @@ while ($row = mysqli_fetch_assoc($result)) {
             </div>
             <input type="text" class="col-search" data-col="0" placeholder="Tìm phòng...">
           </th>
-          <th style="width: 300px">
+          <th>
             <div class="th-content" data-col="1">
               <span>Họ tên sinh viên</span>
               <span class="sort-icon">⇅</span>
             </div>
             <input type="text" class="col-search" data-col="1" placeholder="Tìm tên...">
           </th>
-          <th style="width: 120px">
+          <th style="width: 110px">
             <div class="th-content" data-col="2">
               <span>MSSV</span>
               <span class="sort-icon">⇅</span>
             </div>
             <input type="text" class="col-search" data-col="2" placeholder="Tìm MSSV...">
           </th>
-          <th style="width: 150px">
+          <th style="width: 110px">
             <div class="th-content" data-col="3">
               <span>Ngày sinh</span>
               <span class="sort-icon">⇅</span>
             </div>
             <input type="text" class="col-search" data-col="3" placeholder="Tìm ngày...">
           </th>
-          <th style="width: 150px">
+          <th style="width: 110px">
             <div class="th-content" data-col="4">
               <span>Điện thoại</span>
               <span class="sort-icon">⇅</span>
             </div>
             <input type="text" class="col-search" data-col="4" placeholder="Tìm SĐT...">
           </th>
-          <th>
+          <th style="width: 130px">
             <div class="th-content" data-col="5">
               <span>Địa chỉ</span>
               <span class="sort-icon">⇅</span>
             </div>
             <input type="text" class="col-search" data-col="5" placeholder="Tìm địa chỉ...">
-          </th>
-          <th style="width: 120px">
-            <div class="th-content" data-col="6">
-              <span>Ngày bắt đầu</span>
-              <span class="sort-icon">⇅</span>
-            </div>
-            <input type="text" class="col-search" data-col="6" placeholder="Tìm ngày...">
           </th>
         </tr>
       </thead>
@@ -146,6 +165,12 @@ while ($row = mysqli_fetch_assoc($result)) {
             data-id="<?= htmlspecialchars($s['STD_ID']) ?>" 
             data-room="<?= htmlspecialchars($s['ROOM_ID']) ?>" 
             style="cursor: pointer;">
+          <td class="col-renewal" style="display: none;">
+              <input type="checkbox" class="renewal-cb" 
+                    value="<?= $s['STD_ID'] ?>" 
+                    <?= ($s['is_renewed'] > 0) ? 'checked' : '' ?>
+                    onchange="StudentAdmin.updateCounter()">
+          </td>
           <td>
               <span class="room-badge">
                   <?= $s['ROOM_ID'] ? htmlspecialchars($s['BLOCK_ID'] . $s['ROOM_ID']) : 'Chưa xếp' ?>
@@ -156,7 +181,6 @@ while ($row = mysqli_fetch_assoc($result)) {
           <td><?= date('d/m/Y', strtotime($s['STD_DOB'])) ?></td>
           <td><?= htmlspecialchars($s['STD_PHONE']) ?></td>
           <td><?= htmlspecialchars($s['STD_ADR']) ?></td>
-          <td><?= htmlspecialchars($s['STARTDATE']) ?></td>
         </tr>
         <?php endforeach; ?>
       </tbody>

@@ -1,0 +1,60 @@
+.col-renewal {
+    text-align: center;
+    vertical-align: middle;
+    width: 60px;
+}
+
+.renewal-cb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    position: relative;
+    transition: all 0.2s ease;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.renewal-cb:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 5px rgba(var(--primary-rgb), 0.2);
+}
+
+.renewal-cb:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.renewal-cb:checked::after {
+    content: '';
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    
+    margin-top: -2px; 
+}
+
+#renewalActions {
+    align-items: center;
+    padding: 5px 15px;
+}
+
+#selectedCount {
+    color: var(--primary);
+    font-size: 1.1em;
+}
+
+.student-row:has(.renewal-cb:checked) {
+    background-color: #f0f7ff !important;
+}

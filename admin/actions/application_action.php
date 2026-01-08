@@ -44,7 +44,7 @@ if ($action === 'accept') {
         mysqli_begin_transaction($conn);
 
         // 0. Lấy Kỳ học hiện tại
-        $semRes = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE IS_CURRENT = 1 LIMIT 1");
+        $semRes = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE SEM_STATUS = 'Active' LIMIT 1");
         $currentSem = mysqli_fetch_assoc($semRes);
         if (!$currentSem) throw new Exception('Chưa thiết lập học kỳ hiện tại trong hệ thống');
         $semId = $currentSem['SEM_ID'];
@@ -74,7 +74,6 @@ if ($action === 'accept') {
 
         if ($existingUser) {
             $userId = $existingUser['USER_ID'];
-            // Cập nhật SV cũ
             $stmt = mysqli_prepare($conn, 
                 "UPDATE STUDENT 
                 SET STD_NAME=?, STD_PHONE=?, STD_ADR=?, STD_GD=?, STD_DOB=?, IS_ACTIVE=1 
@@ -84,16 +83,17 @@ if ($action === 'accept') {
         } else {
             // Tạo User mới
             $hashedPass = password_hash('123456', PASSWORD_DEFAULT);
-            $stmt = mysqli_prepare($conn, 
+            $stmtU = mysqli_prepare($conn, 
               "INSERT INTO USERS (EMAIL, PASS, USER_ROLE) VALUES (?, ?, 'student')");
-            mysqli_stmt_bind_param($stmt, 'ss', $email, $hashedPass);
-            mysqli_stmt_execute($stmt);
+            mysqli_stmt_bind_param($stmtU, 'ss', $email, $hashedPass);
+            mysqli_stmt_execute($stmtU);
             $userId = mysqli_insert_id($conn);
 
             // Tạo Student mới
+            $isActiveValue = 1;
             $stmt = mysqli_prepare($conn, 
-                "INSERT INTO STUDENT (STD_ID, STD_NAME, STD_PHONE, STD_ADR, STD_GD, STD_DOB, USER_ID) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            mysqli_stmt_bind_param($stmt, 'ssssssi', $studentId, $name, $phone, $address, $gender, $dob, $userId);
+                "INSERT INTO STUDENT (STD_ID, STD_NAME, STD_PHONE, STD_ADR, STD_GD, STD_DOB, USER_ID, IS_ACTIVE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            mysqli_stmt_bind_param($stmt, 'ssssssii', $studentId, $name, $phone, $address, $gender, $dob, $userId, $isActiveValue);
         }
         
         if (!mysqli_stmt_execute($stmt)) {
@@ -102,29 +102,31 @@ if ($action === 'accept') {
 
         // 3. Xử lý Hợp đồng cho kỳ hiện tại
         // Kiểm tra xem đã có hợp đồng Active nào chưa 
-        $stmt = mysqli_prepare($conn, 
+        $stmtC = mysqli_prepare($conn, 
             "SELECT * FROM CONTRACT 
             WHERE STD_ID = ? AND SEM_ID = ?"
         );
-        mysqli_stmt_bind_param($stmt, 'si', $studentId, $semId);
-        mysqli_stmt_execute($stmt);
-        if (mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))) {
+        mysqli_stmt_bind_param($stmtC, 'ss', $studentId, $semId);
+        mysqli_stmt_execute($stmtC);
+        $existingContract = mysqli_fetch_assoc(mysqli_stmt_get_result($stmtC));
+
+        if ($existingContract) {
             // Nếu đã có hợp đồng kỳ này, cập nhật lại phòng
-            $stmt = mysqli_prepare($conn, 
+            $stmtH = mysqli_prepare($conn, 
                 "UPDATE CONTRACT 
                 SET BLOCK_ID = ?, ROOM_ID = ?, STATUS = 'Active' 
                 WHERE STD_ID = ? AND SEM_ID = ?");
-            mysqli_stmt_bind_param($stmt, 'sssi', $blockId, $roomId, $studentId, $semId);
+            mysqli_stmt_bind_param($stmtH, 'ssss', $blockId, $roomId, $studentId, $semId);
         } else {
             // Nếu chưa có, tạo mới hợp đồng
-            $stmt = mysqli_prepare($conn, 
+            $stmtH = mysqli_prepare($conn, 
                 "INSERT INTO CONTRACT (STD_ID, SEM_ID, BLOCK_ID, ROOM_ID, STATUS) 
                 VALUES (?, ?, ?, ?, 'Active')"
             );
-            mysqli_stmt_bind_param($stmt, 'siss', $studentId, $semId, $blockId, $roomId);
+            mysqli_stmt_bind_param($stmtH, 'ssss', $studentId, $semId, $blockId, $roomId);
         }
         
-        if (!mysqli_stmt_execute($stmt)) {
+        if (!mysqli_stmt_execute($stmtH)) {
             throw new Exception("Lỗi phòng/hợp đồng: " . mysqli_error($conn));
         }
 

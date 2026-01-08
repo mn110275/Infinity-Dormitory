@@ -38,7 +38,7 @@ try {
     window.ALL_ROOMS = <?= json_encode($rooms) ?>;
 </script>
 
-<h2>Quản lý đơn đăng ký</h2>
+<h2>Danh sách đơn đăng ký</h2>
 
 <div class="view-toggles" style="margin: 20px 0; display: flex; gap: 15px;">
     <button class="btn btn-primary toggle-view active" data-status="chua-xu-ly" onclick="ApplicationAdmin.switchView('chua-xu-ly', this)">

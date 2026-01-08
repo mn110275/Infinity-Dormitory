@@ -2,6 +2,7 @@ const StudentAdmin = {
   data: [], 
   table: null,
   rows: [],
+  isRenewalMode: false,
 
   el:
   {
@@ -52,6 +53,7 @@ const StudentAdmin = {
   {
     this.table.querySelectorAll('.th-content').forEach(el =>
     {
+      if (el.classList.contains('no-sort')) return;
       el.onclick = () => this.sort(parseInt(el.dataset.col), el);
     });
 
@@ -65,6 +67,7 @@ const StudentAdmin = {
       row.style.cursor = 'pointer';
       row.onclick = (e) =>
       {
+        if (e.target.closest('.col-renewal') || e.target.classList.contains('renewal-cb')) return;
         if (e.target.closest('.col-search')) return;
         this.showStudentProfile(row.dataset.id);
       };
@@ -75,6 +78,62 @@ const StudentAdmin = {
       if (e.target === this.el.stdModal) this.closeModal();
     };
   },
+
+  toggleRenewalMode() {
+    if (this.isRenewalMode) {
+        if (this.hasRenewalChanges()) {
+            if (!confirm("Các thay đổi chưa được lưu sẽ bị hủy. Bạn có chắc chắn muốn thoát?")) {
+                return;
+            }
+        }
+        this.resetRenewalCheckboxes();
+    }
+
+    this.isRenewalMode = !this.isRenewalMode;
+    const cols = document.querySelectorAll('.col-renewal');
+    const thRenewal = this.table.querySelector('thead th:first-child');
+    const actionDiv = document.getElementById('renewalActions');
+    const btn = document.getElementById('btnToggleEditRenewal');
+
+    const displayVal = this.isRenewalMode ? 'table-cell' : 'none';
+    
+    cols.forEach(c => c.style.display = displayVal);
+    if (thRenewal) thRenewal.style.display = displayVal;
+    
+    actionDiv.style.display = this.isRenewalMode ? 'flex' : 'none';
+    btn.innerHTML = this.isRenewalMode ? 'Thoát chế độ gia hạn' : 'Mở chế độ gia hạn';
+    
+    if (this.isRenewalMode) this.updateCounter();
+  },
+
+  updateCounter() {
+    const checked = document.querySelectorAll('.renewal-cb:checked').length;
+    const counterEl = document.getElementById('selectedCount');
+    if (counterEl) counterEl.innerText = checked;
+  },
+
+  hasRenewalChanges() {
+    const checkboxes = document.querySelectorAll('.renewal-cb');
+    for (let cb of checkboxes) {
+        const student = this.data.find(s => s.STD_ID == cb.value);
+        if (student) {
+            const originalStatus = !!parseInt(student.is_renewed); 
+            if (cb.checked !== originalStatus) return true;
+        }
+    }
+    return false;
+},
+
+resetRenewalCheckboxes() {
+    const checkboxes = document.querySelectorAll('.renewal-cb');
+    checkboxes.forEach(cb => {
+        const student = this.data.find(s => s.STD_ID == cb.value);
+        if (student) {
+            cb.checked = !!parseInt(student.is_renewed);
+        }
+    });
+    this.updateCounter();
+},
 
   // 4. HIỂN THỊ PROFILE
   showStudentProfile(stdId)
@@ -471,28 +530,58 @@ const StudentAdmin = {
       }
   },
 
-  sort(colIndex, headerEl)
-  {
-    if (this.sortColumn === colIndex)
-    {
-      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+  async saveRenewalChanges() {
+    const checkboxes = document.querySelectorAll('.renewal-cb');
+    const renewalData = Array.from(checkboxes).map(cb => ({
+        std_id: cb.value,
+        is_marked: cb.checked ? 1 : 0
+    }));
+
+    if (!confirm(`Xác nhận lưu trạng thái gia hạn cho danh sách sinh viên hiện tại?`)) return;
+
+    try {
+        const res = await fetch('actions/student_action.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'bulk_mark_renewal',
+                list: renewalData
+            })
+        });
+        const result = await res.json();
+
+        if (result.status === 'success') {
+            alert('Đã cập nhật trạng thái gia hạn thành công!');
+            renewalData.forEach(item => {
+                const s = this.data.find(d => d.STD_ID == item.std_id);
+                if (s) s.is_renewed = item.is_marked;
+            });
+            this.toggleRenewalMode(); 
+        } else {
+            alert('Lỗi: ' + result.message);
+        }
+    } catch (e) {
+        alert('Lỗi kết nối hệ thống khi lưu gia hạn.');
     }
-    else
-    {
+  },
+
+  sort(colIndex, headerEl) {
+    if (this.sortColumn === colIndex) {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
       this.sortColumn = colIndex;
       this.sortOrder = 'asc';
     }
 
-    this.table.querySelectorAll('.th-content').forEach(e =>
-    {
+    this.table.querySelectorAll('.th-content').forEach(e => {
       e.classList.remove('sort-asc', 'sort-desc');
     });
     headerEl.classList.add(`sort-${this.sortOrder}`);
 
-    this.rows.sort((a, b) =>
-    {
-      const aText = a.children[colIndex]?.textContent.trim().toLowerCase() || '';
-      const bText = b.children[colIndex]?.textContent.trim().toLowerCase() || '';
+    this.rows.sort((a, b) => {
+      const aText = a.children[colIndex + 1]?.textContent.trim().toLowerCase() || '';
+      const bText = b.children[colIndex + 1]?.textContent.trim().toLowerCase() || '';
+      
       const comparison = aText.localeCompare(bText, 'vi');
       return this.sortOrder === 'asc' ? comparison : -comparison;
     });
@@ -503,21 +592,21 @@ const StudentAdmin = {
     this.filter();
   },
 
-  filter()
-  {
-    const filters = Array.from(this.table.querySelectorAll('.col-search')).map(input =>
-      input.value.toLowerCase()
-    );
-
+  filter() {
+    const searchInputs = Array.from(this.table.querySelectorAll('.col-search'));
     let visibleCount = 0;
-    this.rows.forEach(row =>
-    {
+
+    this.rows.forEach(row => {
       const cells = Array.from(row.children);
-      const matches = filters.every((filter, i) =>
-      {
-        if (!filter) return true;
-        const cellText = cells[i]?.textContent.trim().toLowerCase() || '';
-        return cellText.includes(filter);
+      
+      const matches = searchInputs.every(input => {
+        const filterValue = input.value.toLowerCase().trim();
+        if (!filterValue) return true;
+
+        const colIndex = parseInt(input.dataset.col) + 1;
+        const cellText = cells[colIndex]?.textContent.trim().toLowerCase() || '';
+        
+        return cellText.includes(filterValue);
       });
 
       row.style.display = matches ? '' : 'none';
@@ -525,8 +614,7 @@ const StudentAdmin = {
     });
 
     const infoEl = document.querySelector('.table-info');
-    if (infoEl)
-    {
+    if (infoEl) {
       const total = this.rows.length;
       infoEl.textContent = visibleCount === total ?
         `Tổng: ${total} sinh viên` :

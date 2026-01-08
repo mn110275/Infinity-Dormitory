@@ -17,7 +17,7 @@ if (!$input || !isset($input['action'])) {
 try {
     mysqli_begin_transaction($conn);
 
-    $semRes = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE IS_CURRENT = 1 LIMIT 1");
+    $semRes = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE SEM_STATUS = 'Active' LIMIT 1");
     $currentSem = mysqli_fetch_assoc($semRes);
     if (!$currentSem) throw new Exception('Chưa thiết lập học kỳ hiện tại');
     $semId = $currentSem['SEM_ID'];
@@ -39,8 +39,21 @@ try {
                 SET STATUS = 'Terminated' 
                 WHERE STD_ID = ? AND SEM_ID = ? AND STATUS = 'Active'"
             );
-            mysqli_stmt_bind_param($stmt, "si", $std_id, $semId);
+            mysqli_stmt_bind_param($stmt, "ss", $std_id, $semId);
             mysqli_stmt_execute($stmt);
+
+            $resNext = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE SEM_STATUS = 'Upcoming' LIMIT 1");
+            $nextSem = mysqli_fetch_assoc($resNext);
+            
+            if ($nextSem) {
+                $nextSemId = $nextSem['SEM_ID'];
+                $stmtDeleteUpcoming = mysqli_prepare($conn, 
+                    "DELETE FROM CONTRACT 
+                    WHERE STD_ID = ? AND SEM_ID = ? AND STATUS = 'Upcoming'"
+                );
+                mysqli_stmt_bind_param($stmtDeleteUpcoming, "ss", $std_id, $nextSemId);
+                mysqli_stmt_execute($stmtDeleteUpcoming);
+            }
             break;
 
         case 'update_student':
@@ -65,20 +78,50 @@ try {
             // 2. Kiểm tra và cập nhật phòng nếu có thay đổi
             if (!empty($newBlock) && !empty($newRoom)) {
                 $stmt = mysqli_prepare($conn, "SELECT BLOCK_ID, ROOM_ID FROM CONTRACT WHERE STD_ID = ? AND SEM_ID = ? AND STATUS = 'Active'");
-                mysqli_stmt_bind_param($stmt, "si", $std_id, $semId);
+                mysqli_stmt_bind_param($stmt, "ss", $std_id, $semId);
                 mysqli_stmt_execute($stmt);
                 $contract = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 
                 if ($contract) {
                     if ($newBlock !== $contract['BLOCK_ID'] || $newRoom !== $contract['ROOM_ID']) {
                         $stmt = mysqli_prepare($conn, "UPDATE CONTRACT SET BLOCK_ID = ?, ROOM_ID = ? WHERE STD_ID = ? AND SEM_ID = ? AND STATUS = 'Active'");
-                        mysqli_stmt_bind_param($stmt, "sssi", $newBlock, $newRoom, $std_id, $semId);
+                        mysqli_stmt_bind_param($stmt, "ssss", $newBlock, $newRoom, $std_id, $semId);
                         mysqli_stmt_execute($stmt);
                     }
                 } else {
                     $stmt = mysqli_prepare($conn, "INSERT INTO CONTRACT (STD_ID, SEM_ID, BLOCK_ID, ROOM_ID, STATUS) VALUES (?, ?, ?, ?, 'Active')");
-                    mysqli_stmt_bind_param($stmt, "siss", $std_id, $semId, $newBlock, $newRoom);
+                    mysqli_stmt_bind_param($stmt, "ssss", $std_id, $semId, $newBlock, $newRoom);
                     mysqli_stmt_execute($stmt);
+                }
+            }
+            break;
+        
+        case 'bulk_mark_renewal':
+            if (!isset($input['list']) || !is_array($input['list'])) {
+                throw new Exception('Dữ liệu gia hạn không hợp lệ');
+            }
+
+            // A. Tìm xem có học kỳ nào đang đợi không
+            $resNext = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE SEM_STATUS = 'Upcoming' LIMIT 1");
+            $nextSem = mysqli_fetch_assoc($resNext);
+            $nextSemId = $nextSem ? $nextSem['SEM_ID'] : null;
+
+            foreach ($input['list'] as $item) {
+                $is_marked = (int)$item['is_marked'];
+                $std_id = $item['std_id'];  
+
+                if ($nextSemId) {
+                    if ($is_marked === 1) {
+                        // Đồng bộ sang kỳ tới
+                        $syncQuery = "INSERT IGNORE INTO CONTRACT (STD_ID, SEM_ID, BLOCK_ID, ROOM_ID, STATUS)
+                                      SELECT STD_ID, '$nextSemId', BLOCK_ID, ROOM_ID, 'Upcoming'
+                                      FROM CONTRACT 
+                                      WHERE STD_ID = '$std_id' AND SEM_ID = '$semId' AND STATUS = 'Active'";
+                        mysqli_query($conn, $syncQuery);
+                    } else {
+                        // Nếu bỏ tick, xóa bản ghi Upcoming tương ứng
+                        mysqli_query($conn, "DELETE FROM CONTRACT WHERE STD_ID = '$std_id' AND SEM_ID = '$nextSemId' AND STATUS = 'Upcoming'");
+                    }
                 }
             }
             break;

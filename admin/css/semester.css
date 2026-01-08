@@ -1,0 +1,237 @@
+.semester-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.semester-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+}
+
+.semester-header .title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.current-date {
+    text-align: right;
+}
+
+.current-date .label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.current-date .value {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.card {
+    background: white;
+    margin-bottom: 20px;
+}
+
+.card.cur-sem {
+    border-radius: 12px;
+    border: 1px solid var(--border) !important; 
+    overflow: hidden; 
+}
+
+.card.next-sem input[type="date"] {
+    max-width: 150px;
+}
+
+/* Grid layout */
+.semester-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 24px;
+}
+
+/* Status Banner */
+.status-banner {
+    background: var(--cl);
+    padding: 30px;
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.status-banner .badge {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+.sem-display-id {
+    font-size: 48px;
+    font-weight: 800;
+    margin: 10px 0;
+}
+
+.sem-date-range {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* Statistics */
+.stats-section {
+    padding: 24px;
+}
+
+.section-subtitle {
+    margin-bottom: 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+}
+
+.stat-box {
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.stat-box.info { background: #eff6ff; border-color: #bfdbfe; }
+.stat-box.success { background: #f0fdf4; border-color: #bbf7d0; }
+.stat-box.danger { background: #fef2f2; border-color: #fecaca; }
+
+.stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.stat-box.info .stat-value { color: var(--primary); }
+.stat-box.success .stat-value { color: var(--success); }
+.stat-box.danger .stat-value { color: var(--danger); }
+
+.stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Form & Upcoming Info */
+.upcoming-info, #formRollover {
+    padding: 10px;
+}
+
+.section-title {
+    margin-bottom: 8px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.section-title.no-margin { margin: 0; }
+
+.section-desc {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.details-list {
+    background: #f8fafc;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+}
+
+.detail-item:last-child { border: none; }
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.readonly-input {
+    background: #f1f5f9 !important;
+    font-weight: 600;
+    cursor: not-allowed;
+}
+
+.actions-group {
+    display: flex;
+    gap: 12px;
+}
+
+/* History section */
+.mt-30 { margin-top: 30px; }
+
+.history-header {
+    display: flex !important;
+    justify-content: space-between !important; 
+    align-items: center !important;
+    flex-wrap: nowrap; 
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px; 
+}
+
+.history-content {
+    min-height: 200px;
+    padding: 24px;
+}
+
+.flex-title {
+    flex-shrink: 0; 
+    white-space: nowrap; 
+}
+
+.select-sem {
+    max-width: 220px; 
+    padding: 8px 12px;
+    font-size: 14px;
+    height: 40px;
+}
+
+@media (max-width: 600px) {
+    .history-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .select-sem {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px;
+}
+
+.w-full { width: 100%; }
+.text-danger { color: var(--danger) !important; }
+.text-primary { color: var(--primary) !important; }
