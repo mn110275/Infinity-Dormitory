@@ -22,11 +22,25 @@
           while ($row = mysqli_fetch_assoc($result)) { $applications[] = $row; }
   
           $blocks = [];
-          $resB = mysqli_query($conn, "SELECT b.BLOCK_ID, SUM(r.CAPACITY - r.OCCUPIED) as available FROM BLOCK b LEFT JOIN ROOM r ON r.BLOCK_ID = b.BLOCK_ID GROUP BY b.BLOCK_ID");
+          $resB = mysqli_query($conn, "
+              SELECT 
+                  b.BLOCK_ID, 
+                  b.BLOCK_STATUS, 
+                  SUM(
+                      CASE 
+                          WHEN b.BLOCK_STATUS = 'Active' AND r.ROOM_STATUS = 'Active' 
+                          THEN (r.CAPACITY - r.OCCUPIED) 
+                          ELSE 0 
+                      END
+                  ) as available 
+              FROM BLOCK b 
+              LEFT JOIN ROOM r ON r.BLOCK_ID = b.BLOCK_ID 
+              GROUP BY b.BLOCK_ID, b.BLOCK_STATUS
+          ");
           while($r = mysqli_fetch_assoc($resB)) { $blocks[] = $r; }
   
           $rooms = [];
-          $resR = mysqli_query($conn, "SELECT ROOM_ID, BLOCK_ID, GENDER, CAPACITY, OCCUPIED FROM ROOM");
+          $resR = mysqli_query($conn, "SELECT ROOM_ID, BLOCK_ID, GENDER, CAPACITY, OCCUPIED, ROOM_STATUS FROM ROOM");
           while($r = mysqli_fetch_assoc($resR)) { $rooms[] = $r; }
       }
   } catch (Exception $e) { $appError = $e->getMessage(); }

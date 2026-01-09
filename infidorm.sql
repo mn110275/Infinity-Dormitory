@@ -245,7 +245,7 @@ VALUES
 ('s20@infidorm.com', '$2y$10$vdU.fxPcCwWiQNTze1PT..CyXIlWhGpdU6qKJgAPF817w1TMU/9eG', 'student');
 
 INSERT INTO BLOCK (BLOCK_ID)
-VALUES ('A'), ('B'), ('C'), ('D');
+VALUES ('A'), ('B'), ('C');
 
 INSERT INTO SEMESTER (SEM_ID, STARTDATE, ENDDATE, SEM_STATUS) VALUES
 ('20251', '2025-09-01', '2026-01-31', 'Active'),

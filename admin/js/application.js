@@ -9,6 +9,15 @@ const ApplicationAdmin = {
     selectedRoom: null,
     selectedBlock: null,
 
+    translateStatus(status) {
+        const map = {
+            'Active': 'Đang hoạt động',
+            'Maintenance': 'Bảo trì',
+            'Closed': 'Đóng cửa'
+        };
+        return map[status] || status;
+    },
+
     init() {
         this.table = document.getElementById('applicationTable');
         if (!this.table) return;
@@ -265,6 +274,9 @@ const ApplicationAdmin = {
         wrap.innerHTML = '';
         const studentGender = document.getElementById('reg-gender').value;
 
+        const currentBlock = window.ALL_BLOCKS.find(b => b.BLOCK_ID === blockId);
+        const isBlockAvailable = currentBlock && currentBlock.BLOCK_STATUS === 'Active';
+
         const rooms = window.ALL_ROOMS.filter(r => r.BLOCK_ID === blockId);
 
         if (rooms.length === 0) {
@@ -273,8 +285,8 @@ const ApplicationAdmin = {
         }
 
         rooms.sort((a, b) => {
-            const rank = (r) => (r.GENDER === studentGender && r.OCCUPIED < r.CAPACITY) ? 0 : 1;
-            return rank(a) - rank(b);
+            const isReady = (r) => (r.ROOM_STATUS === 'Active' && isBlockAvailable && r.GENDER === studentGender && r.OCCUPIED < r.CAPACITY);
+            return isReady(b) - isReady(a);
         });
 
         rooms.forEach(r => {
@@ -283,24 +295,32 @@ const ApplicationAdmin = {
             
             const isGenderMatch = r.GENDER === studentGender;
             const hasSlot = r.OCCUPIED < r.CAPACITY;
+            const isRoomActive = r.ROOM_STATUS === 'Active';
+            
+            const canSelect = isGenderMatch && hasSlot && isRoomActive && isBlockAvailable;
 
-            if (!isGenderMatch || !hasSlot) {
+            if (!canSelect) {
                 div.classList.add('disabled');
             }
             
             if (this.selectedRoom === r.ROOM_ID) div.classList.add('active');
 
+            let statusNote = '';
+            if (!isBlockAvailable) statusNote = `<div class="room-note">Tòa ${this.translateStatus(currentBlock.BLOCK_STATUS)}</div>`;
+            else if (!isRoomActive) statusNote = `<div class="room-note">Phòng ${this.translateStatus(r.ROOM_STATUS)}</div>`;
+            else if (!isGenderMatch) statusNote = `<div class="room-note">Khác giới tính</div>`;
+            else if (!hasSlot) statusNote = `<div class="room-note">Hết chỗ</div>`;
+
             div.innerHTML = `
                 <div class="room-name">${r.ROOM_ID}</div>
                 <div class="room-meta">${r.OCCUPIED}/${r.CAPACITY} chỗ · ${r.GENDER}</div>
-                ${!isGenderMatch ? '<div class="room-note">Khác giới tính</div>' : (!hasSlot ? '<div class="room-note">Hết chỗ</div>' : '')}
+                ${statusNote}
             `;
 
-            if (isGenderMatch && hasSlot) {
+            if (canSelect) {
                 div.onclick = () => {
                     this.selectedRoom = r.ROOM_ID;
                     this.selectedBlock = blockId;
-
                     document.querySelectorAll('.room-card').forEach(c => c.classList.remove('active'));
                     div.classList.add('active');
                     
