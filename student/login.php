@@ -51,13 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Đăng nhập Sinh viên</title>
   <link rel="stylesheet" href="../css/public.css" />
   <link rel="stylesheet" href="../css/login.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="nav">
-    <a href="../index.php">Trang chủ</a>
-    <a href="../register/register.html">Đăng ký KTX</a>
-    <a href="login.php" class="active">Đăng nhập Sinh viên</a>
-    <a href="../manager/login.php">Đăng nhập Quản lý</a>
+    <a href="home.php" style="font-style: italic; font-size: 30px;">Infinity Dormitory</a>
   </header>
 
   <main class="container">
