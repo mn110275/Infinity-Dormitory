@@ -63,7 +63,7 @@
     <main class="container">
       <aside class="sidebar">
         <div class="sidebar-header">
-          <h3>Danh mục</h3>
+          <h2>Danh mục quản lý</h2>
         </div>
         <nav class="sidebar-list">
           <?php foreach ($menuItems as $key => $item): ?>

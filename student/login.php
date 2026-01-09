@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p class="message error"><?php echo $error; ?></p>
     <?php endif; ?>
 
-    <p class="note">Tài khoản mẫu: <strong>s1@infidorm.com</strong> / <strong>123456</strong></p>
+    <p class="note">Tài khoản mẫu: <strong>s3@infidorm.com</strong> / <strong>123456</strong></p>
   </main>
 </body>
 </html>

@@ -111,13 +111,26 @@ const RevenueManager = {
     const elecPrice = this.data.unitPrices?.ELEC || 0;
     const waterPrice = this.data.unitPrices?.WATER || 0;
 
+    const fmt = (val) => new Intl.NumberFormat('vi-VN').format(val);
+
     let html = `
-      <div class="revenue-header-actions">
-          <h3>Hóa đơn tháng ${month}/${year}</h3>
-          ${!editable ? `<button id="btnEditMode" class="btn btn-primary">Chỉnh sửa hóa đơn</button>` 
+      <div class="revenue-header-actions" style="display: flex; align-items: center; gap: 20px;">
+          <div>
+              <h3 style="margin: 0;">Hóa đơn tháng ${month}/${year}</h3>
+              <div style="font-size: 16px; color: var(--text-muted); margin-top: 5px;">
+                  Điện: <b>${fmt(elecPrice)}đ</b>/kWh 
+                  <span style="margin: 0 10px;">|</span>
+                  Nước: <b>${fmt(waterPrice)}đ</b>/m³
+              </div>
+          </div>
+
+          <div class="button-group" style="margin-left: auto; display: flex; gap: 10px;">
+              ${!editable ? 
+                  `<button id="btnEditMode" class="btn btn-primary"><i class="fa fa-edit"></i> Chỉnh sửa hóa đơn</button>` 
                 : `<button id="btnSaveDraft" class="btn btn-secondary">Lưu tạm</button>
-                   <button id="btnSaveAndNotify" class="btn btn-success">Lưu & Gửi thông báo</button>`
-          }
+                  <button id="btnSaveAndNotify" class="btn btn-success"><i class="fa fa-paper-plane"></i> Lưu & Gửi thông báo</button>`
+              }
+          </div>
       </div>
       <table class="revenue-table">
           <thead>
@@ -156,7 +169,7 @@ const RevenueManager = {
             <td class="cell-elec-total">${elecTotal.toLocaleString()}</td>
             <td class="cell-water-total">${waterTotal.toLocaleString()}</td>
             <td>${editable ? `<input type="number" class="other-input" style="width: 100px" data-room="${roomId}" value="${rowData.other}">` : rowData.other.toLocaleString()}</td>
-            <td>${editable ? `<input type="text" placeholder="Nhập ghi chú" class="note-input" style="width: 300px" data-room="${roomId}" value="${rowData.note}">` : (rowData.note || '-')}</td>
+            <td>${editable ? `<input type="text" placeholder="Nhập ghi chú" class="note-input" style="width: 90%; text-align: left;" data-room="${roomId}" value="${rowData.note}">` : (rowData.note || '-')}</td>
             <td class="cell-row-total"><strong>${total.toLocaleString()}</strong></td>
         </tr>
       `;

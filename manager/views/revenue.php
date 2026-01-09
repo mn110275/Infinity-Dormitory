@@ -26,7 +26,7 @@ try {
 }
 ?>
 
-<h2>Quản lý thu phí - Tòa <?= htmlspecialchars($managerBlock) ?></h2>
+<h2>Quản lý thu phí</h2>
 
 <div class="revenue-controls">
   <div class="control-box">

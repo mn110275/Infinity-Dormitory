@@ -72,14 +72,14 @@ const NotificationManager = {
 
     const counterDiv = document.createElement('div');
     counterDiv.className = 'char-counter';
-    counterDiv.textContent = '0 / 500';
+    counterDiv.textContent = '0 / 1000';
 
     contentTextarea.parentElement.appendChild(counterDiv);
 
     contentTextarea.addEventListener('input', (e) =>
     {
       const length = e.target.value.length;
-      counterDiv.textContent = `${length} / 500`;
+      counterDiv.textContent = `${length} / 1000`;
 
       if (length > 450)
       {

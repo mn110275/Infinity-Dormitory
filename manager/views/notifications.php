@@ -141,8 +141,8 @@ try {
 
     <div class="form-group">
       <label for="content">Nội dung thông báo *</label>
-      <textarea name="content" id="content" class="form-control" rows="6" required maxlength="500"
-        placeholder="Nhập nội dung chi tiết... (Tối đa 500 ký tự)"></textarea>
+      <textarea name="content" id="content" class="form-control" rows="6" required maxlength="1000"
+        placeholder="Nhập nội dung chi tiết... (Tối đa 1000 ký tự)"></textarea>
     </div>
 
     <div class="form-group">
@@ -233,5 +233,3 @@ try {
     </div>
   <?php endif; ?>
 </div>
-
-<script src="../js/notifications.js"></script>

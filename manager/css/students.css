@@ -1,20 +1,20 @@
 .student-table-wrapper {
-    max-height: 70vh;
-    overflow-y: auto;
-    position: relative;
+  max-height: 70vh;
+  overflow-y: auto;
+  position: relative;
 }
 
 .student-table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background-color: #f8fafc;
-    border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #f8fafc;
+  border-bottom: 2px solid var(--border);
 }
 
 .student-table {
-    border-collapse: separate; 
-    border-spacing: 0;
+  border-collapse: separate; 
+  border-spacing: 0;
 }
 
 .student-table th,

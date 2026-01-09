@@ -76,7 +76,7 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <div class="view-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-  <h2 style="margin: 0; color: #1e293b; font-family: 'Google Sans';">Quản lý Thiết bị - Tòa <?= $managerBlock ?></h2>
+  <h2 style="margin: 0; color: #1e293b; font-family: 'Google Sans';">Quản lý Thiết bị</h2>
   <button onclick="FacilityManager.addNewType()"
     style="padding: 8px 24px; background: #64a9f2; color: white; font-family: 'Google Sans'; font-size: 16px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(100, 169, 242, 0.4);">
   THÊM LOẠI ĐỒ DÙNG MỚI

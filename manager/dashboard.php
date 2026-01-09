@@ -28,6 +28,12 @@
       'js' => 'js/notifications.js',
       'css' => 'css/notifications.css'
     ],
+    'requests'=> [
+      'title'=> 'Yêu cầu',
+      'desc'=> 'Giải quyết các yêu cầu của sinh viên',
+      'js'=> 'js/requests.js',
+      'css' => 'css/requests.css'
+    ],
     'profile'       => [
       'title' => 'Hồ sơ cá nhân',
       'desc' => 'Quản lý thông tin tài khoản',

@@ -91,30 +91,6 @@
   font-style: italic;
 }
 
-.form-control {
-  font-family: 'Google Sans';
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 16px;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-control:disabled {
-  background: #f8fafc;
-  color: var(--text-muted);
-  cursor: not-allowed;
-}
-
-textarea.form-control {
-  resize: vertical;
-}
-
 .form-actions {
   display: flex;
   justify-content: flex-end;
