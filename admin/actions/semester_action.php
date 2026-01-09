@@ -91,22 +91,6 @@ try {
                 throw new Exception("Không thể tạo học kỳ mới.");
             }
 
-            // B. Lấy kỳ hiện tại để copy danh sách gia hạn
-            $res = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE SEM_STATUS = 'Active' LIMIT 1");
-            $oldSem = mysqli_fetch_assoc($res);
-            $oldSemId = $oldSem ? $oldSem['SEM_ID'] : null;
-
-            if ($oldSemId) {
-                $copyQuery = "INSERT INTO CONTRACT (STD_ID, SEM_ID, BLOCK_ID, ROOM_ID, STATUS)
-                            SELECT STD_ID, '$newSemId', BLOCK_ID, ROOM_ID, 'Upcoming'
-                            FROM CONTRACT 
-                            WHERE SEM_ID = '$oldSemId' AND STATUS = 'Active'";        
-                
-                if (!mysqli_query($conn, $copyQuery)) {
-                    throw new Exception("Lỗi khi chuyển danh sách sinh viên gia hạn.");
-                }
-            }
-
             mysqli_commit($conn);
             echo json_encode(['status' => 'success']);
             break;

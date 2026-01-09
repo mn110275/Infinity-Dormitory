@@ -13,6 +13,8 @@ try
         $nextSemRes = mysqli_query($conn, "SELECT SEM_ID FROM SEMESTER WHERE SEM_STATUS = 'Upcoming' LIMIT 1");
         $nextSemRow = mysqli_fetch_assoc($nextSemRes);
         $nextSemId = $nextSemRow ? $nextSemRow['SEM_ID'] : 'NONE';
+
+        $canRenew = ($nextSemId !== 'NONE');
         
         $studentQuery = "SELECT DISTINCT
                               s.*, 
@@ -85,6 +87,7 @@ while ($row = mysqli_fetch_assoc($result)) {
   window.ALL_STUDENTS = <?= json_encode($students) ?>;
   window.ALL_BLOCKS = <?= json_encode($blocks, JSON_UNESCAPED_UNICODE) ?>;
   window.ALL_ROOMS  = <?= json_encode($rooms, JSON_UNESCAPED_UNICODE) ?>;
+  window.CAN_RENEW = <?= json_encode($canRenew) ?>;
 </script>
 
 <h2>Danh sách sinh viên đang ở ký túc xá</h2>
@@ -94,9 +97,17 @@ while ($row = mysqli_fetch_assoc($result)) {
   <div class="alert alert-info">Chưa có sinh viên nào trong hệ thống.</div>
 <?php else: ?>
   <div class="table-controls" style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
-      <button type="button" class="btn btn-primary" id="btnToggleEditRenewal" onclick="StudentAdmin.toggleRenewalMode()">
+      <button type="button" class="btn btn-primary" id="btnToggleEditRenewal" onclick="StudentAdmin.toggleRenewalMode()"
+        <?= !$canRenew ? 'style="opacity: 0.6; cursor: not-allowed;" title="Vui lòng tạo học kỳ mới trước khi gia hạn"' : '' ?>
+      >
           Mở chế độ gia hạn
       </button>
+
+      <?php if (!$canRenew): ?>
+          <span style="color: #ef4444; font-size: 14px; font-style: italic;">
+              * Cần lập lịch học kỳ tới để mở tính năng gia hạn.
+          </span>
+      <?php endif; ?>
       
       <div id="renewalActions" style="display: none; gap: 10px;">
         <button type="button" class="btn btn-success" onclick="StudentAdmin.saveRenewalChanges()">

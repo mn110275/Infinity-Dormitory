@@ -72,6 +72,11 @@ const StudentAdmin = {
   },
 
   toggleRenewalMode() {
+    if (!window.CAN_RENEW) {
+        alert("Hệ thống chưa tìm thấy học kỳ tiếp theo.\nVui lòng vào mục Quản lý học kỳ để lập lịch trước khi thực hiện gia hạn.");
+        return;
+    }
+
     if (this.isRenewalMode) {
       if (this.hasRenewalChanges()) {
         if (!confirm("Các thay đổi chưa được lưu sẽ bị hủy. Bạn có chắc chắn muốn thoát?")) {

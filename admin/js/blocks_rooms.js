@@ -534,6 +534,15 @@ const BRAdmin = {
                 const currentCard = document.querySelector(`.block-card[data-block="${blockId}"]`);
                 if (currentCard) {
                     currentCard.dataset.status = newStatus;
+
+                    currentCard.classList.remove('is-maintenance', 'is-closed');
+                    if (newStatus === 'Maintenance') currentCard.classList.add('is-maintenance');
+                    else if (newStatus === 'Closed') currentCard.classList.add('is-closed');
+
+                    const statusTag = currentCard.querySelector('.block-tag');
+                    if (statusTag) {
+                        statusTag.innerText = this.translateStatus(newStatus);
+                    }
                 }
 
                 this.refreshBlockStats(blockId);

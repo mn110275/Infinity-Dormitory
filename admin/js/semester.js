@@ -29,7 +29,12 @@ const SemesterAdmin = {
     },
 
     async deleteUpcoming(semId) {
-        if(!confirm(`Bạn có chắc chắn muốn HỦY LỊCH kỳ học ${semId}?\nMọi hợp đồng 'Upcoming' đã tạo cho kỳ này cũng sẽ bị xóa.`)) return;
+        const confirmFirst = confirm(`CẢNH BÁO:\n\nBạn đang thực hiện HỦY LỊCH học kỳ: ${semId}.`);
+        if (!confirmFirst) return;
+
+        const confirmSecond = confirm(`LƯU Ý:\nNếu bạn đã thực hiện gia hạn cho sinh viên vào kỳ ${semId}, toàn bộ danh sách gia hạn đó SẼ BỊ XÓA VĨNH VIỄN.\n\nBạn vẫn muốn tiếp tục chứ?`);
+        if (!confirmSecond) return;
+
         this.sendAction('delete_upcoming', { sem_id: semId });
     },
 

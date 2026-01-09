@@ -58,7 +58,7 @@ const Unit = {
 
     async sendRequest(body) {
         try {
-            const res = await fetch('actions/unit_actions.php', {
+            const res = await fetch('actions/unit_action.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: body
