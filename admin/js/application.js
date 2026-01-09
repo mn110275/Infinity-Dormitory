@@ -406,7 +406,6 @@ const ApplicationAdmin = {
         this.table.querySelectorAll('.col-search')
     ).map(input => input.value.toLowerCase());
 
-    // Lấy class đang active trên table (ví dụ: view-chua-xu-ly)
     const currentViewClass = Array.from(this.table.classList).find(c => c.startsWith('view-'));
     const currentStatus = currentViewClass ? currentViewClass.replace('view-', '') : '';
 
@@ -415,13 +414,11 @@ const ApplicationAdmin = {
     this.rows.forEach(row => {
         const cells = Array.from(row.children);
         
-        // 1. Kiểm tra tìm kiếm (Search)
         const matchSearch = filters.every((f, i) => {
             if (!f) return true;
             return (cells[i]?.textContent || '').toLowerCase().includes(f);
         });
 
-        // 2. Kiểm tra bộ lọc trạng thái (View) - KHỚP HOÀN TOÀN VỚI CLASS PHP RENDER
         const matchView = row.classList.contains(`status-${currentStatus}`);
 
         if (matchSearch && matchView) {

@@ -18,6 +18,13 @@ $menuItems = [
         'css' => ['css/modal-info.css', 'css/application.css'],
         'view' => 'applications.php'
     ],
+    'blocks_rooms' => [
+        'title' => 'Tòa & Phòng',
+        'desc' => 'Quản lý sơ đồ ký túc xá',
+        'js' => 'js/blocks_rooms.js',
+        'css' => ['css/modal-info.css', 'css/blocks_rooms.css', 'css/modal.css'],
+        'view' => 'blocks_rooms.php'
+    ],
     'manager' => [
         'title' => 'Quản lý',
         'desc' => 'Tài khoản quản lý',

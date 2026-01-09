@@ -1,0 +1,424 @@
+.mb-20 { margin-bottom: 20px; }
+.btn-sm { padding: 6px 12px; font-size: 14px; }
+
+.semester-header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;           
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.semester-header .title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Base Stat Box */
+.stat-box {
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.stat-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.stat-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-box.info {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+.stat-box.info .stat-value { color: #1e40af; }
+
+.stat-box.success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+}
+.stat-box.success .stat-value { color: #15803d; }
+
+.stat-box.warning {
+    background: #f5f3ff; 
+    border-color: #ddd6fe;
+    position: relative;
+    overflow: hidden;
+}
+.stat-box.warning .stat-value { color: #6d28d9; }
+.stat-box.warning .stat-label { color: #7c3aed; }
+
+.stat-box.danger {
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+.stat-box.danger .stat-value { color: #b91c1c; }
+
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+
+@media (max-width: 640px) {
+    .stats-grid {
+        grid-template-columns: 1fr; 
+    }
+}
+
+.block-card {
+    border: 1px solid #e2e8f0;
+    background: #f0fdf4; 
+    transition: all 0.3s ease;
+}
+.block-card .block-tag {
+    background: #dcfce7;
+    color: #15803d;
+}
+.block-card .progress-bar {
+    background: #22c55e;
+}
+
+.block-card.active .block-available { color: white; opacity: 0.8; }
+
+.block-card.is-maintenance {
+    background: #fffbeb; 
+    border-color: #fde68a;
+}
+.block-card.is-maintenance .block-tag {
+    background: #fef3c7;
+    color: #92400e;
+}
+.block-card.is-maintenance .progress-bar {
+    background: #f59e0b;
+}
+
+.block-card.is-closed {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    opacity: 0.6;
+    filter: grayscale(0.6);
+}
+.block-card.is-closed .block-tag {
+    background: #e2e8f0;
+    color: #475569;
+}
+.block-card.is-closed .progress-bar {
+    background: #94a3b8;
+}
+
+.block-card.active {
+    opacity: 1 !important;
+    filter: none !important;
+    background: var(--cl) !important;
+    border-style: solid !important;
+}
+
+.status-tag {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.status-tag.active { background: var(--success); }
+.status-tag.maintenance { background: #f59e0b; }
+
+.mb-20 { margin-bottom: 20px; }
+.mt-20 { margin-top: 20px; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+
+/* Block Card Customizations */
+.block-header-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.block-tag { font-size: 10px; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+.block-info-line { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+.block-info-line span { color: var(--text); font-weight: 500; }
+.progress-mini { height: 6px; background: #eee; margin-top: 10px; border-radius: 10px; overflow: hidden; }
+.progress-bar { height: 100%; background: var(--primary); border-radius: 10px; transition: width 0.3s; }
+
+/* Room Card */
+.room-card {
+    border: 1px solid #10b981;
+    background: #fff;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.room-card.maintenance {
+    border: 1px solid #f59e0b; 
+    background: #fffbeb;
+}
+
+.room-card.is-closed {
+    border: 1px solid #64748b; 
+    background: #f1f5f9;
+    opacity: 0.8;
+}
+
+.room-status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+.dot-active { background: #10b981; box-shadow: 0 0 4px rgba(16, 185, 129, 0.4); }
+.dot-maintenance { background: #f59e0b; box-shadow: 0 0 4px rgba(245, 158, 11, 0.4); }
+.dot-closed { background: #475569; box-shadow: 0 0 4px rgba(71, 85, 105, 0.4); }
+.room-card .room-name { font-size: 17px; margin-bottom: 5px; display: flex; align-items: center; }
+
+/* Chia Grid cho Tòa (4 cột) */
+.block-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Ép chia 4 cột rộng hơn */
+    gap: 20px;
+}
+
+/* Chia Grid cho Phòng (6 cột như cũ hoặc tự động) */
+.room-grid-6 {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+}
+
+/* Xử lý đổi màu toàn bộ nội dung khi Tòa được Active */
+.block-card.active {
+    border-color: var(--primary);
+    background: var(--cl);
+    color: white !important;
+    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.35);
+}
+
+/* Đổi màu tất cả các thẻ con khi cha là .active */
+.block-card.active .block-name,
+.block-card.active .block-info-line,
+.block-card.active .block-info-line span,
+.block-card.active .block-info-line strong {
+    color: white !important;
+}
+
+.block-card.active .block-tag {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.block-card.active .progress-mini {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.block-card.active .progress-bar {
+    background: white; /* Thanh tiến độ chuyển trắng cho nổi trên nền tím */
+}
+
+/* Room Card - Giữ nguyên logic dot màu của bạn */
+.room-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+.dot-active { background: #10b981; }
+.dot-maintenance { background: #f59e0b; }
+
+#roomContainer .empty-state {
+    grid-column: 1 / -1; 
+    text-align: center;
+    padding: 40px;
+    background: #f8fafc;
+    border-radius: 8px;
+    color: var(--text-muted);
+    border: 2px dashed #e2e8f0;
+}
+
+.sidebar-panel {
+    position: fixed;
+    top: 0; 
+    left: -400px;
+    width: 400px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+    z-index: 2000;
+    transition: left 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-panel.open {
+    left: 0; 
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.3);
+    z-index: 1999;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+.sidebar-header-room { 
+    padding: 20px; 
+    background: var(--cl); 
+    color: white; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+
+.sidebar-header .close { color: white; opacity: 0.8; }
+.sidebar-header .close:hover { opacity: 1; }
+.sidebar-body { padding: 20px; flex: 1; overflow-y: auto; }
+.sidebar-footer { padding: 20px; border-top: 1px solid #eee; }
+
+.occupant-item {
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.block-status-container { position: relative; }
+
+.clickable-tag {
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: all 0.2s;
+}
+.clickable-tag:hover {
+    background: #e2e8f0;
+    transform: scale(1.05);
+}
+
+.status-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 25px; right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    border: 1px solid #edf2f7;
+    z-index: 100;
+    min-width: 140px;
+    overflow: hidden;
+}
+
+.status-dropdown-menu.show { display: block; }
+
+.status-dropdown-menu div {
+    padding: 10px 15px;
+    font-size: 13px;
+    color: #4a5568;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: left;
+}
+.status-dropdown-menu div:hover {
+    background: #f7fafc;
+    color: var(--primary);
+}
+
+#blockActions {
+    display: none; 
+    gap: 8px; 
+    align-items: stretch; 
+}
+
+#changeBlockStatus, #btnAddRoom {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 14px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    border-radius: 6px;
+}
+
+#changeBlockStatus {
+    line-height: 36px;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #d1d5db;
+    width: auto !important;
+    min-width: 180px;
+    max-width: 250px;
+    display: inline-block;
+    padding: 6px 12px;
+}
+
+#btnAddRoom {
+    white-space: nowrap; 
+    border: none;
+}
+
+.info-group-modern { margin-bottom: 25px; }
+.info-label { display: block; font-size: 13px; color: #64748b; font-weight: 600; margin-bottom: 8px; }
+
+.status-text-row { display: flex; align-items: center; gap: 12px; }
+.btn-text-action { 
+    background: none; border: none; color: var(--cl); 
+    font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;
+}
+
+.status-edit-row { display: flex; align-items: center; gap: 10px; }
+.edit-actions { display: flex; gap: 5px; }
+
+.btn-save-sm, .btn-cancel-sm {
+    padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.btn-save-sm { background: var(--cl); color: white; border: none; }
+.btn-cancel-sm { background: #e2e8f0; color: #475569; border: none; }
+
+.badge-status { 
+    padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 600; 
+}
+.badge-active { background: #dcfce7; color: #166534; }
+.badge-maintenance { background: #fef9c3; color: #854d0e; }
+.badge-closed { background: #fee2e2; color: #991b1b; }
